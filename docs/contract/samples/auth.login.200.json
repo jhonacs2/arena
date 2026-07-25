@@ -1,0 +1,11 @@
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SAMPLE.access",
+  "refreshToken": "rt_8f3c1a90d24b47e6b5d0c7a1e9f2b634",
+  "user": {
+    "id": "usr_001",
+    "email": "ana@hipodromo.test",
+    "displayName": "Ana Robles",
+    "balance": 5000,
+    "emailVerified": true
+  }
+}

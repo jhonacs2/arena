@@ -1,0 +1,15 @@
+{
+  "_request": "POST /api/v1/auth/register  ·  { email: \"no-es-un-correo\", password: \"corta\", displayName: \"A\" }",
+
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Revisá los campos marcados.",
+    "details": {
+      "fields": {
+        "email": "Ingresá un correo válido.",
+        "password": "La contraseña necesita al menos 8 caracteres.",
+        "displayName": "El nombre necesita al menos 2 caracteres."
+      }
+    }
+  }
+}

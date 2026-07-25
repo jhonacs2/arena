@@ -1,0 +1,18 @@
+{
+  "_request": "GET /api/v1/races/race_005",
+
+  "id": "race_005",
+  "name": "Gran Premio Nacional",
+  "startsAt": "2026-03-14T12:00:00Z",
+  "status": "live",
+  "horses": [
+    { "id": "hrs_028", "name": "Yatay",    "number": 1, "odds": 4.50 },
+    { "id": "hrs_029", "name": "Payador",  "number": 2, "odds": 2.75 },
+    { "id": "hrs_030", "name": "Tacuara",  "number": 3, "odds": 6.25 },
+    { "id": "hrs_031", "name": "Espuela",  "number": 4, "odds": 3.10 },
+    { "id": "hrs_032", "name": "Lucero",   "number": 5, "odds": 10.00 },
+    { "id": "hrs_033", "name": "Chañar",   "number": 6, "odds": 7.00 },
+    { "id": "hrs_034", "name": "Tordillo", "number": 7, "odds": 16.00 },
+    { "id": "hrs_035", "name": "Bagual",   "number": 8, "odds": 5.25 }
+  ]
+}

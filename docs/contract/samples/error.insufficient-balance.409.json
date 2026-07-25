@@ -1,0 +1,9 @@
+{
+  "_request": "POST /api/v1/bets  ·  { raceId: race_006, horseId: hrs_036, amount: 5000 }  ·  sesión de usr_008 (saldo 980)",
+
+  "error": {
+    "code": "INSUFFICIENT_BALANCE",
+    "message": "No te alcanza el saldo para esta apuesta.",
+    "details": { "balance": 980, "amount": 5000 }
+  }
+}

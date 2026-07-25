@@ -1,0 +1,386 @@
+/* @theme neobrutal */
+
+/*
+ * Tema Marp del módulo. Usa los mismos tokens que la app, así la diapositiva y
+ * el producto que están construyendo hablan el mismo idioma visual.
+ *
+ * Uso en el frontmatter de cada sesión:
+ *
+ *   ---
+ *   marp: true
+ *   theme: neobrutal
+ *   paginate: true
+ *   ---
+ *
+ *   marp --theme-set theme/ sesiones/s01-*/slides.md -o slides.html
+ *
+ * Clases de diapositiva:
+ *   <!-- _class: portada -->   portada de la sesión
+ *   <!-- _class: bloque  -->   separador de bloque del guión
+ *   <!-- _class: codigo  -->   diapositiva de código a pantalla casi completa
+ *   <!-- _class: ojo     -->   la advertencia que no se olvidan
+ */
+
+/* @tokens:start */
+  /* Generado desde docs/design/tokens.json — no editar a mano.
+     Cambiar un color: se edita el JSON y se corre node scripts/gen-tokens-css.mjs */
+
+  :root {
+    /* primitivas */
+    --ink-900:      oklch(0.17 0.02 155);
+    --ink-800:      oklch(0.22 0.02 155);
+    --ink-700:      oklch(0.32 0.02 155);
+    --ink-500:      oklch(0.5 0.02 155);
+    --chalk-050:    oklch(0.97 0.008 110);
+    --chalk-100:    oklch(0.94 0.01 110);
+    --chalk-200:    oklch(0.89 0.012 110);
+    --chalk-400:    oklch(0.72 0.014 110);
+    --turf-500:     oklch(0.52 0.13 152);
+    --turf-700:     oklch(0.38 0.1 152);
+    --turf-200:     oklch(0.9 0.05 152);
+    --rail-500:     oklch(0.64 0.15 55);
+    --rail-300:     oklch(0.78 0.14 55);
+    --rail-200:     oklch(0.92 0.045 55);
+    --flag-500:     oklch(0.56 0.22 27);
+    --flag-300:     oklch(0.72 0.17 27);
+    --flag-200:     oklch(0.91 0.045 27);
+
+    /* sedas de jockey — los 10 colores registrados del deporte.
+       Solo dentro del SVG de la seda. Ningún texto se pinta encima. */
+    --silk-black:   oklch(0.2 0.01 260);
+    --silk-white:   oklch(0.98 0 110);
+    --silk-red:     oklch(0.55 0.22 27);
+    --silk-blue:    oklch(0.48 0.19 260);
+    --silk-yellow:  oklch(0.85 0.165 95);
+    --silk-green:   oklch(0.52 0.15 148);
+    --silk-orange:  oklch(0.7 0.17 55);
+    --silk-purple:  oklch(0.45 0.2 305);
+    --silk-pink:    oklch(0.75 0.15 5);
+    --silk-cyan:    oklch(0.78 0.12 220);
+
+    color-scheme: light dark;
+  }
+
+  :root, [data-theme="light"] {
+    /* semánticos — claro. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */
+    --surface:        var(--chalk-050);
+    --surface-raised: var(--chalk-050);
+    --surface-sunken: var(--chalk-100);
+    --text:           var(--ink-900);
+    --text-muted:     var(--ink-500);
+    --border:         var(--ink-900);
+    --shadow:         var(--ink-900);
+    --accent:         var(--rail-500);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-500);
+    --live-ink:       var(--chalk-050);
+    --success:        var(--turf-500);
+    --success-ink:    var(--chalk-050);
+    --danger:         var(--flag-500);
+    --danger-ink:     var(--chalk-050);
+  }
+
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    /* semánticos — oscuro. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */
+    --surface:        var(--ink-900);
+    --surface-raised: var(--ink-800);
+    --surface-sunken: var(--ink-900);
+    --text:           var(--chalk-050);
+    --text-muted:     var(--chalk-400);
+    --border:         var(--chalk-050);
+    --shadow:         var(--chalk-050);
+    --accent:         var(--rail-300);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-300);
+    --live-ink:       var(--ink-900);
+    --success:        var(--turf-200);
+    --success-ink:    var(--ink-900);
+    --danger:         var(--flag-300);
+    --danger-ink:     var(--ink-900);
+  } }
+
+  [data-theme="dark"] {
+    --surface:        var(--ink-900);
+    --surface-raised: var(--ink-800);
+    --surface-sunken: var(--ink-900);
+    --text:           var(--chalk-050);
+    --text-muted:     var(--chalk-400);
+    --border:         var(--chalk-050);
+    --shadow:         var(--chalk-050);
+    --accent:         var(--rail-300);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-300);
+    --live-ink:       var(--ink-900);
+    --success:        var(--turf-200);
+    --success-ink:    var(--ink-900);
+    --danger:         var(--flag-300);
+    --danger-ink:     var(--ink-900);
+  }
+/* @tokens:end */
+
+/* ── Tipografía ───────────────────────────────────────────────────────────
+   Las tres familias se self-hostean en woff2 en Fase 2. Hasta entonces, la
+   cadena de reserva del sistema: el deck se ve bien igual, sin depender de red. */
+:root {
+  --font-display: 'Bricolage Grotesque', 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Public Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --border-width: 3px;
+  --shadow-hard: 4px 4px 0 var(--shadow);
+  --shadow-hard-sm: 2px 2px 0 var(--shadow);
+  --shadow-hard-lg: 6px 6px 0 var(--shadow);
+}
+
+section {
+  width: 1280px;
+  height: 720px;
+  padding: 56px 72px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 25px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+
+/* ── Títulos ──────────────────────────────────────────────────────────────
+   Bricolage tiene eje de ancho variable: los títulos largos se condensan sin
+   cambiar de familia y sin bajar de tamaño. */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.4em;
+  font-variation-settings: 'wdth' 92;
+}
+
+h1 { font-size: 68px; }
+h2 { font-size: 44px; }
+h3 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* La regla bajo el h2 es un borde de 3px, no una hairline: es el mismo
+   lenguaje que las cards de la app. */
+h2 {
+  border-bottom: var(--border-width) solid var(--border);
+  padding-bottom: 0.22em;
+}
+
+strong { font-weight: 700; }
+
+em {
+  font-style: normal;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0 0.22em;
+  box-decoration-break: clone;
+}
+
+/* ── Listas ───────────────────────────────────────────────────────────────
+   Sin viñeta redonda: un cuadrado sólido, que es la primitiva del sistema. */
+ul { list-style: none; padding-left: 0; }
+
+ul > li {
+  position: relative;
+  padding-left: 1.15em;
+  margin-bottom: 0.42em;
+}
+
+ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.52em;
+  width: 0.42em;
+  height: 0.42em;
+  background: var(--accent);
+  border: 2px solid var(--border);
+}
+
+ol { padding-left: 1.3em; }
+ol > li { margin-bottom: 0.42em; }
+ol > li::marker { font-family: var(--font-mono); font-weight: 700; }
+
+/* ── Código ───────────────────────────────────────────────────────────────
+   El bloque de código es una card: borde de 3px y sombra dura. Sin gradiente,
+   sin blur, sin radio. */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-sunken);
+  padding: 0.08em 0.3em;
+  border: 2px solid var(--border);
+}
+
+pre {
+  background: var(--surface-sunken);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  padding: 22px 26px;
+  overflow-x: auto;
+}
+
+pre code {
+  border: 0;
+  padding: 0;
+  background: none;
+  font-size: 22px;
+  line-height: 1.42;
+}
+
+/* ── Tablas ───────────────────────────────────────────────────────────────
+   El guión de 12 bloques es una tabla y aparece en todas las sesiones.
+   Los minutos van en mono y tabular para que la columna no baile. */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.82em;
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+}
+
+th, td {
+  border: 2px solid var(--border);
+  padding: 0.4em 0.62em;
+  text-align: left;
+}
+
+th {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.86em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+td:first-child {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+blockquote {
+  margin: 0;
+  padding: 0.7em 1em;
+  border: var(--border-width) solid var(--border);
+  border-left-width: 12px;
+  background: var(--surface-sunken);
+  box-shadow: var(--shadow-hard);
+  font-size: 0.92em;
+}
+
+/* ── Portada ──────────────────────────────────────────────────────────────
+   La franja de sedas al pie es la firma del sistema, y es lo único con color
+   saturado en la diapositiva. */
+section.portada {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--ink-900);
+  color: var(--chalk-050);
+  --border: var(--chalk-050);
+  --shadow: var(--chalk-050);
+}
+
+section.portada h1 { font-size: 92px; margin-bottom: 0.12em; }
+section.portada h2 { border: 0; font-size: 34px; font-weight: 600; opacity: 0.82; }
+
+section.portada::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22px;
+  background: linear-gradient(
+    to right,
+    var(--silk-red) 0 10%, var(--silk-blue) 10% 20%, var(--silk-yellow) 20% 30%,
+    var(--silk-green) 30% 40%, var(--silk-orange) 40% 50%, var(--silk-purple) 50% 60%,
+    var(--silk-pink) 60% 70%, var(--silk-cyan) 70% 80%, var(--silk-white) 80% 90%,
+    var(--silk-black) 90% 100%
+  );
+}
+
+/* ── Separador de bloque ──────────────────────────────────────────────────
+   Anuncia en qué minuto del guión estamos. El número va enorme y en mono,
+   como el marcador de una carrera. */
+section.bloque {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--accent-ink);
+  --border: var(--ink-900);
+  --shadow: var(--ink-900);
+}
+
+section.bloque h1 {
+  font-family: var(--font-mono);
+  font-size: 128px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.08em;
+}
+
+section.bloque h2 { border: 0; font-size: 42px; }
+
+/* ── Diapositiva de código ────────────────────────────────────────────────*/
+section.codigo { padding: 40px 56px; }
+section.codigo h2 { font-size: 32px; margin-bottom: 0.3em; }
+section.codigo pre code { font-size: 25px; }
+
+/* ── Advertencia ──────────────────────────────────────────────────────────
+   Para las tres o cuatro cosas por módulo que se olvidan siempre: la zona en
+   S10, `standalone: true` explícito en 18, `track` en el @for. */
+section.ojo {
+  background: var(--live);
+  color: var(--live-ink);
+  --border: var(--live-ink);
+  --shadow: var(--live-ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section.ojo h1 { font-size: 58px; }
+section.ojo code { background: transparent; border-color: currentColor; }
+
+/* ── Pie ──────────────────────────────────────────────────────────────────*/
+section::before {
+  content: attr(data-marpit-header);
+  position: absolute;
+  top: 22px;
+  left: 72px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+section.portada::before, section.bloque::before, section.ojo::before { content: none; }
+
+section::after {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  opacity: 0.5;
+}
+
+section.portada::after { color: transparent; }
+
+/* ── Utilidades ───────────────────────────────────────────────────────────*/
+.dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.chico { font-size: 0.78em; }
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

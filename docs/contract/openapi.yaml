@@ -1,0 +1,488 @@
+openapi: 3.1.0
+
+info:
+  title: Hipódromo API
+  version: 1.0.0
+  description: |
+    Contrato del monolito Go que sirve la app ancla del módulo Angular.
+
+    **Esta especificación es la fuente de verdad.** El backend y el frontend se
+    escriben contra ella, no uno contra el otro. Los ejemplos de cada respuesta
+    viven en `samples/` y los dos lados los usan como golden test.
+
+    Si hace falta un endpoint o un campo que no está acá, se agrega **primero**
+    en este archivo. Nadie lo inventa en su lado.
+
+servers:
+  - url: /api/v1
+
+tags:
+  - name: auth
+  - name: races
+  - name: bets
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Crear cuenta y disparar el correo de verificación
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, displayName]
+              properties:
+                email:       { type: string, format: email }
+                password:    { type: string, minLength: 8, maxLength: 72 }
+                displayName: { type: string, minLength: 2, maxLength: 40 }
+            example: { email: "nuevo@hipodromo.test", password: "Carrera123!", displayName: "Nuevo Apostador" }
+      responses:
+        '201':
+          description: Cuenta creada. El saldo virtual inicial es 1000.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '409': { $ref: '#/components/responses/Error' }   # EMAIL_ALREADY_REGISTERED
+        '422': { $ref: '#/components/responses/Error' }   # VALIDATION_FAILED
+
+  /auth/verify:
+    post:
+      tags: [auth]
+      summary: Canjear el token del correo
+      description: |
+        El correo lleva a `{FRONT_URL}/verificar?token=...`. La ruta del front lee
+        el token del query y hace este POST. El token vive 24 h y es de un solo uso.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token: { type: string }
+      responses:
+        '200':
+          description: Cuenta verificada
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [user]
+                properties:
+                  user: { $ref: '#/components/schemas/User' }
+        '400': { $ref: '#/components/responses/Error' }   # INVALID_VERIFICATION_TOKEN
+        '409': { $ref: '#/components/responses/Error' }   # ALREADY_VERIFIED
+        '410': { $ref: '#/components/responses/Error' }   # VERIFICATION_TOKEN_EXPIRED
+
+  /auth/resend-verification:
+    post:
+      tags: [auth]
+      summary: Reenviar el correo de verificación
+      description: |
+        Devuelve 202 aunque el correo no exista: no filtramos qué direcciones
+        están registradas. Limitado a 3 envíos por hora por dirección.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '202': { description: Aceptado. Si la cuenta existe y no está verificada, sale el correo. }
+        '409': { $ref: '#/components/responses/Error' }   # ALREADY_VERIFIED
+        '429': { $ref: '#/components/responses/Error' }   # RATE_LIMITED
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Iniciar sesión
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:    { type: string, format: email }
+                password: { type: string }
+            example: { email: "ana@hipodromo.test", password: "Carrera123!" }
+      responses:
+        '200':
+          description: Sesión iniciada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthTokens' }
+        '401': { $ref: '#/components/responses/Error' }   # INVALID_CREDENTIALS
+        '429': { $ref: '#/components/responses/Error' }   # RATE_LIMITED
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Rotar el par de tokens
+      description: |
+        El refresh token es de **un solo uso**: al canjearlo se invalida y se emite
+        uno nuevo. Reusar uno ya canjeado devuelve `INVALID_REFRESH_TOKEN`.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken: { type: string }
+      responses:
+        '200':
+          description: Tokens rotados
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [accessToken, refreshToken]
+                properties:
+                  accessToken:  { type: string }
+                  refreshToken: { type: string }
+        '401': { $ref: '#/components/responses/Error' }   # INVALID_REFRESH_TOKEN
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: Cerrar sesión e invalidar el refresh token
+      responses:
+        '204': { description: Sesión cerrada }
+        '401': { $ref: '#/components/responses/Error' }
+
+  /me:
+    get:
+      tags: [auth]
+      summary: Usuario de la sesión actual
+      responses:
+        '200':
+          description: Usuario
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '401': { $ref: '#/components/responses/Error' }
+
+  /races:
+    get:
+      tags: [races]
+      summary: Listar carreras
+      description: |
+        Cada carrera del listado trae sus `horses` completos. Es deliberado: la
+        card necesita las cuotas para mostrar el favorito, y evita que el alumno
+        tenga que resolver un N+1 en S1.
+      security: []
+      parameters:
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/RaceStatus' }
+          description: Sin este parámetro devuelve todas.
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: size
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: Página de carreras. Orden - `live` primero, después `upcoming` por `startsAt` asc, después `finished` por `startsAt` desc.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, page, size, total]
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/Race' } }
+                  page:  { type: integer }
+                  size:  { type: integer }
+                  total: { type: integer, description: Total de carreras que matchean el filtro, no de la página. }
+
+  /races/{id}:
+    get:
+      tags: [races]
+      summary: Detalle de una carrera
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Carrera
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Race' }
+        '404': { $ref: '#/components/responses/Error' }
+
+  /races/{id}/results:
+    get:
+      tags: [races]
+      summary: Podio y pagos de una carrera terminada
+      description: |
+        `payouts` trae **solo las apuestas del usuario autenticado**. Sin sesión
+        devuelve el podio y `payouts: []` — el podio es público, los pagos no.
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Resultado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RaceResult' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }   # RESULTS_NOT_AVAILABLE
+
+  /bets:
+    post:
+      tags: [bets]
+      summary: Apostar
+      description: |
+        Rechaza si la carrera ya arrancó, si el caballo no corre en esa carrera,
+        si el monto está fuera de `[10, 5000]` o si no alcanza el saldo. El
+        descuento del saldo y la creación de la apuesta son atómicos, y el nuevo
+        saldo también sale por `balance.updated` en el socket.
+
+        `odds` queda **congelada** al momento de apostar: si la cuota cambia
+        después, el pago usa la que se guardó.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [raceId, horseId, amount]
+              properties:
+                raceId:  { type: string }
+                horseId: { type: string }
+                amount:  { type: integer, minimum: 10, maximum: 5000, description: Entero. No hay centavos. }
+            example: { raceId: "race_006", horseId: "hrs_038", amount: 150 }
+      responses:
+        '201':
+          description: Apuesta registrada
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [bet, balance]
+                properties:
+                  bet:     { $ref: '#/components/schemas/Bet' }
+                  balance: { type: integer, description: Saldo ya descontado. }
+        '403': { $ref: '#/components/responses/Error' }   # EMAIL_NOT_VERIFIED
+        '404': { $ref: '#/components/responses/Error' }   # NOT_FOUND
+        '409': { $ref: '#/components/responses/Error' }   # RACE_ALREADY_STARTED | INSUFFICIENT_BALANCE
+        '422': { $ref: '#/components/responses/Error' }   # HORSE_NOT_IN_RACE | BET_AMOUNT_OUT_OF_RANGE
+
+  /bets/me:
+    get:
+      tags: [bets]
+      summary: Historial de apuestas del usuario
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: size
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: Página de apuestas, más recientes primero por `placedAt`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, page, size, total]
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/Bet' } }
+                  page:  { type: integer }
+                  size:  { type: integer }
+                  total: { type: integer }
+        '401': { $ref: '#/components/responses/Error' }
+
+  /leaderboard:
+    get:
+      tags: [bets]
+      summary: Tabla de posiciones, top 20
+      description: |
+        Solo entran usuarios con al menos una apuesta **liquidada** en el período.
+        Orden - `profit` desc, luego `wins` desc, luego `displayName` asc.
+        `profit` es la suma de pagos menos la suma de montos apostados.
+      security: []
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string, enum: [daily, all], default: all }
+          description: '`daily` cuenta solo las carreras terminadas hoy en UTC.'
+      responses:
+        '200':
+          description: Entradas del ranking
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [period, entries]
+                properties:
+                  period:  { type: string, enum: [daily, all] }
+                  entries: { type: array, maxItems: 20, items: { $ref: '#/components/schemas/LeaderboardEntry' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Error:
+      description: Error uniforme. El `code` viene del catálogo cerrado de `error-codes.md`.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+
+  schemas:
+    ApiError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, details]
+          properties:
+            code:    { type: string }
+            message: { type: string, description: En español. Se muestra al usuario. }
+            details: { type: object, additionalProperties: true }
+      example:
+        error: { code: "INSUFFICIENT_BALANCE", message: "No te alcanza el saldo para esta apuesta.", details: { balance: 120, amount: 500 } }
+
+    User:
+      type: object
+      required: [id, email, displayName, balance, emailVerified]
+      properties:
+        id:            { type: string }
+        email:         { type: string, format: email }
+        displayName:   { type: string }
+        balance:       { type: integer, description: Saldo virtual. Entero, sin centavos. }
+        emailVerified: { type: boolean }
+
+    AuthTokens:
+      type: object
+      required: [accessToken, refreshToken, user]
+      properties:
+        accessToken:  { type: string, description: JWT. Vive 15 min. }
+        refreshToken: { type: string, description: Opaco. Vive 30 días y es de un solo uso. }
+        user:         { $ref: '#/components/schemas/User' }
+
+    RaceStatus:
+      type: string
+      enum: [upcoming, live, finished]
+
+    Horse:
+      type: object
+      required: [id, name, number, odds]
+      properties:
+        id:     { type: string }
+        name:   { type: string }
+        number: { type: integer, minimum: 1, description: Posición de partida. Única dentro de la carrera. }
+        odds:   { type: number, minimum: 1.01, description: Cuota decimal. Pago = monto × odds. }
+
+    Race:
+      type: object
+      required: [id, name, startsAt, status, horses]
+      properties:
+        id:       { type: string }
+        name:     { type: string }
+        startsAt: { type: string, format: date-time, description: ISO 8601 UTC. }
+        status:   { $ref: '#/components/schemas/RaceStatus' }
+        horses:
+          type: array
+          minItems: 2
+          items: { $ref: '#/components/schemas/Horse' }
+
+    PodiumEntry:
+      type: object
+      required: [place, horseId, horseName, number, odds]
+      properties:
+        place:     { type: integer, enum: [1, 2, 3] }
+        horseId:   { type: string }
+        horseName: { type: string }
+        number:    { type: integer }
+        odds:      { type: number }
+
+    RaceResult:
+      type: object
+      required: [raceId, finishedAt, podium, payouts]
+      properties:
+        raceId:     { type: string }
+        finishedAt: { type: string, format: date-time }
+        podium:
+          type: array
+          minItems: 3
+          maxItems: 3
+          items: { $ref: '#/components/schemas/PodiumEntry' }
+        payouts:
+          type: array
+          description: Solo las apuestas del usuario autenticado. Vacío si no hay sesión.
+          items:
+            type: object
+            required: [betId, horseId, stake, amount]
+            properties:
+              betId:   { type: string }
+              horseId: { type: string }
+              stake:   { type: integer, description: Lo que apostó. }
+              amount:  { type: integer, description: Lo que cobró. 0 si perdió. }
+
+    BetStatus:
+      type: string
+      enum: [pending, won, lost]
+
+    Bet:
+      type: object
+      required: [id, userId, raceId, raceName, horseId, horseName, amount, odds, status, payout, placedAt]
+      description: |
+        `raceName` y `horseName` están denormalizados a propósito: el historial se
+        pinta sin ir a buscar la carrera ni el caballo.
+      properties:
+        id:        { type: string }
+        userId:    { type: string }
+        raceId:    { type: string }
+        raceName:  { type: string }
+        horseId:   { type: string }
+        horseName: { type: string }
+        amount:    { type: integer }
+        odds:      { type: number, description: Congelada al momento de apostar. }
+        status:    { $ref: '#/components/schemas/BetStatus' }
+        payout:    { type: integer, description: 0 mientras esté `pending` o si perdió. }
+        placedAt:  { type: string, format: date-time }
+
+    LeaderboardEntry:
+      type: object
+      required: [rank, userId, displayName, profit, bets, wins]
+      properties:
+        rank:        { type: integer, minimum: 1 }
+        userId:      { type: string }
+        displayName: { type: string }
+        profit:      { type: integer, description: Pagos menos montos apostados. Puede ser negativo. }
+        bets:        { type: integer, description: Apuestas liquidadas en el período. }
+        wins:        { type: integer }

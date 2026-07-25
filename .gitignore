@@ -1,0 +1,43 @@
+# dependencias
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+.angular/
+tmp/
+out-tsc/
+bazel-out/
+project/backend/bin/
+project/backend/hipodromo
+project/backend/hipodromo.exe
+
+# entorno
+.env
+.env.local
+*.local
+
+# editores
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*~
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# tests
+coverage/
+.nyc_output/
+
+# exports de slides (se regeneran con marp)
+sesiones/**/slides.pdf
+sesiones/**/slides.html
