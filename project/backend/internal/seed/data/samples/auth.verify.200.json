@@ -1,0 +1,9 @@
+{
+  "user": {
+    "id": "usr_003",
+    "email": "caro@hipodromo.test",
+    "displayName": "Carolina Vega",
+    "balance": 10000,
+    "emailVerified": true
+  }
+}

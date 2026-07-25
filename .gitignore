@@ -12,6 +12,10 @@ project/backend/bin/
 project/backend/hipodromo
 project/backend/hipodromo.exe
 
+# copia en disco del store: es estado de ejecución, no fuente
+project/backend/data/
+**/snapshot.json
+
 # entorno
 .env
 .env.local

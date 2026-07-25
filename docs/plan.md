@@ -5,8 +5,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | | Fase | Estado |
 |---|---|---|
 | **0** | Contrato y esqueleto | ✅ **terminada** |
-| **1** | Backend Go, completo y congelado | ⬜ siguiente |
-| **2** | Baseline visual del hipódromo | ⬜ |
+| **1** | Backend Go, completo y congelado | ✅ **terminada** |
+| **2** | Baseline visual del hipódromo | ⬜ siguiente |
 | **3–13** | Una sesión por fase, S1 … S11 | ⬜ |
 | **14** | Publicación y deploy | ⬜ |
 
@@ -28,14 +28,26 @@ La Fase 0 congela el contrato como artefacto ejecutable **antes** de escribir cu
 - `docs/curriculum.md` — el mapa de las 11 sesiones
 - `sesiones/_plantilla/` — los 9 archivos de cada sesión
 - `theme/marp-neobrutal.css`
-- `scripts/`: `verify.mjs` (12 verificaciones), `check-contrast.mjs`, `gen-tokens-css.mjs`, `gen-race-ticks.mjs`, `gen-silks-specimen.mjs`
+- `scripts/`: `verify.mjs`, `check-contrast.mjs`, `gen-tokens-css.mjs`, `gen-race-ticks.mjs`, `gen-silks-specimen.mjs`, `sync-contract.mjs`
 - `CLAUDE.md` v2
 
-## Fase 1 — Backend Go, completo y congelado
+`node scripts/verify.mjs` corre hoy **20 verificaciones** sobre contrato, diseño, backend y —cuando exista— el código Angular.
 
-Los 13 endpoints de `openapi.yaml` · hub WebSocket con multiplexado por sala · simulador de carrera a 10 Hz (autoridad del servidor) · JWT + refresh de un solo uso · verificación por correo con Resend, con sender que solo loguea en dev · carga del seed con la regla de rebase de fechas · **tests golden contra `docs/contract/samples/`** · Dockerfile y deploy.
+## Fase 1 — Backend Go, completo y congelado ✅
 
-Al terminar, el backend se congela: `CLAUDE.md` §12.
+Un binario, **una sola dependencia externa** (`github.com/coder/websocket`), sin base de datos, con el dataset embebido.
+
+- Los 13 endpoints de `openapi.yaml`, con el sobre de error uniforme y los 18 códigos del catálogo
+- Hub WebSocket multiplexado por sala. `race.finished` se arma **por destinatario**: difundir el mismo objeto filtraría lo que cobró cada uno
+- Simulador a 10 Hz que implementa `race-simulation.md`. El test golden reproduce el fixture tick por tick, así que la app se ve igual contra el mock y contra el servidor
+- Calendario que larga carreras solo: la primera a los 30 s, después el ciclo del dataset cada 2 h
+- JWT HS256 escrito a mano, PBKDF2 de stdlib, refresh de un solo uso, verificación por correo con un emisor de desarrollo que imprime el enlace en consola
+- Estado en memoria con copia atómica en disco; `RESET=1` vuelve al dataset limpio
+- Dockerfile distroless con binario estático
+
+Probado de punta a punta contra el servidor real: **26 verificaciones**, incluidos 22 eventos de cuenta regresiva, 419 ticks y la liquidación con el saldo consistente entre socket y REST.
+
+**Desde acá el backend está congelado:** `CLAUDE.md` §12.
 
 ## Fase 2 — Baseline visual del hipódromo
 

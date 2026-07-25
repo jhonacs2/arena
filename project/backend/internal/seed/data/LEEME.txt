@@ -1,0 +1,1 @@
+GENERADO — no editar acá. La fuente es docs/contract/. Correr: node scripts/sync-contract.mjs

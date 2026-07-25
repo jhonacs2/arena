@@ -1,0 +1,14 @@
+{
+  "_request": "GET /api/v1/races/race_003/results  ·  sesión de usr_002 (Bruno Salas)",
+
+  "raceId": "race_003",
+  "finishedAt": "2026-03-14T10:42:03Z",
+  "podium": [
+    { "place": 1, "horseId": "hrs_018", "horseName": "Guaraní", "number": 5, "odds": 11.00 },
+    { "place": 2, "horseId": "hrs_015", "horseName": "Pampero", "number": 2, "odds": 2.10 },
+    { "place": 3, "horseId": "hrs_017", "horseName": "Ciclón",  "number": 4, "odds": 4.25 }
+  ],
+  "payouts": [
+    { "betId": "bet_008", "horseId": "hrs_018", "stake": 120, "amount": 1320 }
+  ]
+}

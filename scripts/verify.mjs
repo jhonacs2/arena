@@ -287,9 +287,80 @@ const runScript = (file, extraArgs = []) => {
   }
 };
 
+check('contrato', 'las copias sincronizadas están al día', () => runScript('sync-contract.mjs', ['--check']));
+
+check('contrato', 'el catálogo de errores de Go coincide con error-codes.md', () => {
+  const goFile = join(ROOT, 'project/backend/internal/contract/errors.go');
+  if (!existsSync(goFile)) return [];
+
+  // Los códigos documentados salen de la tabla del markdown: `CODIGO` en la
+  // primera columna. Los de Go, de las constantes tipadas Code.
+  const doc = new Set(
+    [...readFileSync(join(ROOT, 'docs/contract/error-codes.md'), 'utf8').matchAll(/^\|\s*`([A-Z_]+)`\s*\|/gm)]
+      .map((m) => m[1]),
+  );
+  const code = new Set(
+    [...readFileSync(goFile, 'utf8').matchAll(/^\s*Code\w+\s+Code\s*=\s*"([A-Z_]+)"/gm)].map((m) => m[1]),
+  );
+
+  const bad = [];
+  for (const c of doc) if (!code.has(c)) bad.push(`${c} está documentado pero no existe en errors.go`);
+  for (const c of code) if (!doc.has(c)) bad.push(`${c} existe en errors.go pero no está en error-codes.md`);
+  return bad;
+});
+
+check('contrato', 'el fixture coincide con lo que produce el generador', () => {
+  // Los generadores son determinísticos. Si el archivo commiteado no coincide,
+  // alguien lo editó a mano o cambió una constante sin regenerar.
+  const before = readFileSync(join(ROOT, 'docs/contract/fixtures/race-ticks.jsonl'), 'utf8');
+  const problems = runScript('gen-race-ticks.mjs');
+  if (problems.length) return problems;
+
+  const after = readFileSync(join(ROOT, 'docs/contract/fixtures/race-ticks.jsonl'), 'utf8');
+  return before === after ? [] : ['race-ticks.jsonl no coincide con lo que genera scripts/gen-race-ticks.mjs'];
+});
+
 check('diseño', 'la paleta cumple contraste AA', () => runScript('check-contrast.mjs', ['--quiet']));
 
 check('diseño', 'la gramática de sedas no colisiona dentro de una carrera', () => runScript('gen-silks-specimen.mjs'));
+
+check('diseño', 'los tokens CSS están al día', () => runScript('gen-tokens-css.mjs', ['--check']));
+
+// ══ BACKEND GO ═════════════════════════════════════════════════════════════
+
+const BACKEND = join(ROOT, 'project/backend');
+const hasBackend = existsSync(join(BACKEND, 'go.mod'));
+
+/** Corre un comando en el backend y devuelve su salida si falla. */
+function runGo(args, { expectEmptyOutput = false } = {}) {
+  try {
+    const out = execFileSync('go', args, { cwd: BACKEND, stdio: 'pipe', encoding: 'utf8' });
+    if (expectEmptyOutput && out.trim()) {
+      return out.trim().split('\n').map((l) => `sin formatear: ${l}`);
+    }
+    return [];
+  } catch (err) {
+    const out = `${err.stdout ?? ''}${err.stderr ?? ''}`.trim();
+    return out.split('\n').filter((l) => l.trim()).slice(0, 8);
+  }
+}
+
+check('backend', 'el código está formateado', () => {
+  if (!hasBackend) return [];
+  // gofmt -l lista los archivos que NO están formateados. Salida vacía = todo bien.
+  const out = execFileSync('gofmt', ['-l', '.'], { cwd: BACKEND, stdio: 'pipe', encoding: 'utf8' });
+  return out.trim() ? out.trim().split('\n').map((f) => `${f} necesita gofmt`) : [];
+});
+
+check('backend', 'go vet no encuentra problemas', () => (hasBackend ? runGo(['vet', './...']) : []));
+
+check('backend', 'los tests pasan, incluidos los golden del contrato', () =>
+  hasBackend && !FAST ? runGo(['test', './...']) : [],
+);
+
+check('backend', 'compila para producción', () =>
+  hasBackend && !FAST ? runGo(['build', '-o', process.platform === 'win32' ? 'NUL' : '/dev/null', '.']) : [],
+);
 
 // ══ CÓDIGO ANGULAR ═════════════════════════════════════════════════════════
 

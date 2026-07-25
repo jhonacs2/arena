@@ -1,0 +1,38 @@
+{
+  "_request": "GET /api/v1/races?status=upcoming&page=1&size=2",
+
+  "items": [
+    {
+      "id": "race_006",
+      "name": "Premio Estrella del Sur",
+      "startsAt": "2026-03-14T12:08:00Z",
+      "status": "upcoming",
+      "horses": [
+        { "id": "hrs_036", "name": "Candela",   "number": 1, "odds": 3.40 },
+        { "id": "hrs_037", "name": "Pehuén",    "number": 2, "odds": 5.90 },
+        { "id": "hrs_038", "name": "Coirón",    "number": 3, "odds": 2.30 },
+        { "id": "hrs_039", "name": "Zonda",     "number": 4, "odds": 8.75 },
+        { "id": "hrs_040", "name": "Talampaya", "number": 5, "odds": 12.50 },
+        { "id": "hrs_041", "name": "Ombú",      "number": 6, "odds": 6.40 }
+      ]
+    },
+    {
+      "id": "race_007",
+      "name": "Clásico Otoño",
+      "startsAt": "2026-03-14T12:35:00Z",
+      "status": "upcoming",
+      "horses": [
+        { "id": "hrs_042", "name": "Carancho",  "number": 1, "odds": 4.80 },
+        { "id": "hrs_043", "name": "Ceibo",     "number": 2, "odds": 3.05 },
+        { "id": "hrs_044", "name": "Chacarera", "number": 3, "odds": 7.60 },
+        { "id": "hrs_045", "name": "Milonga",   "number": 4, "odds": 2.60 },
+        { "id": "hrs_046", "name": "Zamba",     "number": 5, "odds": 13.00 },
+        { "id": "hrs_047", "name": "Ranquel",   "number": 6, "odds": 9.25 },
+        { "id": "hrs_048", "name": "Vaquero",   "number": 7, "odds": 5.40 }
+      ]
+    }
+  ],
+  "page": 1,
+  "size": 2,
+  "total": 3
+}

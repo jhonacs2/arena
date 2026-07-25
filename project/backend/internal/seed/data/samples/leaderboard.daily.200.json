@@ -1,0 +1,18 @@
+{
+  "_request": "GET /api/v1/leaderboard?period=daily  ·  día UTC 2026-03-14, cuenta race_003 y race_004",
+  "_note": "Los empates muestran la regla de desempate: -50 se resuelve por wins y después por displayName asc (Facundo antes que Joaquín); -200 igual (Diego antes que Karina).",
+
+  "period": "daily",
+  "entries": [
+    { "rank": 1,  "userId": "usr_009", "displayName": "Irene Castro",    "profit": 1700, "bets": 2, "wins": 1 },
+    { "rank": 2,  "userId": "usr_002", "displayName": "Bruno Salas",     "profit": 1200, "bets": 1, "wins": 1 },
+    { "rank": 3,  "userId": "usr_005", "displayName": "Elena Quiroga",   "profit": 850,  "bets": 2, "wins": 1 },
+    { "rank": 4,  "userId": "usr_007", "displayName": "Gabriela Nieto",  "profit": 600,  "bets": 1, "wins": 1 },
+    { "rank": 5,  "userId": "usr_001", "displayName": "Ana Robles",      "profit": 75,   "bets": 2, "wins": 1 },
+    { "rank": 6,  "userId": "usr_006", "displayName": "Facundo Ibarra",  "profit": -50,  "bets": 2, "wins": 1 },
+    { "rank": 7,  "userId": "usr_010", "displayName": "Joaquín Ferrer",  "profit": -50,  "bets": 2, "wins": 1 },
+    { "rank": 8,  "userId": "usr_004", "displayName": "Diego Paredes",   "profit": -200, "bets": 1, "wins": 0 },
+    { "rank": 9,  "userId": "usr_011", "displayName": "Karina Villalba", "profit": -200, "bets": 1, "wins": 0 },
+    { "rank": 10, "userId": "usr_008", "displayName": "Hugo Lemos",      "profit": -250, "bets": 1, "wins": 0 }
+  ]
+}
