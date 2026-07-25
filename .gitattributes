@@ -1,0 +1,20 @@
+# Normaliza finales de línea. Sin esto, un alumno en Linux que regenere
+# race-ticks.jsonl o el bloque de tokens del CSS ve un diff completo que es
+# puro CRLF, y los generadores dejan de parecer determinísticos.
+* text=auto eol=lf
+
+# Binarios: no tocar.
+*.png binary
+*.jpg binary
+*.avif binary
+*.webp binary
+*.woff2 binary
+*.pdf binary
+
+# Los .sh tienen que quedar con LF sí o sí, incluso en Windows.
+*.sh text eol=lf
+
+# Marcar como generados: GitHub los colapsa en los diffs y no cuentan
+# para las estadísticas de lenguaje del repo.
+docs/contract/fixtures/race-ticks.jsonl linguist-generated=true
+docs/design/assets/silks-specimen.svg   linguist-generated=true
