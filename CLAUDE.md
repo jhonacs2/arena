@@ -1,50 +1,54 @@
-# CLAUDE.md — Hipódromo (proyecto ancla, Módulo Angular · Talento DH 8va Versión)
+# CLAUDE.md — Hipódromo · Módulo Angular · Talento DH 8va
 
-> Documento de contexto para Claude Code. Léelo completo antes de escribir código.
 > **Regla cero: este proyecto es Angular 18. No Angular 19, 20 ni 21.**
+
+Este archivo tiene solo lo que vale **en todo el repo**. El resto está repartido por carpeta y se carga cuando trabajás ahí:
+
+| Si tocás… | Leé también |
+|---|---|
+| `project/frontend/` | [`project/frontend/CLAUDE.md`](project/frontend/CLAUDE.md) — convenciones Angular, estructura, mocks por etapa |
+| `lab/` | [`lab/CLAUDE.md`](lab/CLAUDE.md) — el mundo del lab y cómo sumarle una sesión |
+| `sesiones/` | [`sesiones/CLAUDE.md`](sesiones/CLAUDE.md) — cómo se escribe una clase que se pueda dar |
+| `docs/design/` o cualquier `.css` | [`docs/design/CLAUDE.md`](docs/design/CLAUDE.md) — la paleta y las reglas visuales |
+| `docs/contract/` | [`docs/contract/CLAUDE.md`](docs/contract/CLAUDE.md) — regla contrato-primero |
+| `project/backend/` | [`project/backend/CLAUDE.md`](project/backend/CLAUDE.md) — está congelado |
+
+**Estado actual y qué sigue: [`docs/plan.md`](docs/plan.md).**
 
 ---
 
-## 1. Qué es esto y para quién
+## 1. Qué es esto
 
-Aplicación educativa de **simulación de apuestas de carreras de caballos**. No maneja dinero real: el saldo es virtual y se otorga al registrarse. Es el proyecto ancla de un módulo de Angular de **11 sesiones de 2 horas** para desarrolladores en formación.
+Aplicación educativa de **simulación de apuestas de carreras de caballos**. Saldo virtual, cero dinero real. Es el proyecto ancla de un módulo de Angular de **11 sesiones de 2 horas** para desarrolladores en formación.
 
 Se producen **cuatro artefactos** desde este mismo spec. No los mezcles:
 
-| Artefacto | Carpeta | Contenido |
+| Artefacto | Carpeta | Qué es |
 |---|---|---|
-| **Solución de referencia** | `project/frontend/solution/` | App completa y funcional. Solo la ve el instructor. |
-| **Starter del alumno** | `project/frontend/starter/` | Misma estructura, mismos archivos, misma configuración — pero los cuerpos que corresponden a un ejercicio están vacíos y marcados con `// TODO(S3): …`. Compila y levanta sin errores desde el minuto cero. |
-| **Lab** | `lab/solution/` y `lab/starter/` | App aparte, una ruta por sesión (`/s01` … `/s11`). Acá se enseña el concepto **aislado**, sin el ruido del dominio de apuestas. |
-| **Materiales de clase** | `sesiones/sNN-*/` | Guión, slides, misiones, quiz, exit ticket. |
+| **Solución de referencia** | `project/frontend/solution/` | App completa. Solo la ve el instructor. |
+| **Starter del alumno** | `project/frontend/starter/` | Lo que recibe el alumno. Ver la regla de abajo. |
+| **Lab** | `lab/solution/` y `lab/starter/` | App aparte, una ruta por sesión. El concepto **aislado**. |
+| **Materiales de clase** | `sesiones/sNN-*/` | Guión, slides, misiones, quiz, corrección. |
 
-Cuando generes el starter, **nunca borres un archivo**: vacía su implementación y deja el TODO con el número de sesión. Un archivo faltante rompe el árbol; un método vacío no.
+### La regla del starter
 
-### El starter funciona a medias, no está vacío
+> **El alumno tiene que ver aparecer lo que construye.** Si la pantalla ya estaba hecha, no aprendió: le apareció mágicamente y no sabe qué puso él.
 
-Un starter en blanco no enseña: enseña una pantalla en blanco. El starter tiene que **levantar mostrando algo y andar mal de una forma concreta**, y el ejercicio es arreglar eso.
+El starter arranca **con lo mínimo para que el concepto de la sesión sea lo que se construye**. En S1 eso es casi nada: la paleta, la configuración y una pantalla vacía. De ahí en adelante, cada sesión hereda lo que construyó la anterior y agrega lo suyo desde cero.
 
-```ts
-// TODO(S1): esto siempre devuelve 0 porque la cuota está clavada en 0.
-protected get pagoPotencial(): number {
-  return potentialPayout(this.monto, 0);
-}
-```
+Dos consecuencias:
 
-Tres razones, y la tercera es la que no se negocia:
+- **Nunca borres un archivo de configuración** (`angular.json`, `tsconfig`, `styles.css`, fuentes). Eso no es el ejercicio y romperlo cuesta media clase.
+- **Sí se borra el código que es el ejercicio.** Si el componente de la sesión es lo que se construye, en el starter no existe: lo crean ellos, con el CLI.
 
-1. Es más parecido al trabajo real que a un ejercicio de escuela.
-2. El alumno ve el efecto de su cambio de inmediato, contra algo que ya se movía.
-3. **`noUnusedLocals` no deja compilar un starter vacío.** Si `favourite` y `potentialPayout` están importados y nadie los usa, `tsc` falla — y el starter tiene que compilar desde el minuto cero. Un andamiaje que ya los usa resuelve las dos cosas a la vez.
+Cada sesión tiene su **`correccion.md`**: el paso a paso de vacío a funcionando, para guiar en vivo y para que el alumno se autocorrija.
 
 ### El lab y el hipódromo son dos cosas distintas
-
-El guión de clase reparte los bloques entre los dos proyectos. Respetalo:
 
 - **0:20 live coding · 0:35 Misión 1 · 1:10 predice y ejecuta** → `lab/`
 - **1:25 Misión 2** → `project/frontend/starter/`
 
-El concepto se aprende aislado y se aplica en el proyecto. Es lo que evita que la primera clase de `input()` se pelee con el modelo de dominio de las apuestas.
+El concepto se aprende aislado y se aplica en el proyecto.
 
 ---
 
@@ -52,21 +56,20 @@ El concepto se aprende aislado y se aplica en el proyecto. Es lo que evita que l
 
 ```
 a/                              ← workspace del instructor. Tiene TODO.
-├── CLAUDE.md
+├── CLAUDE.md                   ← este archivo
 ├── docs/
-│   ├── contract/               ← ⭐ FUENTE DE VERDAD (§7)
+│   ├── contract/               ← ⭐ fuente de verdad del backend
 │   ├── design/                 ← tokens.json · tokens.md · IMAGES.md · assets/
-│   └── curriculum.md           ← sesión → concepto → lab → misión ancla
-├── project/                    ← lo que se publica al alumno
-│   ├── backend/                ← monolito Go
-│   └── frontend/{solution,starter}
+│   ├── curriculum.md           ← sesión → concepto → lab → misión ancla
+│   └── plan.md                 ← estado y qué sigue
+├── project/{backend, frontend/{solution,starter}}
 ├── lab/{solution,starter}
 ├── sesiones/                   ← _plantilla/ + s00 … s11
 ├── scripts/                    ← verify.mjs y generadores
 └── theme/marp-neobrutal.css
 ```
 
-**Repo del alumno.** Este workspace **no** se publica. `scripts/publish-student-repo.sh` genera un repo con solo `project/backend` + `project/frontend/starter` + `lab/starter`, y se taggea `s01`, `s02`… al cerrar cada clase. El que se atrasa hace `git checkout s03`. La solución nunca sale de acá.
+**Este workspace no se publica.** `scripts/publish-student-repo.sh` genera el repo del alumno con solo `project/backend` + `project/frontend/starter` + `lab/starter`, y se taggea `s01`, `s02`… al cerrar cada clase.
 
 ---
 
@@ -80,13 +83,13 @@ Node         ^20.11 || ^22     (ver .nvmrc — el equipo está en 22.22.3)
 Go           1.26.x
 ```
 
-Instala con `npm install --save-exact`. `package.json` no debe contener `^` ni `~` en `@angular/*`.
+Instalá con `npm install --save-exact`. `package.json` no debe contener `^` ni `~` en `@angular/*`.
 
 ---
 
 ## 4. APIs prohibidas (no existen en Angular 18)
 
-Esta es la sección más importante del documento. Estas APIs aparecen mucho en material reciente y **no compilan** en 18:
+**La sección más importante del repo.** Aparecen mucho en material reciente y **no compilan** en 18:
 
 | API | Llega en | Qué usar en 18 |
 |---|---|---|
@@ -95,286 +98,47 @@ Esta es la sección más importante del documento. Estas APIs aparecen mucho en 
 | `linkedSignal()` | v19 | `computed()` + un `signal()` de override |
 | Signal Forms (`form()`, `Control`, schemas) | v20/21 | **Reactive Forms** (`FormBuilder`, `FormGroup`) |
 | `afterRenderEffect()` | v19 | `afterNextRender()` / `effect()` |
-| `provideZonelessChangeDetection()` | v19 | No usar. En 18 se llama `provideExperimentalZonelessChangeDetection()` y **no lo usamos**: el proyecto corre con zone.js. |
-| `standalone: true` implícito | v19 | En 18 **hay que escribirlo explícitamente** en cada `@Component`, `@Directive` y `@Pipe`. |
+| `provideZonelessChangeDetection()` | v19 | En 18 se llama `provideExperimentalZonelessChangeDetection()` y **no lo usamos**: corremos con zone.js. |
+| `standalone: true` implícito | v19 | En 18 **se escribe explícitamente** en cada `@Component`, `@Directive` y `@Pipe`. |
 
-Sí disponibles en 18, úsalas: `signal()`, `computed()`, `effect()`, `input()`, `input.required()`, `output()`, `model()`, `@if/@for/@switch`, `@defer`, `toSignal()`, `toObservable()`, `takeUntilDestroyed()`, guards e interceptores funcionales, `inject()`.
+Sí disponibles en 18, usalas: `signal()`, `computed()`, `effect()`, `input()`, `input.required()`, `output()`, `model()`, `@if/@for/@switch`, `@defer`, `toSignal()`, `toObservable()`, `takeUntilDestroyed()`, guards e interceptores funcionales, `inject()`.
 
-`@let` y las signal queries (`viewChild()`, `contentChild()`) existen en 18 pero en developer preview — **no las uses**, confunden al alumno.
+`@let` y las signal queries (`viewChild()`, `contentChild()`) existen en 18 pero en developer preview — **no las uses**.
 
-### Verificación mecánica (obligatoria)
+---
 
-Una lista en prosa se degrada a lo largo de una sesión larga. **Ejecutá `node scripts/verify.mjs` después de cada feature.**
+## 5. Verificación mecánica (obligatoria)
+
+Una lista en prosa se degrada a lo largo de una sesión larga. **Corré `node scripts/verify.mjs` después de cada feature.**
 
 ```bash
 node scripts/verify.mjs            # todo
 node scripts/verify.mjs --fast     # sin builds, mientras iterás
-node scripts/verify.mjs contrato   # un solo grupo: contrato | diseño | código
+node scripts/verify.mjs contrato   # un grupo: contrato | diseño | backend | código
 ```
 
-Verifica el contrato (coherencia del seed, integridad referencial de las apuestas, leaderboard golden, fixture de la carrera, copias sincronizadas, catálogo de errores Go ↔ markdown), el diseño (contraste AA, colisiones de sedas, tokens al día), el backend (gofmt, vet, tests, build) y el frontend (APIs prohibidas en `.ts` **y `.html`**, `standalone` y `OnPush`, `any` y `console.log`, fuentes auto-hospedadas, `tsc --noEmit`, build de producción y tests de navegador).
+Verifica el contrato, el diseño (contraste AA, sedas, tokens), el backend (gofmt, vet, tests, build) y el frontend (APIs prohibidas en `.ts` **y `.html`**, `standalone` y `OnPush`, `any` y `console.log`, fuentes auto-hospedadas, `tsc --noEmit`, build y tests de navegador).
 
-Saltea con gracia lo que todavía no existe. `scripts/verify.sh` es un envoltorio: la lógica está en el `.mjs` porque los alumnos están en Windows, macOS y Linux.
+Saltea con gracia lo que todavía no existe. Si falla, **arreglá antes de seguir**. No expliques por qué falló y continúes.
 
-**Los comentarios no cuentan.** El verificador los vacía antes de buscar: escribir "acá no usamos `NgModule`" tiene que ser posible, y explicar por qué algo *no* está es parte del material.
+**Los comentarios no cuentan.** El verificador los vacía antes de buscar: escribir «acá no usamos `NgModule`» tiene que ser posible.
 
 ### Nada generado se edita a mano
 
-| Genera | Script | Desde |
-|---|---|---|
-| `core/mocks/*.ts` | `gen-mocks.mjs` | `docs/contract/seed/` |
-| bloque de tokens en `styles.css` | `gen-tokens-css.mjs` | `docs/design/tokens.json` |
-| `race-ticks.jsonl` | `gen-race-ticks.mjs` | el simulador |
-| hoja de sedas y `silks.golden.ts` | `gen-silks-specimen.mjs` | el seed |
-| `public/contract/`, `internal/seed/data/` | `sync-contract.mjs` | `docs/contract/` |
-| `public/fonts/` y `src/fonts.css` | `fetch-fonts.mjs` | Google Fonts, una sola vez |
-
-`verify.mjs` corre todos en modo `--check` y falla si algo quedó desfasado.
-
-Si falla, **arreglá antes de seguir**. No expliques por qué falló y continúes.
-
-**Única excepción a `NgModule`:** la ruta `/s11` del lab, donde se enseña NgModules como contexto legacy. `verify.mjs` ya la exime.
-
----
-
-## 5. Convenciones de código
-
-- **Standalone en todo.** Cero `NgModule` (salvo `lab/**/s11`). Bootstrap con `bootstrapApplication` + `app.config.ts`.
-- **`inject()` siempre**, nunca inyección por constructor. Es lo que se enseña en clase.
-- **`ChangeDetectionStrategy.OnPush` en todos los componentes**, sin excepción.
-- **Estado con signals**, no con `BehaviorSubject`. RxJS se reserva para HTTP, WebSocket y eventos del DOM.
-- **Inmutabilidad estricta.** Nunca `array.push()` sobre estado; siempre `signal.update(v => [...v, x])`. Esto se evalúa en clase.
-- **Nada de NgRx.** El estado vive en servicios con signals privados de escritura y expuestos de solo lectura:
-  ```ts
-  private readonly _races = signal<Race[]>([]);
-  readonly races = this._races.asReadonly();
-  ```
-- Interceptores y guards **funcionales** (`HttpInterceptorFn`, `CanActivateFn`).
-- `provideRouter(routes, withComponentInputBinding())` para que los params de ruta lleguen como `input()`.
-- Nada de `any`. `strict: true` en `tsconfig.json`, más `noUncheckedIndexedAccess`, `noUnusedLocals` y `noUnusedParameters`.
-- Nombres de archivo en kebab-case, componentes con sufijo real: `race-card.component.ts`.
-- **Todo el texto de la UI en español. Los identificadores del código, en inglés.** Sin excepciones en ninguno de los dos sentidos.
-
----
-
-## 6. Estructura de la app Angular
-
-```
-src/app/
-├── core/                       # singletons, se provee una sola vez
-│   ├── auth/
-│   │   ├── auth.service.ts         # estado de sesión (signals), login/logout/refresh
-│   │   ├── auth.interceptor.ts     # inyecta Bearer, refresca en 401
-│   │   ├── auth.guard.ts           # canActivate funcional
-│   │   └── verified.guard.ts       # bloquea si el correo no está verificado
-│   ├── http/
-│   │   ├── api.config.ts           # InjectionToken con la baseUrl
-│   │   ├── error.interceptor.ts    # normaliza errores del backend
-│   │   └── mock-backend.interceptor.ts  # responde desde el seed (§8)
-│   ├── ws/
-│   │   ├── socket.service.ts       # conexión única, reconexión, multiplexado por sala
-│   │   ├── mock-socket.service.ts  # reproduce race-ticks.jsonl (§8)
-│   │   └── ws-events.model.ts      # tipos de los eventos del servidor
-│   ├── theme/theme.service.ts      # claro / oscuro / sistema
-│   ├── mocks/                      # GENERADO por gen-mocks.mjs desde el seed
-│   └── models/                     # Race, Horse, Bet, User, Page, ApiError
-├── shared/
-│   ├── ui/                         # silk, button, skeleton, empty-state, logo
-│   ├── pipes/                      # money.pipe, odds.pipe
-│   └── directives/
-├── layout/
-│   ├── shell.component.ts          # header + router-outlet
-│   └── balance-widget.component.ts # saldo en vivo, escucha balance.updated
-├── features/
-│   ├── sistema/        muestra del sistema de diseño (no es del producto)
-│   ├── auth/           login | register | verify-email | resend-verification
-│   ├── races/          race-list | race-detail | race-live
-│   ├── bets/           my-bets
-│   └── leaderboard/
-├── app.config.ts
-├── app.routes.ts
-└── app.component.ts
-```
-
-**Regla de dependencias:** `features/` puede importar de `core/` y `shared/`. `shared/` no importa de `features/` ni de `core/`. `core/` no importa de `features/`. Si necesitás romperla, no la rompas: mové el código.
-
-**Lo que NO va en `shared/ui/`:** `<app-badge>` y `<app-race-card>` son el ejercicio de S2. Si están hechos de antemano, esa sesión se queda sin práctica. Vale para cualquier pieza que aparezca en la columna "qué construye el alumno" de §9: se deja para su sesión.
-
----
-
-## 7. El contrato — regla contrato-primero
-
-**`docs/contract/` es la fuente de verdad.** El backend Go y el frontend Angular se escriben contra ella, nunca uno contra el otro.
-
-> **Si un campo o un endpoint no está en `docs/contract/openapi.yaml`, no existe.**
-> Cuando haga falta algo nuevo se agrega **primero** ahí, y recién después se implementa en los dos lados. Si el spec es ambiguo o falta un endpoint, **preguntá**. No inventes rutas.
-
-| Archivo | Qué es |
+| Genera | Script |
 |---|---|
-| `docs/contract/openapi.yaml` | Los 13 endpoints con todos los esquemas. Normativo. |
-| `docs/contract/ws-events.md` | El contrato del WebSocket. OpenAPI no cubre sockets. |
-| `docs/contract/error-codes.md` | Catálogo **cerrado** de `error.code`. El frontend hace `switch` sobre el código, nunca sobre el mensaje. |
-| `docs/contract/seed/` | El dataset. Lo cargan **los dos** lados. |
-| `docs/contract/samples/` | Una respuesta canónica por endpoint. Golden test de ambos lados. |
-| `docs/contract/fixtures/race-ticks.jsonl` | Grabación de una carrera en vivo a 10 Hz. |
-| `docs/contract/README.md` | Regla de rebase de fechas y las decisiones de forma que tomé. **Leelo.** |
+| `core/mocks/*.ts` | `gen-mocks.mjs` |
+| bloque de tokens en cada `styles.css` | `gen-tokens-css.mjs` |
+| `race-ticks.jsonl` | `gen-race-ticks.mjs` |
+| hoja de sedas y `silks.golden.ts` | `gen-silks-specimen.mjs` |
+| `public/contract/`, `internal/seed/data/` | `sync-contract.mjs` |
+| `public/fonts/` y `src/fonts.css` | `fetch-fonts.mjs` |
 
-### Resumen operativo
-
-Base `/api/v1`. Autenticación por `Authorization: Bearer <accessToken>`. Error uniforme:
-
-```json
-{ "error": { "code": "INVALID_CREDENTIALS", "message": "…", "details": {} } }
-```
-
-| Método | Ruta | Nota |
-|---|---|---|
-| POST | `/auth/register` | `201`, dispara correo de verificación (Resend) |
-| POST | `/auth/verify` · `/auth/resend-verification` | el correo lleva a `{FRONT_URL}/verificar?token=…` |
-| POST | `/auth/login` · `/auth/refresh` · `/auth/logout` | refresh token de **un solo uso** |
-| GET | `/me` | |
-| GET | `/races?status=&page=&size=` | paginado `{items, page, size, total}`; el listado **sí** trae `horses[]` |
-| GET | `/races/:id` · `/races/:id/results` | `payouts` trae solo las apuestas del usuario autenticado |
-| POST | `/bets` | rechaza si la carrera arrancó, si no hay saldo o si el monto sale de `[10, 5000]` |
-| GET | `/bets/me?page=` · `/leaderboard?period=daily\|all` | |
-
-WebSocket: `wss://{HOST}/ws?token={accessToken}` — el token va por query string porque el navegador no permite headers en el handshake. Una sola conexión, multiplexada por sala. `race.tick` llega a ~10 Hz.
-
-**La simulación de la carrera es autoridad del servidor.** El front solo pinta `positions`. No interpoles físicas ni calcules ganadores en el cliente.
-
-⚠️ **Detección de cambios y WebSocket.** Los eventos del socket llegan fuera de la zona de Angular y con `OnPush` la UI puede no repintar aunque el signal cambie. El `SocketService` escribe en signals y el componente los lee. **Si la carrera no se anima en el navegador, el problema es la zona, no el binding.** Es el contenido central de S10.
+`verify.mjs` los corre en modo `--check` y falla si algo quedó desfasado.
 
 ---
 
-## 8. Datos falsos, por etapa
-
-El frontend arranca antes que el backend y **las primeras seis sesiones no lo necesitan**. Pero los datos falsos no se inventan: salen del mismo `docs/contract/seed/` que carga Go.
-
-| Sesiones | Qué usa | Por qué |
-|---|---|---|
-| S1–S4 | `core/mocks/` — consts tipadas | Datos hardcodeados, como pide el temario |
-| S5–S6 | `RaceStore` con signals; `of(fixture).pipe(delay(400))` | Async real sin HTTP; habilita debounce y `toSignal()` |
-| S7+ | `HttpClient` real + token `API_URL` | Apunta al Go real **o** a `provideMockBackend()`. Cambiar de uno a otro es una línea en `environment.ts` |
-| S10 | `MockSocketService` reproduce `race-ticks.jsonl` a 10 Hz | **Seguro de clase**: si el deploy se cae, la carrera igual corre |
-
-El interceptor de mock responde desde el seed con los mismos códigos de error del catálogo. Un componente escrito contra el mock funciona contra el backend real sin tocar una línea.
-
----
-
-## 9. Sesiones y materiales
-
-Son **11 sesiones de 2 horas**. El tema 0 (TypeScript) va 100% asíncrono, antes de S1. El mapa completo está en `docs/curriculum.md`; la plantilla de materiales en `sesiones/_plantilla/`.
-
-| Sesión | Tema | Qué construye el alumno en el hipódromo |
-|---|---|---|
-| **S1** | Filosofía e historia de Angular · Web Components · CLI · primer standalone · binding uni y bidireccional | Layout base + listado de carreras con datos hardcodeados |
-| **S2** | Anatomía de un componente · segmentación de templates · `input()`/`output()`/`model()` · ciclo de vida · `ng-content` | `<app-race-card>` reutilizable; `<app-badge>` con proyección |
-| **S3** | Signals (`signal`, `computed`, `set/update`) · control flow `@if/@for/@switch` · inmutabilidad | Filtro por estado y búsqueda; `@for` con `track`; ordenar sin mutar |
-| **S4** | Directivas de atributo y estructurales · directivas custom · pipes built-in y custom | `money.pipe`, `odds.pipe`, directiva de resaltado de favorito |
-| **S5** | DI a fondo · servicios · `inject()` · jerarquía de inyectores · `InjectionToken` | `RaceStore` y `BetStore` con signals; `API_URL` como token |
-| **S6** | Reactividad · promesas vs observables · hot/cold · `map`, `filter`, `switchMap` · `takeUntilDestroyed` | Buscador con debounce; interop `toSignal()` |
-| **S7** | `HttpClient` · GET/POST/PUT/DELETE · interceptores funcionales · `catchError` | Conectar al backend real; `auth.interceptor`; `error.interceptor`; carga/vacío/error |
-| **S8** | Reactive Forms · `FormBuilder` · validadores custom · errores de formulario | Login, registro y formulario de apuesta con validación de saldo |
-| **S9** | Routing operativo · `provideRouter` · params · guards funcionales · lazy `loadComponent` | App multipantalla; `authGuard` y `verifiedGuard` |
-| **S10** | WebSockets · zona y detección de cambios · `OnPush` · `@defer` | `race-live`: carrera en vivo, saldo reactivo, leaderboard diferido |
-| **S11** | NgModules como contexto legacy (30 min) · build de producción · deploy · code review en vivo | App desplegada + revisión cruzada entre equipos |
-| **Async** | TypeScript (tema 0) · verificación de correo · testing introductorio | Pantalla `/verificar`, reenvío de correo |
-
-### El guión de 12 bloques
-
-Toda sesión tiene la misma forma. Está en `sesiones/_plantilla/guion.md` y no se improvisa:
-
-```
-0:00  Pregunta de apertura (chat, sin juicio)                 5 min
-0:05  Wayground de la sesión ANTERIOR                         7 min
-0:12  Concepto en diagrama, SIN editor abierto                8 min
-0:20  Live coding narrado — ellos NO copian, miran           15 min   → lab
-0:35  Misión 1: lo mismo, pero ellos. Vos en silencio        15 min   → lab
-0:50  2 alumnos comparten pantalla. Preguntás, no corregís   10 min
-1:00  Descanso                                               10 min
-1:10  "Predice y ejecuta": código roto a propósito           15 min   → lab
-1:25  Misión 2 sobre el proyecto ancla, en parejas           20 min   → hipódromo
-1:45  Code review en vivo de una solución de alumno          10 min
-1:55  Exit ticket 3 preguntas + tarea asíncrona               5 min
-```
-
-> **Desfase del Wayground:** `sesiones/sNN/wayground.csv` contiene preguntas **sobre la sesión NN** y se corre al empezar la **sesión NN+1**. El bloque 0:05 de S1 usa `s00-typescript/wayground.csv`. El quiz de S11 va a la evaluación asíncrona de cierre.
-
-S11 rompe el molde a propósito (30 min de NgModules + deploy + review cruzado). Va documentado en su propio `guion.md`.
-
-### Cómo se produce una sesión
-
-Es el procedimiento de las fases 4–13. Los nueve archivos y para qué sirve cada uno están en `sesiones/README.md`.
-
-1. Copiar `sesiones/_plantilla/` a `sesiones/sNN-<slug>/`. El slug va corto y en español: `s01-primer-componente`.
-2. Escribir **primero `guion.md`**. Es el documento maestro: slides, misiones y quiz salen de ahí, no al revés.
-3. **Lab:** crear `lab/{solution,starter}/src/app/sesiones/sNN/`, poner `disponible: true` en `src/app/sesiones.ts` **y** sumar la ruta en `app.routes.ts`. Son dos lugares: la barra lateral sale del índice, la navegación del router.
-4. **Hipódromo:** el slice en `solution/`, y el mismo archivo en `starter/` andando a medias con sus `// TODO(SNN)`.
-5. `wayground.csv` de **esta** sesión — se corre en la siguiente.
-6. `node scripts/verify.mjs` y commit `feat(sNN): …`.
-
-**El lab tiene su propio mundo.** El dominio es una cafetería, *Café Compilado*, y se mantiene en las once rutas. El lab **no usa `shared/ui`** del hipódromo: escribe HTML y CSS a mano, para que no haya nada entre el alumno y el concepto.
-
-**Qué testea cada uno.** `lab/solution` testea lo que el alumno tiene que lograr —los bindings, lo que se ve en pantalla—: es la referencia de la misión. `lab/starter` testea **solo la lógica de clase que ya viene hecha**, así pasa desde el minuto cero. Lo visual va en los criterios de «Listo cuando» del enunciado, no en un test.
-
-**Si un tema se necesita antes de su sesión, se da hecho y se nombra.** `@for` es de S3 pero S1 necesita una lista: viene escrito en el starter y el enunciado aclara en qué sesión se ve a fondo. La regla completa está en `docs/curriculum.md`.
-
-> **Las respuestas de «predice y ejecuta» se verifican en el navegador antes de escribirlas.** En S1 la respuesta que parecía obvia era la contraria: `class="a {{ b }}"` y `[class.x]` **no compiten, se combinan**. Escribir la respuesta de memoria es cómo se le enseña algo falso a treinta personas a la vez.
-
-### El tema de las diapositivas tiene tres trampas
-
-Marp no es CSS normal, y las tres ya costaron tiempo una vez:
-
-1. **Nunca escribas `*/` dentro de un comentario del tema.** Un glob como `sesiones/s01-*/slides.md` cierra el comentario ahí mismo y corrompe todo lo que sigue. El deck sale **sin un solo color** y nada avisa.
-2. **Los tokens se declaran en `section`, no en `:root`** — y tampoco en `:root, section`: Marp reescribe la lista de selectores y el navegador la descarta entera. `gen-tokens-css.mjs` ya lo resuelve; no lo «arregles».
-3. **`::after` es de Marp** (la paginación) y `<header>` también. Lo que pongas ahí hereda su `opacity` y se ve apagado.
-
-Las diapositivas se exportan **siempre en claro**, sin `prefers-color-scheme`: si dependieran del tema del sistema, el mismo archivo saldría distinto según la máquina desde la que se genere.
-
-```bash
-npx @marp-team/marp-cli --theme-set theme/ --html --allow-local-files sesiones/sNN-*/slides.md
-```
-
----
-
-## 10. UI
-
-**Sin Tailwind. Sin Sass. Sin librería de componentes.** CSS nativo moderno con tokens. Razón pedagógica: el temario incluye *View Encapsulation*, y con utilidades atómicas ese tema queda sin nada que enseñar.
-
-El sistema completo — paleta, tipografía, sedas, movimiento — está en **`docs/design/tokens.md`**. Los valores canónicos en `docs/design/tokens.json`.
-
-### Reglas duras
-
-- CSS nativo. `nesting`, `@layer`, custom properties y `color-mix()` cubren lo que se usaba Sass.
-- `styles.css` global **solo** para tokens, reset y capas: `@layer reset, tokens, base, components, utilities;`. Todo lo demás vive en el `.css` del componente, encapsulado. Los estilos de componente quedan fuera de capas a propósito, para ganar sin `!important`.
-- **Los tokens no se escriben a mano en el CSS.** Se editan en `tokens.json` y se corre `node scripts/gen-tokens-css.mjs`, que inyecta el bloque entre los marcadores `/* @tokens:start */` y `/* @tokens:end */`.
-- Color en `oklch()`, nunca hex. Modo oscuro **diseñado**: reasigna tokens semánticos, jamás primitivos. En oscuro el borde se invierte a tiza.
-- **Contraste AA (4,5:1) en todo texto, verificado por `scripts/check-contrast.mjs`.** El neobrutalismo falla exactamente acá.
-- Nada de neumorfismo ni glassmorphism.
-- Bordes sólidos de 3px, sombras duras `4px 4px 0` sin blur, cero gradientes, **radio 0 sin excepciones**.
-- Movimiento con propósito: la animación comunica estado (la carrera avanzando, el saldo cambiando), nunca decora. Respetar `prefers-reduced-motion`.
-
-### Las sedas de jockey son el elemento firma
-
-Cada caballo tiene su seda, **generada como SVG de forma determinística desde su `id`** — patrón de cuerpo × 2 colores × mangas, con rechazo si los colores no separan ΔL ≥ 0,22. Implementación de referencia en `scripts/gen-silks-specimen.mjs`; hoja de muestra en `docs/design/assets/silks-specimen.svg`.
-
-**Regla dura: ningún texto se pinta sobre una seda.** El número del caballo va en su cuadrado aparte, tinta sobre tiza.
-
-### Layout
-
-Mobile-first real (la carrera en vivo funciona a 360px) · **container queries** en `<app-race-card>` para que responda a su contenedor y no al viewport · grid bento en el dashboard · `:has()` para estado condicional sin clases extra.
-
-### Imágenes
-
-Las sedas y los avatares son SVG generado: **no hay archivos de imagen para el 80% de la UI.** Lo que sí hace falta está especificado en **`docs/design/IMAGES.md`** — seis piezas, con dimensiones, formato y prompt. Las genera el instructor. Mientras no existan, la app usa los placeholders de `docs/design/assets/`: **nunca hay una imagen rota**.
-
-Si necesitás una imagen que no está en `IMAGES.md`, **agregala ahí primero** con su especificación. No metas un `<img>` apuntando a un archivo que no existe.
-
----
-
-## 11. Definición de terminado
-
-Una feature no está lista hasta que:
+## 6. Definición de terminado
 
 | | Desde |
 |---|---|
@@ -382,23 +146,23 @@ Una feature no está lista hasta que:
 | 2. No hay `any`, ni `console.log`, ni imports sin usar | siempre |
 | 3. Todos los componentes son `standalone: true` y `OnPush` | siempre |
 | 4. Se probó **en el navegador**, no solo compilando | siempre |
-| 5. Recorrido por teclado con foco visible | siempre |
-| 6. El equivalente en `starter/` existe, compila, anda a medias y tiene su `// TODO(Sn)` | siempre |
-| 7. La ruta `/sNN` del lab existe, en solución y starter | siempre |
-| 8. Los materiales de `sesiones/sNN-*/` están completos | siempre |
-| 9. La vista maneja los tres estados: cargando (skeleton), vacío (con acción), error (con reintento) | **S7** |
-| 10. Se probó contra el mock **y** contra el backend real, y se ve igual en los dos | **S7** |
+| 5. Se probó **en claro y en oscuro** | siempre |
+| 6. Recorrido por teclado con foco visible | siempre |
+| 7. El starter arranca sin el código de la sesión, y su `correccion.md` lleva de vacío a funcionando | siempre |
+| 8. La ruta `/sNN` del lab existe, en solución y starter | siempre |
+| 9. Los materiales de `sesiones/sNN-*/` están completos | siempre |
+| 10. La vista maneja los tres estados: cargando, vacío, error | **S7** |
+| 11. Se probó contra el mock **y** contra el backend real, y se ve igual | **S7** |
 
-Los puntos 9 y 10 **no aplican antes de S7**: hasta ahí los datos son constantes tipadas y no hay nada que cargar ni que pueda fallar. Decirlo en voz alta durante el code review de las sesiones tempranas —*«hoy no hay estado de carga porque no hay nada que cargar; en S7 vuelve y es obligatorio»*— es mejor que exigir algo imposible y acostumbrar a saltear la lista.
+Los puntos 10 y 11 **no aplican antes de S7**: hasta ahí los datos son constantes tipadas y no hay nada que cargar ni que pueda fallar. Decirlo en voz alta en el code review de las sesiones tempranas es mejor que exigir algo imposible y acostumbrar a saltear la lista.
 
 ---
 
-## 12. Cómo trabajar
+## 7. Cómo trabajar
 
-- **Fases.** El plan vive en `docs/plan.md`. Orden: contrato → backend → baseline visual → una sesión por fase.
-- Avanzá **una sesión a la vez**. Terminá S1 completa (solución + starter + lab + materiales + verificación) antes de tocar S2.
-- Antes de escribir un archivo nuevo, decí en qué carpeta va y por qué, según la regla de dependencias de §6.
-- Si el spec es ambiguo o falta un endpoint, **preguntá**. No inventes rutas del backend.
+- Avanzá **una sesión a la vez**. Terminá S(N) completa —solución, starter, lab, materiales, verificación— antes de tocar S(N+1).
+- Antes de escribir un archivo nuevo, decí en qué carpeta va y por qué.
+- Si el spec es ambiguo o falta un endpoint, **preguntá**. No inventes rutas.
 - Si necesitás una API que §4 prohíbe, **pará y decilo**. No busques un rodeo silencioso.
-- Commits pequeños con prefijo de sesión: `feat(s4): race store con signals`.
-- **El backend se congela al terminar la Fase 1.** Desde ahí: no lo escribas, no lo modifiques, no propongas cambiarlo. Antes de ese punto es tuyo, y se escribe contra `docs/contract/`.
+- Commits pequeños con prefijo de sesión: `feat(s04): pipe de cuotas`.
+- **Verificá antes de afirmar.** Si escribís que algo pasa, corrélo y miralo. En S1 la respuesta «obvia» de un ejercicio de predicción resultó ser la contraria.

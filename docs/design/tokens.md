@@ -1,8 +1,8 @@
 # Sistema de diseño — Hipódromo
 
-`CLAUDE.md` §8 fija el estilo: neobrutalismo disciplinado, `oklch`, bordes de 3 px, sombras duras `4px 4px 0`, cero gradientes, contraste AA sin excepciones. Eso no se discute.
+`docs/design/CLAUDE.md` fija el estilo: neobrutalismo disciplinado, `oklch`, bordes de 3 px, sombras duras `4px 4px 0`, cero gradientes, contraste AA sin excepciones. Eso no se discute.
 
-Lo que este documento resuelve es lo que §8 deja abierto: **de qué mundo sale la paleta, qué tipografías y cuál es el elemento que hace que la app se reconozca**.
+Lo que este documento resuelve es lo que esas reglas dejan abierto: **de qué mundo sale la paleta, qué tipografías y cuál es el elemento que hace que la app se reconozca**.
 
 Los valores viven en `tokens.json`, que es la fuente canónica. Este archivo explica el porqué.
 
@@ -67,12 +67,17 @@ Va contra el instinto del estilo. Es lo que evita que veinte cards con acento fu
 
 | Token | `oklch` | Para qué |
 |---|---|---|
-| `--ink-900` | `0.17 0.02 155` | verde-negro pizarra · texto y borde en claro, superficie en oscuro |
-| `--ink-800` | `0.22 0.02 155` | superficie elevada en oscuro |
+| `--ink-950` | `0.13 0.018 155` | lo más hundido en oscuro |
+| `--ink-900` | `0.17 0.02 155` | verde-negro pizarra · texto, borde y sombra en claro |
+| `--ink-850` | `0.215 0.020 155` | **superficie en oscuro** |
+| `--ink-800` | `0.27 0.021 155` | superficie elevada en oscuro |
+| `--ink-700` | `0.36 0.02 155` | skeletons en oscuro |
 | `--ink-500` | `0.50 0.02 155` | texto secundario en claro |
-| `--chalk-050` | `0.97 0.008 110` | tiza tibia · superficie en claro, texto y borde en oscuro |
-| `--chalk-100` | `0.94 0.010 110` | fondo hundido |
-| `--chalk-200` | `0.89 0.012 110` | skeletons |
+| `--chalk-000` | `1.00 0 110` | superficie elevada en claro |
+| `--chalk-050` | `0.97 0.008 110` | tiza tibia · superficie en claro |
+| `--chalk-100` | `0.94 0.010 110` | superficie hundida en claro |
+| `--chalk-150` | `0.91 0.010 110` | **texto en oscuro** |
+| `--chalk-300` | `0.80 0.013 110` | **borde en oscuro** |
 | `--chalk-400` | `0.72 0.014 110` | texto secundario en oscuro |
 | `--turf-500` | `0.52 0.13 152` | verde pista · `finished`, ganada |
 | `--rail-500` | `0.64 0.150 55` | arena · **acento primario**, `upcoming` |
@@ -82,9 +87,20 @@ La tiza es tibia (`h 110`, `C 0.008`) pero **no es crema**: a `L 0.97` con esa c
 
 ### Modo oscuro: diseñado, no invertido
 
-No es un filtro. En oscuro **el borde neobrutalista se invierte**: de tinta a tiza, y la sombra dura también. La card pasa de "recorte negro sobre papel" a "recorte de tiza sobre pizarra". Es el mismo lenguaje leído al revés, no el mismo lienzo apagado.
+No es un filtro. En oscuro el borde neobrutalista se invierte de tinta a tiza: la card pasa de «recorte negro sobre papel» a «recorte de tiza sobre pizarra». Solo se reasignan tokens **semánticos**; las primitivas nunca cambian.
 
-Solo se reasignan tokens **semánticos** (`--surface`, `--text`, `--border`, `--accent`). Las primitivas nunca cambian.
+La primera versión de este modo oscuro estaba mal, y vale la pena dejar escrito por qué — son los tres errores que se repiten en cualquier tema oscuro:
+
+| Estaba | Está | Por qué |
+|---|---|---|
+| Superficie en `L 0.17`, casi negro | `L 0.215` | Texto casi blanco sobre negro casi puro produce **halación**: el texto vibra y cansa. |
+| `--surface`, `--surface-raised` y `--surface-sunken` **casi iguales** | ΔL de 0,055 y 0,085 | Sin diferencia de luminancia, la pantalla se ve plana y sucia, y el borde queda como único indicio de dónde termina una card. |
+| Texto y borde los dos en `L 0.97` | texto `0.91`, borde `0.80` | Un borde tan brillante como la letra **compite con la letra**. El borde delimita; no tiene que gritar. |
+| Sombra dura en tiza | sombra en `ink-950` | Veinte sombras blancas sobre pizarra son veinte manchas. Una sombra más oscura que la superficie da profundidad sin ruido. |
+
+El texto bajó de 17,49:1 a **13,36:1** y el borde de 17,49:1 a **9,35:1**. Los dos siguen muy por encima de AA: acá el problema nunca fue el contraste, era el exceso.
+
+`scripts/check-contrast.mjs` verifica ahora **las dos cosas**: el contraste y la separación entre superficies. La segunda no es una regla WCAG, es una regla de este sistema, y está mecanizada para que no vuelva a pasar.
 
 ### Contraste — medido, no afirmado
 
@@ -92,9 +108,9 @@ Solo se reasignan tokens **semánticos** (`--surface`, `--text`, `--border`, `--
 
 | | claro | oscuro |
 |---|---|---|
-| texto de cuerpo | 17,49:1 | 17,49:1 |
-| texto secundario | 5,45:1 | 7,70:1 |
-| borde de 3 px | 17,49:1 | 17,49:1 |
+| texto de cuerpo | 17,49:1 | 13,36:1 |
+| texto secundario | 5,45:1 | 7,04:1 |
+| borde de 3 px | 17,49:1 | 9,35:1 |
 | botón primario | 5,40:1 | 9,16:1 |
 | badge EN VIVO | 4,78:1 | 7,14:1 |
 | badge de ganada | 4,76:1 | 14,39:1 |

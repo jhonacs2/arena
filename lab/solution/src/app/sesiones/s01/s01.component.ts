@@ -56,7 +56,7 @@ export class S01Component {
     if (!this.puedeAgregar) return;
 
     // Nunca `push` sobre el estado: se crea un array nuevo. Es la regla de
-    // inmutabilidad de CLAUDE.md §5, y en S3 va a ser la diferencia entre que
+    // inmutabilidad de project/frontend/CLAUDE.md, y en S3 va a ser la diferencia entre que
     // la vista se actualice y que no.
     this.pedidos = [...this.pedidos, `${this.cantidad} × ${this.cafe.nombre} para ${this.cliente.trim()}`];
 

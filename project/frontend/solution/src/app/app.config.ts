@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 
 /**
  * Configuración de la aplicación. Cero NgModule: `bootstrapApplication` más
- * esta lista de providers es todo el arranque (`CLAUDE.md` §5).
+ * esta lista de providers es todo el arranque (`project/frontend/CLAUDE.md`).
  */
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -27,13 +27,18 @@
 
   section {
     /* primitivas */
+    --ink-950:      oklch(0.13 0.018 155);
     --ink-900:      oklch(0.17 0.02 155);
-    --ink-800:      oklch(0.22 0.02 155);
-    --ink-700:      oklch(0.32 0.02 155);
+    --ink-850:      oklch(0.215 0.02 155);
+    --ink-800:      oklch(0.27 0.021 155);
+    --ink-700:      oklch(0.36 0.02 155);
     --ink-500:      oklch(0.5 0.02 155);
+    --chalk-000:    oklch(1 0 110);
     --chalk-050:    oklch(0.97 0.008 110);
     --chalk-100:    oklch(0.94 0.01 110);
+    --chalk-150:    oklch(0.91 0.01 110);
     --chalk-200:    oklch(0.89 0.012 110);
+    --chalk-300:    oklch(0.8 0.013 110);
     --chalk-400:    oklch(0.72 0.014 110);
     --turf-500:     oklch(0.52 0.13 152);
     --turf-700:     oklch(0.38 0.1 152);
@@ -64,7 +69,7 @@
   section {
     /* semánticos — claro. Las diapositivas son siempre claras: se proyectan */
     --surface:        var(--chalk-050);
-    --surface-raised: var(--chalk-050);
+    --surface-raised: var(--chalk-000);
     --surface-sunken: var(--chalk-100);
     --text:           var(--ink-900);
     --text-muted:     var(--ink-500);
@@ -250,7 +255,7 @@ section.portada {
   /* La franja de acento va como borde y no como ::after: Marp ya usa ese
      pseudo-elemento para la paginación, y el opacity de la paginación se le
      aplicaba encima. Además un borde sólido respeta la regla de cero
-     gradientes de CLAUDE.md §10; la franja de sedas era un linear-gradient. */
+     gradientes de docs/design/CLAUDE.md; la franja de sedas era un linear-gradient. */
   border-block-end: 22px solid var(--accent);
 }
 

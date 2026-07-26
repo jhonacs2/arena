@@ -1,6 +1,6 @@
 /*
   Estilos encapsulados de <app-silk>. Fuera de @layer a propósito: así le ganan
-  a lo global sin !important. Es CLAUDE.md §10.
+  a lo global sin !important. Es docs/design/CLAUDE.md.
 */
 
 :host {

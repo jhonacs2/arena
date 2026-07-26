@@ -41,7 +41,7 @@
 }
 
 /* El movimiento comunica "esto está trabajando". Es opacidad, no un barrido de
-   gradiente: los gradientes están prohibidos por CLAUDE.md §10, y además un
+   gradiente: los gradientes están prohibidos por docs/design/CLAUDE.md, y además un
    barrido a lo ancho de la pantalla es más caro de pintar. */
 @media (prefers-reduced-motion: no-preference) {
   .barra {
