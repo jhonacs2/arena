@@ -51,6 +51,16 @@ Es el detalle que más fácil se rompe al armar los materiales. Dos consecuencia
 | **S10** | WebSockets · zona y detección de cambios · `OnPush` · `@defer` | Socket mock que empuja a un signal | `race-live`: carrera en vivo, saldo reactivo, leaderboard con `@defer` | **El clásico**: llega el evento, el signal cambia, la vista no repinta |
 | **S11** | NgModules como contexto legacy (30 min) · build de producción · deploy · code review cruzado | Un `NgModule` mínimo, solo para leerlo | App desplegada · revisión cruzada entre equipos | Build que pasa en dev y explota en `--configuration production` |
 
+### Cuando un tema se necesita antes de su sesión
+
+`@for` es de S3, pero no se puede mostrar un listado sin bucle en S1. Cuando eso pase, la regla es:
+
+> **La pieza adelantada se da hecha en el starter, se nombra en voz alta durante el live coding, y se dice en qué sesión se ve a fondo.**
+
+En S1 el `@for` viene escrito y el enunciado lo aclara: *«el control flow es S3; hoy el trabajo son los bindings de adentro»*. Así S1 puede construir una lista sin quedarse con el tema de S3.
+
+Lo mismo aplica a `standalone: true` (se usa desde S1, se explica cuando toca) y a `OnPush` (está en todos los componentes desde el principio, se explica en S10).
+
 ### S11 rompe el guión, a propósito
 
 Los 30 minutos de NgModules legacy y el deploy en vivo no entran en el molde de 12 bloques. S11 usa una variante: pregunta de apertura, Wayground de S10, los 30 min de NgModules, descanso, deploy guiado, y **code review cruzado entre equipos** en lugar de misiones. Va documentado en `sesiones/s11-*/guion.md`.

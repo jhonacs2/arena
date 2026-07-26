@@ -23,12 +23,25 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHECK = process.argv.includes('--check');
 
+/**
+ * Cada destino dice dónde declarar los tokens y si quiere los dos temas.
+ *
+ * `selector` existe por Marp: sus diapositivas son elementos `<section>` y hay
+ * que declarar las variables ahí. Ojo — tiene que ser `section` a secas: con
+ * `:root, section`, el reescribiwlector de Marp genera una lista de selectores
+ * que el navegador descarta entera, y el deck sale sin un solo color.
+ *
+ * `modes: 'light'` también es por Marp: si el tema dependiera de
+ * `prefers-color-scheme`, el mismo archivo exportaría distinto según la
+ * máquina desde la que se genere. Unas diapositivas tienen que verse igual
+ * siempre — y proyectadas, claras.
+ */
 const TARGETS = [
-  'theme/marp-neobrutal.css',
-  'project/frontend/solution/src/styles.css',
-  'project/frontend/starter/src/styles.css',
-  'lab/solution/src/styles.css',
-  'lab/starter/src/styles.css',
+  { file: 'theme/marp-neobrutal.css', selector: 'section', modes: 'light' },
+  { file: 'project/frontend/solution/src/styles.css' },
+  { file: 'project/frontend/starter/src/styles.css' },
+  { file: 'lab/solution/src/styles.css' },
+  { file: 'lab/starter/src/styles.css' },
 ];
 
 const START = '/* @tokens:start */';
@@ -39,14 +52,14 @@ const tokens = JSON.parse(readFileSync(join(ROOT, 'docs/design/tokens.json'), 'u
 const oklch = ([l, c, h]) => `oklch(${l} ${c} ${h})`;
 const pad = (s, n) => s.padEnd(n);
 
-function block() {
+function block({ selector = ':root', modes = 'both' } = {}) {
   const lines = [];
   const emit = (s = '') => lines.push(s);
 
   emit('  /* Generado desde docs/design/tokens.json — no editar a mano.');
   emit('     Cambiar un color: se edita el JSON y se corre node scripts/gen-tokens-css.mjs */');
   emit('');
-  emit('  :root {');
+  emit(`  ${selector} {`);
 
   emit('    /* primitivas */');
   for (const [name, def] of Object.entries(tokens.primitives)) {
@@ -64,37 +77,47 @@ function block() {
   emit('    color-scheme: light dark;');
   emit('  }');
 
-  for (const [theme, map] of Object.entries(tokens.semantic)) {
-    emit('');
-    const selector =
-      theme === 'light'
-        ? '  :root, [data-theme="light"] {'
-        : '  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {';
-    emit(selector);
-    emit(`    /* semánticos — ${theme === 'light' ? 'claro' : 'oscuro'}. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */`);
+  const semanticos = (map, label) => {
+    emit(`    /* semánticos — ${label} */`);
     for (const [semantic, primitive] of Object.entries(map)) {
       emit(`    --${pad(semantic + ':', 15)} var(--${primitive});`);
     }
-    emit(theme === 'light' ? '  }' : '  } }');
+  };
+
+  if (modes === 'light') {
+    // Un solo tema, sin media query: las diapositivas tienen que exportar
+    // igual desde cualquier máquina.
+    emit('');
+    emit(`  ${selector} {`);
+    semanticos(tokens.semantic.light, 'claro. Las diapositivas son siempre claras: se proyectan');
+    emit('  }');
+    return lines.join('\n');
   }
+
+  emit('');
+  emit(`  ${selector}, [data-theme="light"] {`);
+  semanticos(tokens.semantic.light, 'claro');
+  emit('  }');
+
+  emit('');
+  emit(`  @media (prefers-color-scheme: dark) { ${selector}:not([data-theme="light"]) {`);
+  semanticos(tokens.semantic.dark, 'oscuro. El borde se invierte a tiza: es un modo diseñado, no un filtro');
+  emit('  } }');
 
   // El selector explícito tiene que poder ganarle a la media query en ambos sentidos.
   emit('');
   emit('  [data-theme="dark"] {');
-  for (const [semantic, primitive] of Object.entries(tokens.semantic.dark)) {
-    emit(`    --${pad(semantic + ':', 15)} var(--${primitive});`);
-  }
+  semanticos(tokens.semantic.dark, 'oscuro forzado');
   emit('  }');
 
   return lines.join('\n');
 }
 
-const generated = block();
 const stale = [];
 let written = 0;
 
 for (const target of TARGETS) {
-  const path = join(ROOT, target);
+  const path = join(ROOT, target.file);
   if (!existsSync(path)) continue;
 
   const text = readFileSync(path, 'utf8');
@@ -102,14 +125,15 @@ for (const target of TARGETS) {
   const to = text.indexOf(END);
 
   if (from === -1 || to === -1) {
-    stale.push(`${target} — no tiene los marcadores ${START} … ${END}`);
+    stale.push(`${target.file} — no tiene los marcadores ${START} … ${END}`);
     continue;
   }
 
+  const generated = block(target);
   const next = text.slice(0, from + START.length) + '\n' + generated + '\n' + text.slice(to);
   if (next === text) continue;
 
-  if (CHECK) stale.push(`${target} — desfasado respecto de tokens.json`);
+  if (CHECK) stale.push(`${target.file} — desfasado respecto de tokens.json`);
   else {
     writeFileSync(path, next, 'utf8');
     written++;

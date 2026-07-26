@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460" font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif">
+  <style>
+    :root, svg {
+      --ink:    oklch(0.17 0.02 155);
+      --chalk:  oklch(0.97 0.008 110);
+      --accent: oklch(0.64 0.15 55);
+      --muted:  oklch(0.5 0.02 155);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root, svg {
+        --ink:   oklch(0.97 0.008 110);
+        --chalk: oklch(0.17 0.02 155);
+        --accent: oklch(0.78 0.14 55);
+        --muted: oklch(0.72 0.014 110);
+      }
+    }
+    .caja   { fill: var(--chalk); stroke: var(--ink); stroke-width: 3; }
+    .sombra { fill: var(--ink); }
+    .titulo { font-size: 19px; font-weight: 800; fill: var(--ink); letter-spacing: -0.02em; }
+    .sub    { font-size: 12px; fill: var(--muted); }
+    .item   { font-size: 14px; fill: var(--ink); font-family: ui-monospace, 'Cascadia Mono', monospace; }
+    .flecha { stroke: var(--ink); stroke-width: 3; fill: none; }
+    .sintaxis { font-size: 15px; font-weight: 700; fill: var(--ink); font-family: ui-monospace, 'Cascadia Mono', monospace; }
+    .nombre { font-size: 11px; fill: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+    .pastilla { fill: var(--accent); stroke: var(--ink); stroke-width: 2; }
+    .pastilla-txt { font-size: 12px; font-weight: 700; fill: var(--ink); }
+  </style>
+
+  <defs>
+    <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink)" />
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="var(--chalk)" />
+
+  <!-- ── Caja: la clase ─────────────────────────────────────────────── -->
+  <rect class="sombra" x="34" y="74" width="230" height="240" />
+  <rect class="caja"   x="30" y="70" width="230" height="240" />
+  <text class="nombre" x="50" y="98">TypeScript</text>
+  <text class="titulo" x="50" y="124">La clase</text>
+  <text class="sub"    x="50" y="146">Los datos y las decisiones</text>
+
+  <text class="item" x="50" y="188">cafe = { … }</text>
+  <text class="item" x="50" y="214">cliente = ''</text>
+  <text class="item" x="50" y="240">cantidad = 1</text>
+  <text class="item" x="50" y="266">agregar()</text>
+
+  <!-- ── Caja: el template ──────────────────────────────────────────── -->
+  <rect class="sombra" x="644" y="74" width="230" height="240" />
+  <rect class="caja"   x="640" y="70" width="230" height="240" />
+  <text class="nombre" x="660" y="98">HTML</text>
+  <text class="titulo" x="660" y="124">El template</text>
+  <text class="sub"    x="660" y="146">Lo que se ve</text>
+
+  <text class="item" x="660" y="188">&lt;h2&gt;…&lt;/h2&gt;</text>
+  <text class="item" x="660" y="214">&lt;input&gt;</text>
+  <text class="item" x="660" y="240">&lt;button&gt;</text>
+  <text class="item" x="660" y="266">&lt;p&gt;…&lt;/p&gt;</text>
+
+  <!-- ── Flecha 1: interpolación ────────────────────────────────────── -->
+  <line class="flecha" x1="270" y1="120" x2="630" y2="120" marker-end="url(#punta)" />
+  <text class="sintaxis" x="450" y="112" text-anchor="middle">{{ nombre }}</text>
+  <text class="nombre"   x="450" y="140" text-anchor="middle">Interpolación · texto</text>
+
+  <!-- ── Flecha 2: property binding ─────────────────────────────────── -->
+  <line class="flecha" x1="270" y1="184" x2="630" y2="184" marker-end="url(#punta)" />
+  <text class="sintaxis" x="450" y="176" text-anchor="middle">[disabled]="…"</text>
+  <text class="nombre"   x="450" y="204" text-anchor="middle">Property binding · propiedad</text>
+
+  <!-- ── Flecha 3: event binding ────────────────────────────────────── -->
+  <line class="flecha" x1="630" y1="248" x2="270" y2="248" marker-end="url(#punta)" />
+  <text class="sintaxis" x="450" y="240" text-anchor="middle">(click)="…"</text>
+  <text class="nombre"   x="450" y="268" text-anchor="middle">Event binding · el DOM avisa</text>
+
+  <!-- ── Flecha 4: two-way ──────────────────────────────────────────── -->
+  <line class="flecha" x1="270" y1="298" x2="630" y2="298" marker-start="url(#punta)" marker-end="url(#punta)" />
+  <text class="sintaxis" x="450" y="290" text-anchor="middle">[(ngModel)]="…"</text>
+  <text class="nombre"   x="450" y="318" text-anchor="middle">Two-way · en los dos sentidos</text>
+
+  <!-- ── Nota ───────────────────────────────────────────────────────── -->
+  <rect class="pastilla" x="240" y="368" width="420" height="34" />
+  <text class="pastilla-txt" x="450" y="390" text-anchor="middle">
+    [(ngModel)] es [ngModel] + (ngModelChange) — necesita FormsModule
+  </text>
+
+  <text class="sub" x="450" y="432" text-anchor="middle">
+    Un componente standalone declara en imports lo que usa. Nadie lo declara por él.
+  </text>
+</svg>

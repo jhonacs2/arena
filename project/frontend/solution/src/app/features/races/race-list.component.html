@@ -1,0 +1,87 @@
+<header class="portada">
+  <p class="eyebrow">Programa de hoy</p>
+  <h1>Carreras</h1>
+  <p class="entrada">
+    Tocá una carrera para ver su parrilla y simular una apuesta al favorito.
+  </p>
+</header>
+
+<div class="programa">
+  <!-- El listado. En S2 todo esto se convierte en <app-race-card>. -->
+  <ul class="carreras" role="list">
+    @for (vista of carreras; track vista.carrera.id) {
+      <li>
+        <!-- PROPERTY BINDING: las clases de estado salen de una expresión, no
+             de una cadena fija. Y `aria-pressed` le dice al lector de pantalla
+             cuál está abierta. -->
+        <button
+          type="button"
+          class="carrera"
+          [class.carrera--viva]="vista.carrera.status === 'live'"
+          [class.carrera--terminada]="vista.carrera.status === 'finished'"
+          [class.carrera--abierta]="seleccionada?.carrera?.id === vista.carrera.id"
+          [attr.aria-pressed]="seleccionada?.carrera?.id === vista.carrera.id"
+          (click)="seleccionar(vista)"
+        >
+          <span class="carrera__estado">{{ vista.etiquetaEstado }}</span>
+
+          <!-- INTERPOLACIÓN: el texto sale de las propiedades de la clase. -->
+          <span class="carrera__nombre">{{ vista.carrera.name }}</span>
+          <span class="carrera__hora num">{{ vista.hora }}</span>
+
+          <span class="carrera__pie">
+            {{ vista.carrera.horses.length }} competidores
+            @if (vista.favorito) {
+              · favorito {{ vista.favorito.name }} a {{ vista.favorito.odds.toFixed(2) }}
+            }
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+
+  <!-- El panel solo existe si hay una carrera elegida. -->
+  @if (seleccionada) {
+    <aside class="detalle">
+      <h2>{{ seleccionada.carrera.name }}</h2>
+      <p class="detalle__hora num">{{ seleccionada.hora }}</p>
+
+      <h3 class="rotulo">Parrilla</h3>
+      <ul class="parrilla" role="list">
+        @for (caballo of seleccionada.carrera.horses; track caballo.id) {
+          <li class="corredor">
+            <span class="dorsal num">{{ caballo.number }}</span>
+            <app-silk [horseId]="caballo.id" [horseName]="caballo.name" size="sm" />
+            <span class="corredor__nombre">{{ caballo.name }}</span>
+            <!-- toFixed mantiene dos decimales: sin esto conviven «9» y «2.4» en la
+                 misma columna. En S4 esto se convierte en un pipe reutilizable. -->
+            <span class="corredor__cuota num">{{ caballo.odds.toFixed(2) }}</span>
+          </li>
+        }
+      </ul>
+
+      @if (seleccionada.favorito) {
+        <!-- TWO-WAY BINDING: el monto va del input a la clase y vuelve al
+             texto de abajo. Es la misma propiedad leída en los dos sentidos. -->
+        <div class="simulador">
+          <h3 class="rotulo">Si le apostás al favorito</h3>
+
+          <label class="campo">
+            <span>Monto</span>
+            <input name="monto" type="number" min="10" max="5000" step="10" [(ngModel)]="monto" />
+          </label>
+
+          <p class="simulador__pago">
+            {{ seleccionada.favorito.name }} paga
+            <strong class="num">{{ pagoPotencial }}</strong>
+          </p>
+          <p class="simulador__nota">Saldo virtual. Todavía no se puede apostar de verdad.</p>
+        </div>
+      }
+    </aside>
+  } @else {
+    <aside class="detalle detalle--vacio">
+      <p>Elegí una carrera de la lista.</p>
+    </aside>
+  }
+</div>

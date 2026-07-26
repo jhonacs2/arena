@@ -1,0 +1,233 @@
+.portada {
+  max-inline-size: 55ch;
+  margin-block-end: var(--space-8);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.entrada {
+  margin-block-start: var(--space-3);
+  color: var(--text-muted);
+}
+
+.rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-block: var(--space-6) var(--space-2);
+}
+
+/* Bento: la lista manda y el detalle acompaña. A partir de 60rem se acuestan;
+   abajo de eso el detalle va debajo. */
+.programa {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (width >= 60rem) {
+  .programa {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}
+
+/* ── Listado ───────────────────────────────────────────────────────────── */
+.carreras {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* Cada carrera es un <button>: se puede tabular, se activa con Enter y con
+   barra espaciadora, y los lectores de pantalla la anuncian como control.
+   Un <div> con (click) no hace nada de eso. */
+.carrera {
+  inline-size: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'estado hora'
+    'nombre hora'
+    'pie    pie';
+  gap: var(--space-1) var(--space-4);
+  text-align: start;
+
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  cursor: pointer;
+
+  transition:
+    transform var(--dur-instant) var(--ease-snap),
+    box-shadow var(--dur-instant) var(--ease-snap);
+}
+
+.carrera:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* La carrera abierta se hunde y se queda hundida: el estado se ve sin leer. */
+.carrera--abierta {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
+  border-color: var(--accent);
+}
+
+.carrera__estado {
+  grid-area: estado;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.carrera--viva .carrera__estado {
+  color: var(--live);
+  font-weight: 700;
+}
+
+.carrera__nombre {
+  grid-area: nombre;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 92;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.carrera__hora {
+  grid-area: hora;
+  align-self: center;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.carrera__pie {
+  grid-area: pie;
+  margin-block-start: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Lo que ya pasó pesa menos, pero sigue siendo legible: bajar la opacidad
+   entera rompería el contraste AA. */
+.carrera--terminada .carrera__nombre {
+  font-variation-settings: 'wdth' 92;
+  color: var(--text-muted);
+}
+
+/* ── Detalle ───────────────────────────────────────────────────────────── */
+.detalle {
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  background: var(--surface-raised);
+  position: sticky;
+  inset-block-start: 5rem;
+}
+
+.detalle--vacio {
+  color: var(--text-muted);
+  box-shadow: none;
+  border-style: dashed;
+}
+
+.detalle__hora {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.parrilla {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.corredor {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-1);
+}
+
+.corredor + .corredor {
+  border-block-start: 2px solid var(--border);
+  padding-block-start: var(--space-2);
+}
+
+/* El dorsal es la posición de partida: información real, no numeración
+   decorativa. Nunca va encima de la seda. */
+.dorsal {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  display: grid;
+  place-items: center;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  background: var(--surface);
+  border: 2px solid var(--border);
+}
+
+.corredor__nombre {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.corredor__cuota {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* ── Simulador ─────────────────────────────────────────────────────────── */
+.simulador {
+  margin-block-start: var(--space-6);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width) solid var(--border);
+}
+
+.campo span {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  margin-block-end: var(--space-1);
+}
+
+.campo input {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  background: var(--surface);
+  color: var(--text);
+  border: var(--border-width) solid var(--border);
+}
+
+.simulador__pago {
+  margin-block-start: var(--space-3);
+  font-size: var(--text-lg);
+}
+
+.simulador__pago strong {
+  font-size: var(--text-2xl);
+}
+
+.simulador__nota {
+  margin-block-start: var(--space-1);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}

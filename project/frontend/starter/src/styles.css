@@ -60,7 +60,7 @@
   }
 
   :root, [data-theme="light"] {
-    /* semánticos — claro. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */
+    /* semánticos — claro */
     --surface:        var(--chalk-050);
     --surface-raised: var(--chalk-050);
     --surface-sunken: var(--chalk-100);
@@ -79,7 +79,7 @@
   }
 
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    /* semánticos — oscuro. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */
+    /* semánticos — oscuro. El borde se invierte a tiza: es un modo diseñado, no un filtro */
     --surface:        var(--ink-900);
     --surface-raised: var(--ink-800);
     --surface-sunken: var(--ink-900);
@@ -98,6 +98,7 @@
   } }
 
   [data-theme="dark"] {
+    /* semánticos — oscuro forzado */
     --surface:        var(--ink-900);
     --surface-raised: var(--ink-800);
     --surface-sunken: var(--ink-900);

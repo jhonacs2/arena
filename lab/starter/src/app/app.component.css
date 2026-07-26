@@ -1,0 +1,133 @@
+.saltar {
+  position: absolute;
+  inset-block-start: -100%;
+  inset-inline-start: var(--space-4);
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: var(--border-width) solid var(--border);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.saltar:focus {
+  inset-block-start: var(--space-4);
+}
+
+.lab {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-block-size: 100dvh;
+}
+
+/* ── Barra lateral ─────────────────────────────────────────────────────── */
+.barra {
+  border-inline-end: var(--border-width) solid var(--border);
+  padding: var(--space-6) var(--space-4);
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100dvh;
+  overflow-y: auto;
+}
+
+.barra__titulo {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.barra__sub {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-block-end: var(--space-6);
+}
+
+.sesiones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sesiones a,
+.sesiones .pendiente {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  font-size: var(--text-xs);
+  text-decoration: none;
+  border: 2px solid transparent;
+}
+
+.sesiones a:hover {
+  border-color: var(--border);
+}
+
+.sesiones a.activa {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--border);
+  box-shadow: var(--shadow-hard-sm);
+  font-weight: 700;
+}
+
+/* Las sesiones que todavía no se dieron se ven, pero no se pueden abrir:
+   el alumno sabe adónde va el curso sin poder adelantarse. */
+.pendiente {
+  color: var(--text-muted);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sesiones__num {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-align: end;
+}
+
+/* ── Contenido ─────────────────────────────────────────────────────────── */
+.contenido {
+  padding: var(--space-8) var(--space-6) var(--space-16);
+  max-inline-size: 62rem;
+}
+
+.contenido:focus {
+  outline: none;
+}
+
+@media (width < 48rem) {
+  .lab {
+    grid-template-columns: 1fr;
+  }
+
+  .barra {
+    position: static;
+    block-size: auto;
+    border-inline-end: 0;
+    border-block-end: var(--border-width) solid var(--border);
+  }
+
+  /* En pantalla angosta la lista de sesiones se acuesta y hace scroll
+     horizontal: ocupa una fila en vez de media pantalla. */
+  .sesiones {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-block-end: var(--space-2);
+  }
+
+  .sesiones a,
+  .sesiones .pendiente {
+    white-space: nowrap;
+  }
+
+  .contenido {
+    padding-inline: var(--space-4);
+  }
+}

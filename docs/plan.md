@@ -7,7 +7,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **0** | Contrato y esqueleto | ✅ **terminada** |
 | **1** | Backend Go, completo y congelado | ✅ **terminada** |
 | **2** | Baseline visual del hipódromo | ✅ **terminada** |
-| **3–13** | Una sesión por fase, S1 … S11 | ⬜ siguiente |
+| **3** | S1 · Primer componente | ✅ **terminada** |
+| **4–13** | Una sesión por fase, S2 … S11 | ⬜ siguiente |
 | **14** | Publicación y deploy | ⬜ |
 
 ---
@@ -66,7 +67,26 @@ Build de producción en **75 kB** de transferencia inicial. Probado en navegador
 
 Un defecto real que encontró el cruce JS↔TS: había **dos mezcladores de hash distintos** —el generador de sedas usaba una mezcla de dos pasos y el simulador de carreras una de tres—. Unificados; de paso, las coincidencias de seda entre carreras bajaron de 1 a 0.
 
-## Fases 3–13 — Una sesión por fase
+## Fase 3 — S1 · Primer componente ✅
+
+- **Lab creado** (`lab/solution` y `lab/starter`): una app con una ruta por sesión, dominio propio —una cafetería— para que el concepto se practique sin el ruido del hipódromo
+- **Lab `/s01`**: los cuatro bindings en un solo componente standalone, con tests que los verifican desde afuera
+- **Hipódromo**: `race-list` con las 8 carreras, panel de parrilla con sedas y simulador de apuesta al favorito
+- **`sesiones/s00-typescript/`**: material del tema 0 y su quiz, que alimenta el bloque 0:05 de S1
+- **`sesiones/s01-primer-componente/`**: los 9 archivos — guión de 12 bloques, 24 diapositivas Marp, diagrama, dos misiones, tres ejercicios de predicción con respuestas, quiz, exit ticket y tarea
+
+Dos decisiones que quedaron escritas como regla y no como caso particular:
+
+- **El starter funciona a medias, no está vacío** (`CLAUDE.md` §1). Además de ser mejor pedagogía, es lo único que compila: `noUnusedLocals` no deja un starter con imports sin usar.
+- **Cuando un tema se necesita antes de su sesión, se da hecho y se nombra** (`docs/curriculum.md`). `@for` es de S3 pero S1 necesita una lista.
+
+Tres cosas que se arreglaron porque se verificaron en vez de suponerse:
+
+- El deck de Marp salía **sin un solo color**: un `sesiones/s01-*/` dentro de un comentario del tema CSS cerraba el comentario en el `*/` del glob y corrompía todo lo que seguía
+- La franja de la portada usaba `::after`, que **Marp ya usa para la paginación** — y era un `linear-gradient`, prohibido por §10. Ahora es un borde sólido
+- La respuesta del primer «predice y ejecuta» era **la contraria** de lo que había escrito: `class` y `[class.x]` no compiten, se combinan
+
+## Fases 4–13 — Una sesión por fase
 
 Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los 9 archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
 

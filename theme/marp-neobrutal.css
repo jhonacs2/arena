@@ -12,7 +12,7 @@
  *   paginate: true
  *   ---
  *
- *   marp --theme-set theme/ sesiones/s01-*/slides.md -o slides.html
+ *   npx @marp-team/marp-cli --theme-set theme/ <sesion>/slides.md -o slides.html
  *
  * Clases de diapositiva:
  *   <!-- _class: portada -->   portada de la sesión
@@ -25,7 +25,7 @@
   /* Generado desde docs/design/tokens.json — no editar a mano.
      Cambiar un color: se edita el JSON y se corre node scripts/gen-tokens-css.mjs */
 
-  :root {
+  section {
     /* primitivas */
     --ink-900:      oklch(0.17 0.02 155);
     --ink-800:      oklch(0.22 0.02 155);
@@ -61,8 +61,8 @@
     color-scheme: light dark;
   }
 
-  :root, [data-theme="light"] {
-    /* semánticos — claro. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */
+  section {
+    /* semánticos — claro. Las diapositivas son siempre claras: se proyectan */
     --surface:        var(--chalk-050);
     --surface-raised: var(--chalk-050);
     --surface-sunken: var(--chalk-100);
@@ -78,43 +78,6 @@
     --success-ink:    var(--chalk-050);
     --danger:         var(--flag-500);
     --danger-ink:     var(--chalk-050);
-  }
-
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    /* semánticos — oscuro. El oscuro invierte el borde a tiza: es un modo diseñado, no un filtro. */
-    --surface:        var(--ink-900);
-    --surface-raised: var(--ink-800);
-    --surface-sunken: var(--ink-900);
-    --text:           var(--chalk-050);
-    --text-muted:     var(--chalk-400);
-    --border:         var(--chalk-050);
-    --shadow:         var(--chalk-050);
-    --accent:         var(--rail-300);
-    --accent-ink:     var(--ink-900);
-    --live:           var(--flag-300);
-    --live-ink:       var(--ink-900);
-    --success:        var(--turf-200);
-    --success-ink:    var(--ink-900);
-    --danger:         var(--flag-300);
-    --danger-ink:     var(--ink-900);
-  } }
-
-  [data-theme="dark"] {
-    --surface:        var(--ink-900);
-    --surface-raised: var(--ink-800);
-    --surface-sunken: var(--ink-900);
-    --text:           var(--chalk-050);
-    --text-muted:     var(--chalk-400);
-    --border:         var(--chalk-050);
-    --shadow:         var(--chalk-050);
-    --accent:         var(--rail-300);
-    --accent-ink:     var(--ink-900);
-    --live:           var(--flag-300);
-    --live-ink:       var(--ink-900);
-    --success:        var(--turf-200);
-    --success-ink:    var(--ink-900);
-    --danger:         var(--flag-300);
-    --danger-ink:     var(--ink-900);
   }
 /* @tokens:end */
 
@@ -283,24 +246,23 @@ section.portada {
   color: var(--chalk-050);
   --border: var(--chalk-050);
   --shadow: var(--chalk-050);
+
+  /* La franja de acento va como borde y no como ::after: Marp ya usa ese
+     pseudo-elemento para la paginación, y el opacity de la paginación se le
+     aplicaba encima. Además un borde sólido respeta la regla de cero
+     gradientes de CLAUDE.md §10; la franja de sedas era un linear-gradient. */
+  border-block-end: 22px solid var(--accent);
+}
+
+section.portada code,
+section.bloque code {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
 }
 
 section.portada h1 { font-size: 92px; margin-bottom: 0.12em; }
 section.portada h2 { border: 0; font-size: 34px; font-weight: 600; opacity: 0.82; }
-
-section.portada::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 22px;
-  background: linear-gradient(
-    to right,
-    var(--silk-red) 0 10%, var(--silk-blue) 10% 20%, var(--silk-yellow) 20% 30%,
-    var(--silk-green) 30% 40%, var(--silk-orange) 40% 50%, var(--silk-purple) 50% 60%,
-    var(--silk-pink) 60% 70%, var(--silk-cyan) 70% 80%, var(--silk-white) 80% 90%,
-    var(--silk-black) 90% 100%
-  );
-}
 
 /* ── Separador de bloque ──────────────────────────────────────────────────
    Anuncia en qué minuto del guión estamos. El número va enorme y en mono,
@@ -345,20 +307,16 @@ section.ojo {
 section.ojo h1 { font-size: 58px; }
 section.ojo code { background: transparent; border-color: currentColor; }
 
-/* ── Pie ──────────────────────────────────────────────────────────────────*/
-section::before {
-  content: attr(data-marpit-header);
-  position: absolute;
-  top: 22px;
-  left: 72px;
+/* ── Cabecera y paginación ────────────────────────────────────────────────
+   Marp inyecta un <header> propio y numera con section::after. No hay que
+   fabricarlos: solo darles el tono del sistema. */
+header {
   font-family: var(--font-mono);
   font-size: 15px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   opacity: 0.55;
 }
-
-section.portada::before, section.bloque::before, section.ojo::before { content: none; }
 
 section::after {
   font-family: var(--font-mono);

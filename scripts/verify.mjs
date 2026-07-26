@@ -554,6 +554,11 @@ check('código', 'los tests del navegador pasan', () => {
 
   const bad = [];
   for (const p of angularProjects) {
+    // Un proyecto sin specs hace fallar a `ng test` con TS18003. Que todavía
+    // no tenga tests no es un error: los va sumando cada sesión.
+    const src = join(ROOT, p, 'src');
+    if (!existsSync(src) || walk(src, ['.spec.ts']).length === 0) continue;
+
     try {
       execFileSync('npx', ['ng', 'test', '--watch=false', '--browsers=ChromeHeadless'], {
         cwd: join(ROOT, p),

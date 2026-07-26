@@ -1,0 +1,49 @@
+/*
+  Configuración de TypeScript — Hipódromo.
+
+  `strict: true` más `noUncheckedIndexedAccess`, `noUnusedLocals` y
+  `noUnusedParameters`, que es lo que pide CLAUDE.md §5. Las tres últimas no
+  vienen en el `ng new`: se agregan a propósito, y son las que convierten
+  "no hay imports sin usar" en una regla del compilador y no en una intención.
+
+  `include` apunta a src/ para que `npx tsc --noEmit` funcione sin argumentos,
+  que es lo que corre scripts/verify.mjs.
+*/
+{
+  "compileOnSave": false,
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+
+    /* Más allá de strict. `noUncheckedIndexedAccess` es el que más cuesta y el
+       que más enseña: `horses[0]` pasa a ser `Horse | undefined` y hay que
+       hacerse cargo. Está en CLAUDE.md §5 justamente por eso. */
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": ["ES2022", "dom"]
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

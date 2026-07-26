@@ -20,6 +20,23 @@ Se producen **cuatro artefactos** desde este mismo spec. No los mezcles:
 
 Cuando generes el starter, **nunca borres un archivo**: vacía su implementación y deja el TODO con el número de sesión. Un archivo faltante rompe el árbol; un método vacío no.
 
+### El starter funciona a medias, no está vacío
+
+Un starter en blanco no enseña: enseña una pantalla en blanco. El starter tiene que **levantar mostrando algo y andar mal de una forma concreta**, y el ejercicio es arreglar eso.
+
+```ts
+// TODO(S1): esto siempre devuelve 0 porque la cuota está clavada en 0.
+protected get pagoPotencial(): number {
+  return potentialPayout(this.monto, 0);
+}
+```
+
+Tres razones, y la tercera es la que no se negocia:
+
+1. Es más parecido al trabajo real que a un ejercicio de escuela.
+2. El alumno ve el efecto de su cambio de inmediato, contra algo que ya se movía.
+3. **`noUnusedLocals` no deja compilar un starter vacío.** Si `favourite` y `potentialPayout` están importados y nadie los usa, `tsc` falla — y el starter tiene que compilar desde el minuto cero. Un andamiaje que ya los usa resuelve las dos cosas a la vez.
+
 ### El lab y el hipódromo son dos cosas distintas
 
 El guión de clase reparte los bloques entre los dos proyectos. Respetalo:

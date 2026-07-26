@@ -1,0 +1,77 @@
+<header class="cabecera">
+  <p class="eyebrow">Sesión 1 · Lab</p>
+  <h1>Café Compilado</h1>
+  <p class="entrada">
+    Un componente standalone y los cuatro caminos entre la clase y el template.
+  </p>
+</header>
+
+<section class="mostrador">
+  <!-- 1 · INTERPOLACIÓN — clase → template.
+       Todo lo que va entre llaves sale de una propiedad de la clase. -->
+  <div class="producto" [class.producto--agotado]="!cafe.disponible">
+    <h2>{{ cafe.nombre }}</h2>
+    <p class="producto__origen">{{ cafe.origen }}</p>
+    <p class="producto__precio num">{{ cafe.precio }}</p>
+
+    <!-- 2 · PROPERTY BINDING — clase → template, pero a una PROPIEDAD del
+         elemento y no a texto. Los corchetes dicen "esto es una expresión de
+         TypeScript", no la cadena literal.
+
+         Escribir class="producto--agotado" pondría la clase siempre;
+         [class.producto--agotado]="!cafe.disponible" la pone solo si toca. -->
+    <p class="producto__estado">
+      {{ cafe.disponible ? 'Disponible' : 'Agotado' }}
+    </p>
+
+    <!-- 3 · EVENT BINDING — template → clase. Los paréntesis escuchan un
+         evento del DOM y llaman a un método. -->
+    <button type="button" class="boton boton--fantasma" (click)="alternarDisponibilidad()">
+      {{ cafe.disponible ? 'Marcar agotado' : 'Marcar disponible' }}
+    </button>
+  </div>
+
+  <!-- 4 · TWO-WAY BINDING — en los dos sentidos.
+       [(ngModel)] es azúcar sobre [ngModel] + (ngModelChange): si el usuario
+       escribe, cambia la propiedad; si la propiedad cambia, cambia el input.
+       NO funciona sin FormsModule en los imports del componente. -->
+  <form class="pedido" (submit)="$event.preventDefault(); agregar()">
+    <h2>Tomar el pedido</h2>
+
+    <label class="campo">
+      <span>Nombre del cliente</span>
+      <input name="cliente" type="text" autocomplete="off" [(ngModel)]="cliente" />
+    </label>
+
+    <label class="campo">
+      <span>Cantidad</span>
+      <input name="cantidad" type="number" min="1" max="20" [(ngModel)]="cantidad" />
+    </label>
+
+    <!-- La interpolación se actualiza sola mientras se escribe: es el mismo
+         valor que el input, en el otro sentido. -->
+    <p class="pedido__total">
+      Total: <span class="num">{{ total }}</span>
+      @if (cliente) {
+        <span class="pedido__para">para {{ cliente }}</span>
+      }
+    </p>
+
+    <button type="submit" class="boton" [disabled]="!puedeAgregar">Agregar al pedido</button>
+  </form>
+</section>
+
+<section class="comanda">
+  <h2>Comanda</h2>
+
+  @if (pedidos.length === 0) {
+    <p class="vacia">Todavía no hay nada. Tomá el primer pedido.</p>
+  } @else {
+    <ol class="comanda__lista" role="list">
+      @for (linea of pedidos; track $index) {
+        <li>{{ linea }}</li>
+      }
+    </ol>
+    <button type="button" class="boton boton--fantasma" (click)="limpiar()">Vaciar comanda</button>
+  }
+</section>
