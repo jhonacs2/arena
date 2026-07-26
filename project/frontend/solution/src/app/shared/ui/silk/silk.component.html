@@ -1,0 +1,31 @@
+<!--
+  La geometría vive en silk.util.ts, donde se puede testear. Acá solo se pinta
+  lo que esa función devuelve: primero los rellenos, después los contornos.
+-->
+<svg viewBox="0 0 40 38" aria-hidden="true" focusable="false">
+  @for (shape of drawing().fills; track $index) {
+    @switch (shape.kind) {
+      @case ('rect') {
+        <rect [attr.x]="shape.x" [attr.y]="shape.y" [attr.width]="shape.w" [attr.height]="shape.h" [attr.fill]="shape.fill" />
+      }
+      @case ('poly') {
+        <polygon [attr.points]="shape.points" [attr.fill]="shape.fill" />
+      }
+      @case ('path') {
+        <path [attr.d]="shape.d" [attr.fill]="shape.fill" />
+      }
+    }
+  }
+
+  <!-- El contorno va al final para que ningún relleno lo tape. Es lo que
+       define la silueta de casaca a 24px, cuando el patrón ya no se lee. -->
+  <g class="contorno" fill="none">
+    @for (outline of drawing().outlines; track $index) {
+      @if (outline.kind === 'rect') {
+        <rect [attr.x]="outline.x" [attr.y]="outline.y" [attr.width]="outline.w" [attr.height]="outline.h" />
+      }
+    }
+  </g>
+
+  <path class="cuello" [attr.d]="drawing().collar" />
+</svg>

@@ -6,8 +6,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 |---|---|---|
 | **0** | Contrato y esqueleto | ✅ **terminada** |
 | **1** | Backend Go, completo y congelado | ✅ **terminada** |
-| **2** | Baseline visual del hipódromo | ⬜ siguiente |
-| **3–13** | Una sesión por fase, S1 … S11 | ⬜ |
+| **2** | Baseline visual del hipódromo | ✅ **terminada** |
+| **3–13** | Una sesión por fase, S1 … S11 | ⬜ siguiente |
 | **14** | Publicación y deploy | ⬜ |
 
 ---
@@ -49,11 +49,22 @@ Probado de punta a punta contra el servidor real: **26 verificaciones**, incluid
 
 **Desde acá el backend está congelado:** `CLAUDE.md` §12.
 
-## Fase 2 — Baseline visual del hipódromo
+## Fase 2 — Baseline visual del hipódromo ✅
 
-Antes de S1 hace falta piso: `styles.css` con `@layer` y los tokens inyectados · las 3 tipografías subseteadas en woff2 · `silkFromId()` y `<app-silk>` portados desde `gen-silks-specimen.mjs` · primitivas de `shared/ui/` · `layout/shell` · `core/models/` · fixtures.
+El piso sobre el que se para S1. Angular 18.2.14 con versiones exactas, standalone en todo, `strict` más `noUncheckedIndexedAccess`.
 
-Es lo único que se construye adelantado. Sin esto, S1 no tiene dónde pararse.
+- `styles.css` con `@layer reset, tokens, base, utilities` y el bloque de tokens inyectado desde `tokens.json`
+- Las tres tipografías variables auto-hospedadas en woff2 — 356 KB en el repo, cero CDN
+- `silkFromId()` portado a TypeScript, `<app-silk>`, y un test que cruza el port contra la implementación de referencia en JS para los 54 caballos
+- `shared/ui/`: button, skeleton, empty-state, logo. **Sin badge ni race-card**: son el ejercicio de S2
+- `core/models/` (contraparte del contrato), `core/mocks/` (generado desde el seed), `core/theme/`
+- `layout/shell` con salto al contenido, navegación y el interruptor de tema
+- `features/sistema`: la muestra del sistema de diseño, que es la prueba visible de que todo esto funciona
+- `starter/` creado con el mismo baseline — a partir de S1 los dos divergen
+
+Build de producción en **75 kB** de transferencia inicial. Probado en navegador, en claro y oscuro, y medido de 320 a 768 px sin desbordamiento horizontal.
+
+Un defecto real que encontró el cruce JS↔TS: había **dos mezcladores de hash distintos** —el generador de sedas usaba una mezcla de dos pasos y el simulador de carreras una de tres—. Unificados; de paso, las coincidencias de seda entre carreras bajaron de 1 a 0.
 
 ## Fases 3–13 — Una sesión por fase
 

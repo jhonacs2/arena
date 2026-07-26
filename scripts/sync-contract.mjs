@@ -29,8 +29,8 @@ const SOURCE = join(ROOT, 'docs/contract');
  */
 const TARGETS = [
   { dir: 'project/backend/internal/seed/data', parts: ['seed', 'fixtures', 'samples'] },
-  { dir: 'project/frontend/solution/src/assets/contract', parts: ['seed', 'fixtures'] },
-  { dir: 'project/frontend/starter/src/assets/contract', parts: ['seed', 'fixtures'] },
+  { dir: 'project/frontend/solution/public/contract', parts: ['seed', 'fixtures'] },
+  { dir: 'project/frontend/starter/public/contract', parts: ['seed', 'fixtures'] },
 ];
 
 const HEADER = 'GENERADO — no editar acá. La fuente es docs/contract/. Correr: node scripts/sync-contract.mjs';
@@ -52,9 +52,10 @@ let skipped = 0;
 
 for (const target of TARGETS) {
   const destRoot = join(ROOT, target.dir);
-  // El destino se crea solo si su proyecto ya existe. `internal/seed/data` sí
-  // se crea, porque su padre lo escribimos nosotros.
-  const projectRoot = join(ROOT, target.dir.split('/src/')[0].replace(/[\\/]internal[\\/].*$/, ''));
+  // El destino se crea solo si su proyecto ya existe: en Fase 1 el frontend
+  // todavía no estaba. La raíz del proyecto es lo que hay antes de `internal/`
+  // o de `public/`.
+  const projectRoot = join(ROOT, target.dir.replace(/\/(internal|public)\/.*$/, ''));
   if (!existsSync(projectRoot)) { skipped++; continue; }
 
   const wanted = new Map();

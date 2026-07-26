@@ -11,7 +11,7 @@
  * entre esta hoja y la app, algo se portó mal.
  */
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -45,10 +45,23 @@ function hash(id) {
   return h;
 }
 
+/**
+ * Mezcla final de 32 bits. Sin ella, ids parecidos dan sedas parecidas.
+ *
+ * Es exactamente la misma que usa el simulador de carreras
+ * (docs/contract/race-simulation.md): un solo mezclador en todo el proyecto,
+ * documentado en un solo lugar.
+ */
+function mix32(h) {
+  let x = (h ^ (h >>> 15)) >>> 0;
+  x = Math.imul(x, 0x2545f491) >>> 0;
+  return (x ^ (x >>> 13)) >>> 0;
+}
+
 /** id → especificación de seda. Función pura. */
 export function silkFromId(id) {
   let h = hash(id);
-  const next = () => (h = Math.imul(h ^ (h >>> 15), 0x2545f491) >>> 0);
+  const next = () => (h = mix32(h));
 
   const primary = COLOR_NAMES[h % COLOR_NAMES.length];
 
@@ -277,6 +290,30 @@ ${COLOR_NAMES.map((n) => `      --silk-${n}: oklch(${tokens.silks[n].oklch.join(
 
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, svg, 'utf8');
+
+// ── Golden para el port a TypeScript ──────────────────────────────────────
+// El frontend reimplementa silkFromId() en TS. Este archivo es lo que produce
+// LA implementación de referencia (esta), y silk.util.spec.ts lo compara contra
+// la del navegador. Si alguna de las dos deriva, el test lo dice.
+const golden = Object.fromEntries(horses.map((h) => [h.id, silkFromId(h.id)]));
+const goldenTs =
+  `/**\n` +
+  ` * Golden de las sedas — GENERADO por scripts/gen-silks-specimen.mjs.\n` +
+  ` *\n` +
+  ` * Es la salida de la implementación de referencia en JavaScript, la misma\n` +
+  ` * que dibuja docs/design/assets/silks-specimen.svg. silk.util.spec.ts la\n` +
+  ` * compara contra el port a TypeScript: si las dos derivan, el test falla.\n` +
+  ` */\n\n` +
+  `import type { SilkSpec } from './silk.util';\n\n` +
+  `export const SILKS_GOLDEN: Readonly<Record<string, SilkSpec>> = ${JSON.stringify(golden, null, 2)
+    .replace(/"([a-zA-Z_][\w]*)":/g, '$1:')
+    .replace(/"/g, "'")};\n`;
+
+for (const app of ['project/frontend/solution', 'project/frontend/starter']) {
+  const dir = join(ROOT, app, 'src/app/shared/ui/silk');
+  if (!existsSync(dir)) continue;
+  writeFileSync(join(dir, 'silks.golden.ts'), goldenTs, 'utf8');
+}
 
 // ── Chequeos de la gramática ──────────────────────────────────────────────
 const key = (s) => `${s.primary}|${s.secondary}|${s.body}|${s.sleeves}`;

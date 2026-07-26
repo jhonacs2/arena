@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+.hueso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.barra {
+  display: block;
+  block-size: 1rem;
+  background: var(--chalk-200);
+  border: var(--border-width) solid var(--border);
+}
+
+/* La última barra más corta: sugiere un párrafo, no un bloque. */
+.hueso--text .barra:last-child {
+  inline-size: 62%;
+}
+
+.hueso--card {
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  background: var(--surface-raised);
+}
+
+.hueso--card .barra:first-child {
+  block-size: 2rem;
+}
+
+.hueso--row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.hueso--row .barra {
+  flex: 1;
+}
+
+/* El movimiento comunica "esto está trabajando". Es opacidad, no un barrido de
+   gradiente: los gradientes están prohibidos por CLAUDE.md §10, y además un
+   barrido a lo ancho de la pantalla es más caro de pintar. */
+@media (prefers-reduced-motion: no-preference) {
+  .barra {
+    animation: latido 1.4s ease-in-out infinite;
+  }
+
+  /* Escalonar las barras hace que se lea como un bloque de texto cargando y
+     no como tres cosas parpadeando a destiempo. */
+  .barra:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  .barra:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+}
+
+@keyframes latido {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .barra {
+    background: var(--ink-700);
+  }
+}
+
+[data-theme='dark'] .barra {
+  background: var(--ink-700);
+}

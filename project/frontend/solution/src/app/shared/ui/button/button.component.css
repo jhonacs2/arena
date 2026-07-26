@@ -1,0 +1,101 @@
+:host {
+  display: inline-block;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 96;
+  letter-spacing: -0.01em;
+  text-align: center;
+
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
+  cursor: pointer;
+
+  /* Solo transform y box-shadow: las dos son baratas y no disparan layout. */
+  transition:
+    transform var(--dur-instant) var(--ease-snap),
+    box-shadow var(--dur-instant) var(--ease-snap);
+}
+
+/* El único efecto de profundidad del sistema: al presionar, el objeto se
+   hunde de verdad — se desplaza lo mismo que pierde de sombra. */
+.boton:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+/* ── Variantes ─────────────────────────────────────────────────────────── */
+.boton--primario {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.boton--secundario {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.boton--peligro {
+  background: var(--danger);
+  color: var(--danger-ink);
+}
+
+/* Fantasma: sin sombra ni borde hasta que se lo apunta. Es para acciones
+   terciarias — cancelar, volver — que no tienen que competir con la principal. */
+.boton--fantasma {
+  background: transparent;
+  color: var(--text);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.boton--fantasma:hover:not(:disabled),
+.boton--fantasma:focus-visible {
+  border-color: var(--border);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* ── Tamaños ───────────────────────────────────────────────────────────── */
+.boton--sm {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+  min-block-size: 2rem;
+}
+
+.boton--md {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  min-block-size: 2.75rem;
+}
+
+.boton--lg {
+  font-size: var(--text-lg);
+  padding: var(--space-3) var(--space-6);
+  min-block-size: 3.25rem;
+}
+
+/* A 360px un botón principal ocupa todo el ancho: es más fácil de tocar y
+   deja de competir con lo que tenga al lado. */
+@media (width < 26rem) {
+  :host {
+    display: block;
+  }
+
+  .boton--lg {
+    inline-size: 100%;
+  }
+}

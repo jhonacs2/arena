@@ -1,0 +1,38 @@
+[
+  {
+    "raceId": "race_001",
+    "finishedAt": "2026-03-13T20:17:12Z",
+    "podium": [
+      { "place": 1, "horseId": "hrs_003", "horseName": "Viento Norte", "number": 3, "odds": 2.40 },
+      { "place": 2, "horseId": "hrs_001", "horseName": "Relámpago",    "number": 1, "odds": 3.20 },
+      { "place": 3, "horseId": "hrs_006", "horseName": "Alborada",     "number": 6, "odds": 7.25 }
+    ]
+  },
+  {
+    "raceId": "race_002",
+    "finishedAt": "2026-03-13T21:02:08Z",
+    "podium": [
+      { "place": 1, "horseId": "hrs_010", "horseName": "Media Luna",   "number": 4, "odds": 3.50 },
+      { "place": 2, "horseId": "hrs_008", "horseName": "Trueno Manso", "number": 2, "odds": 2.80 },
+      { "place": 3, "horseId": "hrs_007", "horseName": "Centella",     "number": 1, "odds": 4.10 }
+    ]
+  },
+  {
+    "raceId": "race_003",
+    "finishedAt": "2026-03-14T10:42:03Z",
+    "podium": [
+      { "place": 1, "horseId": "hrs_018", "horseName": "Guaraní", "number": 5, "odds": 11.00 },
+      { "place": 2, "horseId": "hrs_015", "horseName": "Pampero", "number": 2, "odds": 2.10  },
+      { "place": 3, "horseId": "hrs_017", "horseName": "Ciclón",  "number": 4, "odds": 4.25  }
+    ]
+  },
+  {
+    "raceId": "race_004",
+    "finishedAt": "2026-03-14T11:22:19Z",
+    "podium": [
+      { "place": 1, "horseId": "hrs_022", "horseName": "Chasqui",  "number": 3, "odds": 2.50 },
+      { "place": 2, "horseId": "hrs_025", "horseName": "Mistral",  "number": 6, "odds": 4.40 },
+      { "place": 3, "horseId": "hrs_020", "horseName": "Cascabel", "number": 1, "odds": 3.60 }
+    ]
+  }
+]

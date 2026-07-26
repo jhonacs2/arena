@@ -309,16 +309,38 @@ check('contrato', 'el catálogo de errores de Go coincide con error-codes.md', (
   return bad;
 });
 
-check('contrato', 'el fixture coincide con lo que produce el generador', () => {
-  // Los generadores son determinísticos. Si el archivo commiteado no coincide,
-  // alguien lo editó a mano o cambió una constante sin regenerar.
-  const before = readFileSync(join(ROOT, 'docs/contract/fixtures/race-ticks.jsonl'), 'utf8');
-  const problems = runScript('gen-race-ticks.mjs');
-  if (problems.length) return problems;
+/**
+ * Todo lo que produce un generador. Cada uno es determinístico, así que volver
+ * a correrlos no debería cambiar nada: si cambia algo, o el archivo se editó a
+ * mano o alguien tocó una constante sin regenerar.
+ */
+const GENERATED = [
+  'docs/contract/fixtures/race-ticks.jsonl',
+  'docs/design/assets/silks-specimen.svg',
+  'project/frontend/solution/src/app/shared/ui/silk/silks.golden.ts',
+  'project/frontend/starter/src/app/shared/ui/silk/silks.golden.ts',
+];
 
-  const after = readFileSync(join(ROOT, 'docs/contract/fixtures/race-ticks.jsonl'), 'utf8');
-  return before === after ? [] : ['race-ticks.jsonl no coincide con lo que genera scripts/gen-race-ticks.mjs'];
+check('contrato', 'los archivos generados están al día', () => {
+  const before = new Map(
+    GENERATED.filter((f) => existsSync(join(ROOT, f))).map((f) => [f, readFileSync(join(ROOT, f), 'utf8')]),
+  );
+
+  for (const script of ['gen-race-ticks.mjs', 'gen-silks-specimen.mjs']) {
+    const problems = runScript(script);
+    if (problems.length) return problems;
+  }
+
+  const stale = [];
+  for (const [file, content] of before) {
+    if (readFileSync(join(ROOT, file), 'utf8') !== content) {
+      stale.push(`${file} no coincide con lo que produce su generador`);
+    }
+  }
+  return stale;
 });
+
+check('contrato', 'los mocks del frontend salen del seed', () => runScript('gen-mocks.mjs', ['--check']));
 
 check('diseño', 'la paleta cumple contraste AA', () => runScript('check-contrast.mjs', ['--quiet']));
 
@@ -395,6 +417,22 @@ const sourceFiles = () =>
  */
 const isNgModuleExempt = (file) => /[\\/]lab[\\/].*[\\/]s11[\\/]/.test(file);
 
+/**
+ * Vacía los comentarios conservando los saltos de línea, para no correr los
+ * números de línea del informe.
+ *
+ * Sin esto, un comentario que dice "acá no usamos NgModule" hace fallar la
+ * verificación de NgModule. Y ese comentario es justamente el que hay que
+ * escribir: explicar por qué algo NO está es parte del material de clase.
+ */
+function stripComments(text) {
+  const keepNewlines = (match) => match.replace(/[^\n]/g, ' ');
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, keepNewlines) // bloque /* … */
+    .replace(/<!--[\s\S]*?-->/g, keepNewlines) // comentario HTML
+    .replace(/(^|[^:])\/\/[^\n]*/g, (m, before) => before + ' '.repeat(m.length - before.length)); // línea //
+}
+
 check('código', 'no hay APIs de Angular 19+ ni NgModule', () => {
   if (!angularProjects.length) return [];
   const banned = [
@@ -410,10 +448,10 @@ check('código', 'no hay APIs de Angular 19+ ni NgModule', () => {
   ];
   const bad = [];
   for (const file of sourceFiles()) {
-    const text = readFileSync(file, 'utf8');
+    const lines = stripComments(readFileSync(file, 'utf8')).split('\n');
     for (const [re, why] of banned) {
       if (re.source.includes('NgModule') && isNgModuleExempt(file)) continue;
-      const line = text.split('\n').findIndex((l) => re.test(l));
+      const line = lines.findIndex((l) => re.test(l));
       if (line >= 0) bad.push(`${relative(ROOT, file)}:${line + 1} — ${why}`);
     }
   }
@@ -438,14 +476,55 @@ check('código', 'no hay any ni console.log', () => {
   const bad = [];
   for (const file of sourceFiles().filter((f) => f.endsWith('.ts'))) {
     const rel = relative(ROOT, file);
-    readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
-      if (/\/\/\s*(TODO|eslint)/.test(line)) return;
-      if (/:\s*any\b|<any>|as\s+any\b/.test(line)) bad.push(`${rel}:${i + 1} — any`);
-      if (/console\.(log|debug|info)\s*\(/.test(line)) bad.push(`${rel}:${i + 1} — console.log`);
-    });
+    // Sin comentarios: nombrar `any` para explicar por qué no se usa es válido.
+    stripComments(readFileSync(file, 'utf8'))
+      .split('\n')
+      .forEach((line, i) => {
+        if (/:\s*any\b|<any>|as\s+any\b/.test(line)) bad.push(`${rel}:${i + 1} — any`);
+        // console.error sí se permite: es el catch de arranque de main.ts, y un
+        // error que nadie ve es peor que un log.
+        if (/console\.(log|debug|info)\s*\(/.test(line)) bad.push(`${rel}:${i + 1} — console.log`);
+      });
   }
   return bad;
 });
+
+check('código', 'las fuentes están auto-hospedadas', () => {
+  // Un enlace a fonts.googleapis.com haría que la app dependa de la red en
+  // plena clase. Es una regla dura de docs/design/tokens.md §3, y por eso se
+  // escanea también el CSS y el index.html, no solo el TypeScript.
+  const bad = [];
+  for (const p of angularProjects) {
+    const src = join(ROOT, p, 'src');
+    if (!existsSync(src)) continue;
+
+    for (const file of walk(src, ['.ts', '.html', '.css'])) {
+      if (/fonts\.(googleapis|gstatic)\.com/.test(readFileSync(file, 'utf8'))) {
+        bad.push(`${relative(ROOT, file)} — enlaza a Google Fonts en vez de usar la copia local`);
+      }
+    }
+    if (!existsSync(join(src, 'fonts.css'))) {
+      bad.push(`${p} — falta src/fonts.css; correr node scripts/fetch-fonts.mjs`);
+    }
+    if (!existsSync(join(ROOT, p, 'public/fonts'))) {
+      bad.push(`${p} — falta public/fonts; correr node scripts/fetch-fonts.mjs`);
+    }
+  }
+  return bad;
+});
+
+/** Chrome para correr Karma sin ventana. */
+function chromeBinary() {
+  if (process.env['CHROME_BIN']) return process.env['CHROME_BIN'];
+  const candidates = [
+    'C:/Program Files/Google/Chrome/Application/chrome.exe',
+    'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  ];
+  return candidates.find((c) => existsSync(c));
+}
 
 check('código', 'compila en producción y tipa sin errores', () => {
   if (!angularProjects.length || FAST) return [];
@@ -462,6 +541,34 @@ check('código', 'compila en producción y tipa sin errores', () => {
         const out = `${err.stdout ?? ''}${err.stderr ?? ''}`.trim().split('\n').slice(0, 6).join('\n      ');
         bad.push(`${p} — ${label} falló:\n      ${out}`);
       }
+    }
+  }
+  return bad;
+});
+
+check('código', 'los tests del navegador pasan', () => {
+  if (!angularProjects.length || FAST) return [];
+
+  const chrome = chromeBinary();
+  if (!chrome) return ['no se encontró Chrome ni Edge; definí CHROME_BIN para correr los tests'];
+
+  const bad = [];
+  for (const p of angularProjects) {
+    try {
+      execFileSync('npx', ['ng', 'test', '--watch=false', '--browsers=ChromeHeadless'], {
+        cwd: join(ROOT, p),
+        stdio: 'pipe',
+        shell: process.platform === 'win32',
+        env: { ...process.env, CHROME_BIN: chrome },
+      });
+    } catch (err) {
+      const out = `${err.stdout ?? ''}${err.stderr ?? ''}`;
+      const failures = out
+        .split('\n')
+        .filter((l) => /FAILED|Expected/.test(l))
+        .slice(0, 5)
+        .map((l) => l.trim());
+      bad.push(`${p} — ${failures.length ? failures.join(' · ') : 'los tests fallaron'}`);
     }
   }
   return bad;

@@ -1,0 +1,39 @@
+/*
+  Estilos encapsulados de <app-silk>. Fuera de @layer a propósito: así le ganan
+  a lo global sin !important. Es CLAUDE.md §10.
+*/
+
+:host {
+  display: inline-block;
+  flex: none;
+  line-height: 0;
+}
+
+:host(.sm) {
+  inline-size: 1.5rem;
+}
+
+:host(.md) {
+  inline-size: 2.25rem;
+}
+
+:host(.lg) {
+  inline-size: 3.5rem;
+}
+
+svg {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+/* El contorno usa el color de borde del tema: tinta sobre tiza en claro, tiza
+   sobre pizarra en oscuro. Es la misma inversión que el resto del sistema. */
+.contorno {
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.cuello {
+  fill: var(--border);
+}

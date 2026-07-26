@@ -1,0 +1,417 @@
+/**
+ * Las 8 carreras del dataset, con sus 54 caballos.
+ *
+ * GENERADO desde docs/contract/seed/ por scripts/gen-mocks.mjs — no editar a
+ * mano. Es el MISMO dataset que carga el backend Go, así que un componente
+ * escrito contra estos datos funciona sin cambios cuando en S7 se conecta al
+ * servidor real.
+ */
+
+import type { Race } from '../models';
+
+/**
+ * Las fechas del dataset están ancladas a un instante fijo y se desplazan al
+ * cargar el módulo, igual que hace el backend: `docs/contract/README.md`,
+ * regla de rebase. Así la carrera en vivo siempre está en vivo y la próxima
+ * siempre está por venir, se dé la clase el mes que se dé.
+ */
+const ANCHOR = Date.parse('2026-03-14T12:00:00Z');
+const OFFSET = Date.now() - ANCHOR;
+
+function rebase(iso: string): string {
+  return new Date(Date.parse(iso) + OFFSET).toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
+export const RACES: readonly Race[] = [
+  {
+    id: 'race_001',
+    name: 'Clásico Apertura',
+    startsAt: '2026-03-13T20:15:00Z',
+    status: 'finished',
+    horses: [
+      {
+        id: 'hrs_001',
+        name: 'Relámpago',
+        number: 1,
+        odds: 3.2,
+      },
+      {
+        id: 'hrs_002',
+        name: 'Tormenta Azul',
+        number: 2,
+        odds: 5.5,
+      },
+      {
+        id: 'hrs_003',
+        name: 'Viento Norte',
+        number: 3,
+        odds: 2.4,
+      },
+      {
+        id: 'hrs_004',
+        name: 'Sombra Larga',
+        number: 4,
+        odds: 9,
+      },
+      {
+        id: 'hrs_005',
+        name: 'Duende',
+        number: 5,
+        odds: 12,
+      },
+      {
+        id: 'hrs_006',
+        name: 'Alborada',
+        number: 6,
+        odds: 7.25,
+      },
+    ],
+  },
+  {
+    id: 'race_002',
+    name: 'Premio Los Álamos',
+    startsAt: '2026-03-13T21:00:00Z',
+    status: 'finished',
+    horses: [
+      {
+        id: 'hrs_007',
+        name: 'Centella',
+        number: 1,
+        odds: 4.1,
+      },
+      {
+        id: 'hrs_008',
+        name: 'Trueno Manso',
+        number: 2,
+        odds: 2.8,
+      },
+      {
+        id: 'hrs_009',
+        name: 'Caña Brava',
+        number: 3,
+        odds: 6.75,
+      },
+      {
+        id: 'hrs_010',
+        name: 'Media Luna',
+        number: 4,
+        odds: 3.5,
+      },
+      {
+        id: 'hrs_011',
+        name: 'Zafiro',
+        number: 5,
+        odds: 15,
+      },
+      {
+        id: 'hrs_012',
+        name: 'Bandolero',
+        number: 6,
+        odds: 8.5,
+      },
+      {
+        id: 'hrs_013',
+        name: 'Farolito',
+        number: 7,
+        odds: 22,
+      },
+    ],
+  },
+  {
+    id: 'race_003',
+    name: 'Handicap del Litoral',
+    startsAt: '2026-03-14T10:40:00Z',
+    status: 'finished',
+    horses: [
+      {
+        id: 'hrs_014',
+        name: 'Nube Baja',
+        number: 1,
+        odds: 5,
+      },
+      {
+        id: 'hrs_015',
+        name: 'Pampero',
+        number: 2,
+        odds: 2.1,
+      },
+      {
+        id: 'hrs_016',
+        name: 'Malbec',
+        number: 3,
+        odds: 7.5,
+      },
+      {
+        id: 'hrs_017',
+        name: 'Ciclón',
+        number: 4,
+        odds: 4.25,
+      },
+      {
+        id: 'hrs_018',
+        name: 'Guaraní',
+        number: 5,
+        odds: 11,
+      },
+      {
+        id: 'hrs_019',
+        name: 'Altiplano',
+        number: 6,
+        odds: 6,
+      },
+    ],
+  },
+  {
+    id: 'race_004',
+    name: 'Clásico Velocidad',
+    startsAt: '2026-03-14T11:20:00Z',
+    status: 'finished',
+    horses: [
+      {
+        id: 'hrs_020',
+        name: 'Cascabel',
+        number: 1,
+        odds: 3.6,
+      },
+      {
+        id: 'hrs_021',
+        name: 'Salitre',
+        number: 2,
+        odds: 8,
+      },
+      {
+        id: 'hrs_022',
+        name: 'Chasqui',
+        number: 3,
+        odds: 2.5,
+      },
+      {
+        id: 'hrs_023',
+        name: 'Ámbar',
+        number: 4,
+        odds: 5.75,
+      },
+      {
+        id: 'hrs_024',
+        name: 'Quebracho',
+        number: 5,
+        odds: 14,
+      },
+      {
+        id: 'hrs_025',
+        name: 'Mistral',
+        number: 6,
+        odds: 4.4,
+      },
+      {
+        id: 'hrs_026',
+        name: 'Colibrí',
+        number: 7,
+        odds: 19,
+      },
+      {
+        id: 'hrs_027',
+        name: 'Aguará',
+        number: 8,
+        odds: 9.5,
+      },
+    ],
+  },
+  {
+    id: 'race_005',
+    name: 'Gran Premio Nacional',
+    startsAt: '2026-03-14T12:00:00Z',
+    status: 'live',
+    horses: [
+      {
+        id: 'hrs_028',
+        name: 'Yatay',
+        number: 1,
+        odds: 4.5,
+      },
+      {
+        id: 'hrs_029',
+        name: 'Payador',
+        number: 2,
+        odds: 2.75,
+      },
+      {
+        id: 'hrs_030',
+        name: 'Tacuara',
+        number: 3,
+        odds: 6.25,
+      },
+      {
+        id: 'hrs_031',
+        name: 'Espuela',
+        number: 4,
+        odds: 3.1,
+      },
+      {
+        id: 'hrs_032',
+        name: 'Lucero',
+        number: 5,
+        odds: 10,
+      },
+      {
+        id: 'hrs_033',
+        name: 'Chañar',
+        number: 6,
+        odds: 7,
+      },
+      {
+        id: 'hrs_034',
+        name: 'Tordillo',
+        number: 7,
+        odds: 16,
+      },
+      {
+        id: 'hrs_035',
+        name: 'Bagual',
+        number: 8,
+        odds: 5.25,
+      },
+    ],
+  },
+  {
+    id: 'race_006',
+    name: 'Premio Estrella del Sur',
+    startsAt: '2026-03-14T12:08:00Z',
+    status: 'upcoming',
+    horses: [
+      {
+        id: 'hrs_036',
+        name: 'Candela',
+        number: 1,
+        odds: 3.4,
+      },
+      {
+        id: 'hrs_037',
+        name: 'Pehuén',
+        number: 2,
+        odds: 5.9,
+      },
+      {
+        id: 'hrs_038',
+        name: 'Coirón',
+        number: 3,
+        odds: 2.3,
+      },
+      {
+        id: 'hrs_039',
+        name: 'Zonda',
+        number: 4,
+        odds: 8.75,
+      },
+      {
+        id: 'hrs_040',
+        name: 'Talampaya',
+        number: 5,
+        odds: 12.5,
+      },
+      {
+        id: 'hrs_041',
+        name: 'Ombú',
+        number: 6,
+        odds: 6.4,
+      },
+    ],
+  },
+  {
+    id: 'race_007',
+    name: 'Clásico Otoño',
+    startsAt: '2026-03-14T12:35:00Z',
+    status: 'upcoming',
+    horses: [
+      {
+        id: 'hrs_042',
+        name: 'Carancho',
+        number: 1,
+        odds: 4.8,
+      },
+      {
+        id: 'hrs_043',
+        name: 'Ceibo',
+        number: 2,
+        odds: 3.05,
+      },
+      {
+        id: 'hrs_044',
+        name: 'Chacarera',
+        number: 3,
+        odds: 7.6,
+      },
+      {
+        id: 'hrs_045',
+        name: 'Milonga',
+        number: 4,
+        odds: 2.6,
+      },
+      {
+        id: 'hrs_046',
+        name: 'Zamba',
+        number: 5,
+        odds: 13,
+      },
+      {
+        id: 'hrs_047',
+        name: 'Ranquel',
+        number: 6,
+        odds: 9.25,
+      },
+      {
+        id: 'hrs_048',
+        name: 'Vaquero',
+        number: 7,
+        odds: 5.4,
+      },
+    ],
+  },
+  {
+    id: 'race_008',
+    name: 'Handicap Nocturno',
+    startsAt: '2026-03-14T13:35:00Z',
+    status: 'upcoming',
+    horses: [
+      {
+        id: 'hrs_049',
+        name: 'Serrano',
+        number: 1,
+        odds: 6.1,
+      },
+      {
+        id: 'hrs_050',
+        name: 'Rocío',
+        number: 2,
+        odds: 2.95,
+      },
+      {
+        id: 'hrs_051',
+        name: 'Yaguareté',
+        number: 3,
+        odds: 4,
+      },
+      {
+        id: 'hrs_052',
+        name: 'Estribo',
+        number: 4,
+        odds: 8.2,
+      },
+      {
+        id: 'hrs_053',
+        name: 'Vizcacha',
+        number: 5,
+        odds: 11.5,
+      },
+      {
+        id: 'hrs_054',
+        name: 'Tobiano',
+        number: 6,
+        odds: 3.7,
+      },
+    ],
+  },
+].map((race) => ({
+  ...race,
+  startsAt: rebase(race.startsAt),
+})) as readonly Race[];

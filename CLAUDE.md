@@ -95,9 +95,24 @@ node scripts/verify.mjs --fast     # sin builds, mientras iterás
 node scripts/verify.mjs contrato   # un solo grupo: contrato | diseño | código
 ```
 
-Verifica, en este orden: coherencia del seed y los samples · integridad referencial de las apuestas · el leaderboard golden contra el calculado · el fixture de la carrera · contraste AA de la paleta · colisiones de sedas · APIs prohibidas en `.ts` **y `.html`** · `standalone: true` y `OnPush` en todo componente · `any` y `console.log` · `tsc --noEmit` y `ng build --configuration production` en los cuatro proyectos.
+Verifica el contrato (coherencia del seed, integridad referencial de las apuestas, leaderboard golden, fixture de la carrera, copias sincronizadas, catálogo de errores Go ↔ markdown), el diseño (contraste AA, colisiones de sedas, tokens al día), el backend (gofmt, vet, tests, build) y el frontend (APIs prohibidas en `.ts` **y `.html`**, `standalone` y `OnPush`, `any` y `console.log`, fuentes auto-hospedadas, `tsc --noEmit`, build de producción y tests de navegador).
 
 Saltea con gracia lo que todavía no existe. `scripts/verify.sh` es un envoltorio: la lógica está en el `.mjs` porque los alumnos están en Windows, macOS y Linux.
+
+**Los comentarios no cuentan.** El verificador los vacía antes de buscar: escribir "acá no usamos `NgModule`" tiene que ser posible, y explicar por qué algo *no* está es parte del material.
+
+### Nada generado se edita a mano
+
+| Genera | Script | Desde |
+|---|---|---|
+| `core/mocks/*.ts` | `gen-mocks.mjs` | `docs/contract/seed/` |
+| bloque de tokens en `styles.css` | `gen-tokens-css.mjs` | `docs/design/tokens.json` |
+| `race-ticks.jsonl` | `gen-race-ticks.mjs` | el simulador |
+| hoja de sedas y `silks.golden.ts` | `gen-silks-specimen.mjs` | el seed |
+| `public/contract/`, `internal/seed/data/` | `sync-contract.mjs` | `docs/contract/` |
+| `public/fonts/` y `src/fonts.css` | `fetch-fonts.mjs` | Google Fonts, una sola vez |
+
+`verify.mjs` corre todos en modo `--check` y falla si algo quedó desfasado.
 
 Si falla, **arreglá antes de seguir**. No expliques por qué falló y continúes.
 
@@ -143,16 +158,18 @@ src/app/
 │   │   ├── socket.service.ts       # conexión única, reconexión, multiplexado por sala
 │   │   ├── mock-socket.service.ts  # reproduce race-ticks.jsonl (§8)
 │   │   └── ws-events.model.ts      # tipos de los eventos del servidor
-│   ├── mocks/                      # fixtures tipadas para S1–S6
-│   └── models/                     # Race, Horse, Bet, User, LeaderboardEntry
+│   ├── theme/theme.service.ts      # claro / oscuro / sistema
+│   ├── mocks/                      # GENERADO por gen-mocks.mjs desde el seed
+│   └── models/                     # Race, Horse, Bet, User, Page, ApiError
 ├── shared/
-│   ├── ui/                         # botón, card, badge, skeleton, empty-state, silk
+│   ├── ui/                         # silk, button, skeleton, empty-state, logo
 │   ├── pipes/                      # money.pipe, odds.pipe
 │   └── directives/
 ├── layout/
 │   ├── shell.component.ts          # header + router-outlet
 │   └── balance-widget.component.ts # saldo en vivo, escucha balance.updated
 ├── features/
+│   ├── sistema/        muestra del sistema de diseño (no es del producto)
 │   ├── auth/           login | register | verify-email | resend-verification
 │   ├── races/          race-list | race-detail | race-live
 │   ├── bets/           my-bets
@@ -163,6 +180,8 @@ src/app/
 ```
 
 **Regla de dependencias:** `features/` puede importar de `core/` y `shared/`. `shared/` no importa de `features/` ni de `core/`. `core/` no importa de `features/`. Si necesitás romperla, no la rompas: mové el código.
+
+**Lo que NO va en `shared/ui/`:** `<app-badge>` y `<app-race-card>` son el ejercicio de S2. Si están hechos de antemano, esa sesión se queda sin práctica. Vale para cualquier pieza que aparezca en la columna "qué construye el alumno" de §9: se deja para su sesión.
 
 ---
 

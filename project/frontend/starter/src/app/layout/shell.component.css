@@ -1,0 +1,150 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+/* ── Salto al contenido ──────────────────────────────────────────────────
+   Fuera de pantalla hasta que recibe el foco. No se oculta con
+   `display: none`: eso lo sacaría del orden de tabulación y dejaría de servir. */
+.saltar {
+  position: absolute;
+  inset-block-start: -100%;
+  inset-inline-start: var(--space-4);
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.saltar:focus {
+  inset-block-start: var(--space-4);
+}
+
+/* ── Cabecera ──────────────────────────────────────────────────────────── */
+.cabecera {
+  border-block-end: var(--border-width) solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 5;
+}
+
+.cabecera__interior {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: 4rem;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.marca__nombre {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  font-variation-settings: 'wdth' 90;
+  letter-spacing: -0.02em;
+}
+
+.nav {
+  display: flex;
+  gap: var(--space-1);
+  margin-inline-start: auto;
+}
+
+.nav a {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  border: var(--border-width) solid transparent;
+}
+
+.nav a:hover {
+  border-color: var(--border);
+}
+
+/* La ruta activa se marca con el borde y el acento, no con un subrayado:
+   el subrayado ya significa "enlace". */
+.nav a.activo {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--border);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.tema {
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  display: grid;
+  place-items: center;
+  font-size: var(--text-lg);
+  background: var(--surface);
+  color: var(--text);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard-sm);
+  cursor: pointer;
+  transition:
+    transform var(--dur-instant) var(--ease-snap),
+    box-shadow var(--dur-instant) var(--ease-snap);
+}
+
+.tema:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* ── Contenido ─────────────────────────────────────────────────────────── */
+.principal {
+  flex: 1;
+  padding-block: var(--space-8) var(--space-16);
+}
+
+/* El outline del <main> aparecería al usar el salto al contenido; el foco se
+   mueve igual y los lectores de pantalla lo anuncian. */
+.principal:focus {
+  outline: none;
+}
+
+/* ── Pie ───────────────────────────────────────────────────────────────── */
+.pie {
+  border-block-start: var(--border-width) solid var(--border);
+  padding-block: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.pie p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  justify-content: space-between;
+}
+
+.pie__curso {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+@media (width < 30rem) {
+  .marca__nombre {
+    /* A 360px la navegación y el interruptor necesitan el ancho más que el
+       nombre: la marca queda identificada por el isotipo. */
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}

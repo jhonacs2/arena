@@ -1,0 +1,39 @@
+<!-- Salto al contenido: primer elemento enfocable de la página. Sin esto, cada
+     visita con teclado tiene que recorrer toda la navegación. -->
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera">
+  <div class="contenedor cabecera__interior">
+    <a class="marca" routerLink="/" aria-label="Hipódromo — inicio">
+      <app-logo />
+      <span class="marca__nombre">Hipódromo</span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <a routerLink="/sistema" routerLinkActive="activo">Sistema</a>
+    </nav>
+
+    <button
+      type="button"
+      class="tema"
+      [attr.aria-label]="temaEtiqueta()"
+      [title]="temaEtiqueta()"
+      (click)="cambiarTema()"
+    >
+      <span aria-hidden="true">{{ temaIcono() }}</span>
+    </button>
+  </div>
+</header>
+
+<main id="contenido" class="contenedor principal" tabindex="-1">
+  <router-outlet />
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <p>
+      Saldo virtual. No se mueve dinero real en ningún momento.
+      <span class="pie__curso">Módulo Angular · Talento DH 8va</span>
+    </p>
+  </div>
+</footer>

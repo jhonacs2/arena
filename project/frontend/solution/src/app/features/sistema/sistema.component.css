@@ -1,0 +1,273 @@
+/* ── Portada ───────────────────────────────────────────────────────────── */
+.portada {
+  max-inline-size: 60ch;
+  margin-block-end: var(--space-16);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-block-end: var(--space-2);
+}
+
+.entrada {
+  margin-block-start: var(--space-4);
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+}
+
+/* ── Secciones ─────────────────────────────────────────────────────────── */
+.seccion {
+  margin-block-end: var(--space-16);
+}
+
+.seccion > h2 {
+  border-block-end: var(--border-width) solid var(--border);
+  padding-block-end: var(--space-2);
+  margin-block-end: var(--space-4);
+}
+
+.bajada {
+  max-inline-size: 62ch;
+  color: var(--text-muted);
+  margin-block-end: var(--space-6);
+}
+
+.rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-block: var(--space-8) var(--space-3);
+}
+
+.nota {
+  margin-block-start: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  max-inline-size: 62ch;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--surface-sunken);
+  border: 2px solid var(--border);
+  padding: 0 0.25em;
+}
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.rejilla-dos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-4);
+}
+
+/* ── Parrilla de salida ────────────────────────────────────────────────── */
+.parrilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-3);
+}
+
+.corredor {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-template-areas:
+    'dorsal seda nombre'
+    'dorsal seda cuota';
+  align-items: center;
+  gap: 0 var(--space-3);
+
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  background: var(--surface-raised);
+}
+
+.corredor app-silk {
+  grid-area: seda;
+}
+
+.corredor__nombre {
+  grid-area: nombre;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  align-self: end;
+}
+
+.corredor__cuota {
+  grid-area: cuota;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  align-self: start;
+}
+
+/* El dorsal. El número de partida es información real —la posición en la
+   puerta de largada—, no una numeración decorativa: por eso existe y por eso
+   se pinta como en el programa de carreras, cuadrado y en mono.
+
+   Va en su propia celda del grid, nunca encima de la seda. */
+.dorsal {
+  grid-area: dorsal;
+  align-self: center;
+
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  display: grid;
+  place-items: center;
+
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+/* ── Muestrarios de color ──────────────────────────────────────────────── */
+.muestrario {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: var(--space-3);
+}
+
+.muestrario--ancho {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+}
+
+.muestrario li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.muestra {
+  display: block;
+  block-size: 3rem;
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.muestra--grande {
+  block-size: 4rem;
+}
+
+.muestra__nombre {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+}
+
+.muestra__uso {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+/* ── Tipografía ────────────────────────────────────────────────────────── */
+.familias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: var(--space-6);
+  margin-block-end: var(--space-8);
+}
+
+.familia__muestra {
+  font-size: var(--text-lg);
+}
+
+.familia__muestra--display {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 92;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.familia__muestra--mono {
+  font-size: var(--text-base);
+}
+
+.familia__nota {
+  margin-block-start: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.escala {
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+}
+
+.escala li {
+  display: grid;
+  grid-template-columns: 4rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+}
+
+.escala li + li {
+  border-block-start: 2px solid var(--border);
+}
+
+.escala__token {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+.escala__muestra {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.escala__uso {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ── Tablero del saldo ─────────────────────────────────────────────────── */
+.tablero {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard-lg);
+  background: var(--surface-raised);
+}
+
+.tablero .rotulo {
+  margin: 0;
+}
+
+.tablero__saldo {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  line-height: 1;
+  /* La clave del salto tipo split-flap: la animación se re-dispara cada vez
+     que Angular vuelve a pintar el nodo de texto. */
+  animation: saltar var(--dur-flip) var(--ease-snap);
+}
+
+@keyframes saltar {
+  from {
+    transform: translateY(-0.35em);
+    opacity: 0.2;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}

@@ -31,11 +31,15 @@ Quedan seis piezas.
 | Formato | **SVG**, monocromo, un solo `path` si se puede |
 | Tamaño | viewBox cuadrado, legible a **20 px** |
 | Dónde | header del shell, favicon, OG, slides de las 11 sesiones |
-| Estado | placeholder pendiente — lo genero yo en Fase 2 si querés |
+| Estado | **hecho** — `shared/ui/logo/logo.component.ts` tiene un placeholder vectorial en uso |
 
 Isotipo, no ilustración. Tiene que funcionar en un color plano sobre pizarra y sobre tiza, sin degradados ni sombras.
 
-Tres direcciones que salen del mundo del hipódromo y no de "app genérica": el **poste de furlong** (raya vertical con bandas), la **puerta de partida** (rejilla de compartimentos) o una **seda abstracta** (el rombo/chevron del sistema, reducido a su mínima expresión). La tercera es la más coherente con el resto del sistema.
+Había tres direcciones sobre la mesa, todas del mundo del hipódromo y ninguna de "app genérica": el **poste de furlong** (raya vertical con bandas), la **puerta de partida** (rejilla de compartimentos) y una **seda abstracta**.
+
+El placeholder en uso toma la tercera: una casaca reducida a su mínima expresión —silueta con mangas y un chevron—. Es la más coherente con el resto del sistema, porque el logo y los 54 caballos terminan hablando el mismo idioma sin que haya que explicarlo.
+
+**Si te convence, alcanza con exportarlo como SVG definitivo.** Si no, las otras dos direcciones siguen disponibles.
 
 ---
 
@@ -88,7 +92,7 @@ Bordes duros y áreas de color amplias. Debajo va texto: dejá el tercio inferio
 | Formato | **SVG**, `currentColor` para la tinta |
 | Tamaño | viewBox 240 × 180 |
 | Dónde | los tres estados vacíos obligatorios de §8 |
-| Estado | los genero yo en Fase 2 |
+| Estado | pendientes — hasta que existan, el estado vacío usa solo texto, que ya funciona |
 
 Van como SVG y no como raster porque tienen que seguir el tema: en oscuro la tinta se invierte a tiza. Un PNG no puede hacer eso.
 
