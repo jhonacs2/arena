@@ -13,8 +13,12 @@ header: 'S1 · Primer componente'
 
 <!--
 Módulo Angular · Talento DH 8va.
-El guión completo está en guion.md. Las notas de cada diapositiva son el
-guión de esa diapositiva: se ven con la tecla P en el HTML de Marp.
+
+El guión completo está en guion.md, y es un teleprompter: lo que está entre
+comillas se dice. Estas notas son el resumen de cada diapositiva; si algo no
+está acá, está allá.
+
+Se ven con la tecla P en el HTML de Marp.
 -->
 
 ---
@@ -27,7 +31,7 @@ guión de esa diapositiva: se ven con la tecla P en el HTML de Marp.
 
 <!--
 5 minutos. Responden en el chat. Sin juicio, sin corregir, sin "casi".
-Leer dos o tres en voz alta y seguir.
+Esperá 90 segundos en silencio. Si nadie escribe, respondé vos primero.
 -->
 
 ---
@@ -38,14 +42,16 @@ Cuando cambia un número en pantalla —el carrito, un contador, un saldo—
 
 # ¿quién lo cambió?
 
-Escribilo en el chat. No hay respuesta correcta.
-
 <!--
-Va a haber de todo: "el servidor", "JavaScript", "React", "no sé".
-TODAS SIRVEN. La pregunta no busca la respuesta: busca que noten que hay
-alguien moviendo el DOM. Hoy ese alguien va a ser Angular.
+Van a decir "el servidor", "JavaScript", "React", "no sé". TODAS SIRVEN.
+No corrijas ninguna.
 
-Si nadie escribe a los 90 segundos, responder uno mismo para romper el hielo.
+Cerrá con esto, textual:
+"Todas tienen algo de razón. Lo que quiero que se lleven es que ALGUIEN tuvo
+que agarrar ese pedazo de pantalla y cambiarlo. No se actualizó solo. Hoy
+vamos a ver quién hace eso en Angular, y por qué eso es todo el asunto."
+
+NO EXPLIQUES NADA TODAVÍA. Este bloque es para que hablen.
 -->
 
 ---
@@ -60,11 +66,12 @@ Si nadie escribe a los 90 segundos, responder uno mismo para romper el hielo.
 
 <!--
 sesiones/s00-typescript/wayground.csv — el material asíncrono.
+
 Es la ÚNICA sesión donde el quiz no es de la anterior: no hay anterior.
 
-30 segundos de explicación como máximo por pregunta que falle más de un
-tercio. Si necesita más, va a la tarea. Los tres tropiezos esperables están
-en el guión.
+Máximo 30 segundos por pregunta, y solo si la falló más de un tercio. Los
+tres tropiezos esperables, con su respuesta, están en el guión. Si algo
+necesita más de 30 segundos, va a la tarea: no te enganches acá.
 -->
 
 ---
@@ -77,29 +84,79 @@ en el guión.
 
 ## Editor cerrado
 
-<!-- A partir de acá, ni una línea de código en pantalla. Solo diagrama. -->
+<!--
+A partir de acá, ni una línea de código en pantalla. Solo diagrama.
+
+Si alguien pregunta "¿y el código?": "en diez minutos. Primero quiero que
+puedan dibujar esto en una servilleta."
+-->
 
 ---
 
-## De dónde viene esto
+## Un contador, sin framework
 
-**2010 · AngularJS** — que el HTML pudiera tener lógica declarativa
+```html
+<p>Llevás 0 clics</p>
+<button>Sumar</button>
+```
 
-**2016 · Angular 2** — reescritura. La idea de los *Web Components*: el navegador ya sabe de componentes
+```js
+let clics = 0;
+boton.onclick = () => clics + 1;
+```
+
+## El número no se mueve.
+
+<!--
+DOS MINUTOS. El problema ANTES de nombrar nada.
+
+"El HTML ya se dibujó. Ese número dejó de ser tu variable en el momento en
+que se pintó. Para que cambie, tenés que ir a buscar el elemento y
+escribirle el valor nuevo, a mano."
+
+"Con un contador es molesto. Con veinte carreras, cada una con ocho caballos
+y sus cuotas, es IMPOSIBLE de sostener: cada vez que cambia un dato tenés
+que acordarte de todos los lugares de la pantalla que lo muestran."
+-->
+
+---
+
+## Eso que hay que ir a tocar tiene nombre
+
+# El DOM
+
+El árbol de elementos que el navegador tiene en memoria y dibuja en pantalla.
+
+Sin framework, mantenerlo sincronizado con tus datos **es trabajo tuyo**.
+
+<!--
+Primera palabra del glosario. Definila y seguí.
+
+"Y es el trabajo que más bugs genera en cualquier interfaz: no porque sea
+difícil, sino porque hay que acordarse siempre."
+-->
+
+---
+
+## De dónde viene Angular
+
+**2010 · AngularJS** — que el HTML pudiera decir de dónde salen sus datos
+
+**2016 · Angular 2** — reescritura. La idea de los *Web Components*: una parte de la pantalla puede ser una pieza cerrada
 
 **2024 · standalone** — se va la capa de `NgModule`. El componente se declara solo
 
 <!--
 TRES MINUTOS. No más.
 
-En la primera sesión hay que salir con algo funcionando. Quien escribió su
-primer componente entiende para qué sirvió AngularJS mucho mejor que quien
-escuchó veinte minutos de historia sin escribir nada.
-
 Frase para dejar: "Angular no inventó los componentes. Los hizo tipados, con
 herramientas y con un ciclo de vida."
 
-Los NgModules vuelven en S11, con contexto, para poder leer código viejo.
+Las tres preguntas que van a hacer —NgModules, AngularJS, por qué la 18— y
+sus respuestas están en el guión.
+
+SI VAS TARDE: este bloque es lo único recortable. El diagrama y la detección
+de cambios, no.
 -->
 
 ---
@@ -111,34 +168,78 @@ Los NgModules vuelven en S11, con contexto, para poder leer código viejo.
 <!--
 CINCO MINUTOS sobre este diagrama.
 
-La analogía: un mostrador de cafetería.
-  · La clase es la trastienda: qué hay, cuánto cuesta, quién atiende.
-  · El template es la vidriera.
-  · Interpolación = escribir el precio en el cartel.
-  · Property binding = apagar la luz del cartel cuando se acabó.
-  · Event binding = el timbre que suena cuando alguien pide.
-  · Two-way = la libreta del pedido: la escribe el cliente, la lee el mozo.
+"A la izquierda, LA CLASE: un archivo TypeScript. Ahí viven los datos y las
+decisiones."
 
-Que puedan dibujar las dos cajas y las cuatro flechas ANTES de escribir una
-línea. Si arranca el código acá, copian sintaxis sin modelo mental.
+"A la derecha, EL TEMPLATE: un archivo HTML. Y ojo, que es la primera trampa:
+EL TEMPLATE NO ES HTML COMÚN. Es HTML con instrucciones adentro, y esas
+instrucciones las lee Angular antes de dibujar."
+
+La analogía: un mostrador de cafetería. La clase es la trastienda; el
+template, la vidriera. Interpolación = escribir el precio en el cartel.
+Property binding = apagar la luz del cartel cuando se acabó. Event binding =
+el timbre. Two-way = la libreta del pedido.
+
+Señalá cada flecha mientras la nombrás.
+-->
+
+---
+
+## Binding quiere decir *atadura*
+
+Atás un pedazo del template a un pedazo de la clase,
+
+y Angular se encarga de que **no se despeguen**.
+
+<!--
+La palabra más importante del día. Definila así, en castellano, antes de
+mostrar un solo corchete.
+
+"Nunca más vas a ir a buscar un elemento para escribirle un número."
 -->
 
 ---
 
 <!-- _class: ojo -->
 
-# Ojo con esto
+# ¿Cómo se entera Angular?
 
-En Angular 18 hay que escribir
+No hay magia y no hay nadie mirando tus variables.
 
-`standalone: true`
-
-En 19 pasa a ser el valor por defecto
+**Angular repinta después de que pasó algo.**
 
 <!--
-Es la trampa número uno al copiar código de un blog reciente.
-Todo el material nuevo asume 19+; este proyecto es 18.
-La sección 4 de CLAUDE.md tiene la lista completa de lo que NO existe todavía.
+LA PREGUNTA QUE CASI NADIE HACE Y TODOS NECESITAN.
+
+"Angular espera a que pase ALGO: un clic, una tecla, una respuesta del
+servidor. Cuando eso pasa, revisa los bindings de la pantalla y repinta lo
+que haga falta. A ese momento se le dice DETECCIÓN DE CAMBIOS."
+
+"Guardensé esa frase. En la clase 10 vamos a ver un caso donde pasa algo y
+Angular NO se entera, y va a tener todo el sentido del mundo."
+
+Sin esta diapositiva, ni el ejercicio de predicción de hoy ni el OnPush de
+S10 se pueden explicar.
+-->
+
+---
+
+## Las palabras de hoy
+
+| Palabra | Qué es |
+|---|---|
+| **DOM** | El árbol que el navegador dibuja |
+| **Componente** | Una clase + un template |
+| **Template** | HTML con instrucciones para Angular |
+| **Standalone** | Declara solo lo que usa |
+| **Binding** | La atadura entre la clase y el template |
+| **Detección de cambios** | Cuando Angular revisa y repinta |
+
+<!--
+Checkpoint de treinta segundos. Preguntá: "¿alguna de estas seis no quedó
+clara?" y esperá de verdad.
+
+El glosario completo, con las trece palabras, está en el guión.
 -->
 
 ---
@@ -152,59 +253,190 @@ La sección 4 de CLAUDE.md tiene la lista completa de lo que NO existe todavía.
 ## Ustedes miran
 
 <!--
-DECIRLO EXPLÍCITO: "cierren el editor, esto lo hacemos juntos en 15 minutos
-y después lo hacen ustedes".
+DECILO TEXTUAL: "Cierren el editor. Los próximos quince minutos yo escribo y
+ustedes miran. No copien: van a hacer esto mismo después, y con las manos
+libres se entiende mejor. Si me equivoco, avisen."
 
-Proyecto: lab/solution → ruta /s01
-La tabla minuto a minuto está en el guión.
-
-A las 0:37: romperlo a propósito sacando FormsModule. Leer el error en voz
-alta ANTES de arreglarlo. Es el error más frecuente de la sesión: que lo vean
-acá hace que a las 0:35 lo reconozcan solos.
+Proyecto: lab/solution → ruta /s01. La tabla minuto a minuto está en el
+guión. Si querés escribirlo desde cero, borrá antes src/app/sessions/s01/.
 -->
 
 ---
 
 <!-- _class: codigo -->
 
-## Un componente standalone
+## El CLI crea los archivos
+
+```bash
+ng generate component sessions/s01 --flat
+```
+
+Cuatro archivos: el `.ts`, el `.html`, el `.css` y uno de tests.
+
+<!--
+"Esto es el CLI, la herramienta de línea de comandos de Angular."
+
+"Podría haberlos creado a mano. Uso el CLI porque los nombra igual siempre y
+porque no me olvido de ninguno. NO HACE NADA MÁGICO: mírenlos, están vacíos."
+
+Abrí el .ts y leelo línea por línea: qué es un decorador, qué es el selector,
+qué dice standalone, qué apuntan templateUrl y styleUrl.
+-->
+
+---
+
+<!-- _class: codigo -->
+
+## Hacen falta DOS cosas para que se vea
 
 ```ts
-@Component({
-  selector: 'app-s01',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './s01.component.html',
-})
-export class S01Component {
-  protected coffee = { name: 'Yirgacheffe', price: 42 };
-}
+// app.routes.ts — para que la dirección exista
+{ path: 's01', loadComponent: … }
+```
+
+```ts
+// sessions.ts — para que aparezca en el menú
+{ number: 1, slug: 's01', available: true }
 ```
 
 <!--
-"imports es de ESTE componente. Standalone quiere decir que se declara solo:
-no hay ningún NgModule que lo haga por él."
+"Son dos archivos distintos y hay que tocar los dos. Es el error más común
+de la clase que viene."
+
+El router resuelve direcciones; el menú es una lista que dibuja un
+componente. Ninguno se entera del otro.
+
+Navegá a /s01: se ve la página vacía que dejó el CLI.
+"De acá para arriba, todo lo que aparezca lo vamos a poner nosotros."
 -->
 
 ---
 
 <!-- _class: codigo -->
 
-## Los cuatro, en cuatro líneas
+## 1 · Interpolación
+
+```ts
+protected coffee = { name: 'Yirgacheffe', price: 42 };
+```
 
 ```html
 <h2>{{ coffee.name }}</h2>
-
-<div [class.agotado]="!coffee.available">…</div>
-
-<button (click)="addOrder()">Pedir</button>
-
-<input [(ngModel)]="customer" />
+<p>{{ coffee.price }}</p>
 ```
 
 <!--
-Uno por uno, con la pantalla del navegador al lado.
-Cambiar el precio en el .ts en vivo y que vean la recarga.
+"Las llaves dobles dicen: Angular, poné acá el valor de esta expresión, como
+texto."
+
+AHORA LA DEMOSTRACIÓN QUE VALE POR TODA LA EXPLICACIÓN: cambiá price a 55 y
+guardá.
+
+"Cambié UN SOLO LUGAR —la clase— y la pantalla se actualizó sola. Ese es el
+trato: el dato vive en un lugar, y el template lo mira."
+-->
+
+---
+
+<!-- _class: codigo -->
+
+## 2 · Property binding
+
+```html
+<!-- queda puesta SIEMPRE -->
+<div class="product product--soldout">
+
+<!-- depende de un dato -->
+<div class="product" [class.product--soldout]="!coffee.available">
+```
+
+<!--
+Escribí primero la versión de arriba, mostrá que está mal, y recién ahí la
+de abajo.
+
+"Los corchetes cambian todo. SIN corchetes, lo que va entre comillas es
+TEXTO LITERAL. CON corchetes, es una expresión de TypeScript que Angular
+evalúa."
+
+"Y fíjense que puedo tener las dos cosas en el mismo elemento: class con lo
+que va siempre, y [class.algo] con lo que va a veces. No se pisan, se suman."
+
+Cambiá available a false y mostralo.
+-->
+
+---
+
+<!-- _class: codigo -->
+
+## 3 · Event binding
+
+```html
+<button (click)="toggleAvailability()">
+  {{ coffee.available ? 'Marcar agotado' : 'Marcar disponible' }}
+</button>
+```
+
+<!--
+"Los paréntesis escuchan un evento del navegador. `click` no lo inventó
+Angular: es el mismo de siempre. Lo que agrega Angular es que en vez de
+escribir un addEventListener, decís qué método llamar."
+
+Tocá el botón un par de veces y conectá con el concepto:
+
+"Acá está lo de la detección de cambios: TOCARON EL BOTÓN, entonces pasó
+algo, entonces Angular revisó. Por eso se actualizaron el texto del botón Y
+la clase del div, sin que yo tocara nada más."
+-->
+
+---
+
+<!-- _class: ojo -->
+
+# Y acá va a fallar
+
+`NG8002: Can't bind to 'ngModel'`
+
+`since it isn't a known property of 'input'.`
+
+<!--
+ROMPELO A PROPÓSITO. Escribí [(ngModel)] SIN FormsModule y leé el error
+completo en voz alta.
+
+"Buenísimo que falle. Léanlo conmigo: no puedo enlazar a ngModel porque no
+es una propiedad conocida de input."
+
+"Y tiene razón: ngModel no existe en HTML, lo trae Angular. Y este
+componente es STANDALONE, o sea que declara solo lo que usa. Yo nunca le
+dije que iba a usar ngModel."
+
+Es el error número uno de la sesión. Que lo vean acá hace que a las 0:35 lo
+reconozcan solos.
+-->
+
+---
+
+<!-- _class: codigo -->
+
+## 4 · Two-way binding
+
+```ts
+imports: [FormsModule],   // ← sin esto, no compila
+```
+
+```html
+<input [(ngModel)]="customer" />
+<p>Hola, {{ customer }}</p>
+```
+
+<!--
+"La regla completa: SI EL TEMPLATE USA ALGO DE ANGULAR, TIENE QUE ESTAR EN
+IMPORTS. Vale para esto, para el router, y desde la clase que viene, para
+cada componente que usen adentro de otro."
+
+Escribí en el input y mostrá cómo el <p> cambia mientras escribís.
+
+"[(ngModel)] es literalmente [ngModel] más (ngModelChange): property binding
+y event binding juntos, con azúcar sintáctica."
 -->
 
 ---
@@ -218,28 +450,39 @@ Cambiar el precio en el .ts en vivo y que vean la recarga.
 ## Individual · 15 min
 
 <!--
-lab/starter → /s01. El enunciado está en mision-1.md.
+lab/starter. El enunciado completo está en mision-1.md.
 
-ESTÁS EN SILENCIO. Disponible si preguntan, pero no circulás ofreciendo ayuda.
-Los quince minutos de pelearse solo con el error SON la clase.
+ESTÁS EN SILENCIO. Disponible si preguntan, pero no circulás ofreciendo
+ayuda. Los quince minutos de pelearse con el error SON la clase.
 
-Si a los 8 minutos más de la mitad está trabada en lo mismo, una pista para
-todos en voz alta, sin resolver:
-"¿Alguien ya vio el error de ngModel? ¿Dónde declara un componente lo que usa?"
+Reloj de pistas, solo si más de la mitad está trabada en lo mismo:
+  0:43 — "¿A alguien le apareció un error con ngModel? Vuelvan a leerlo
+         entero: dice dónde está el problema."
+  0:47 — "Acordate: para que la ruta aparezca en el menú hay que tocar DOS
+         archivos."
 -->
 
 ---
 
 ## Misión 1 · El mostrador
 
-Buscá `TODO(S1)` en `lab/starter`. Están numerados del 1 al 4.
+**El componente no existe. Lo creás vos.**
 
-1. **Interpolación** — nombre, origen y precio
-2. **Property binding** — la clase `product--soldout`
-3. **Event binding** — el botón de disponibilidad
-4. **Two-way** — cliente y cantidad
+1. Que la pantalla exista — CLI, ruta e índice
+2. **Interpolación** — nombre, origen y precio
+3. **Property binding** — la clase de agotado
+4. **Event binding** — el botón de disponibilidad
+5. **Two-way** — cliente y cantidad
 
-**Listo cuando:** cambiar el precio en el `.ts` cambia lo que se ve, y el total se actualiza mientras escribís.
+**Listo cuando** cambiar el precio en el `.ts` cambia lo que se ve, y el total se actualiza mientras escribís.
+
+<!--
+Recalcá el "no existe": arrancan de una barra lateral vacía y una pantalla
+de inicio, no de un archivo con huecos.
+
+Si alguien se queda muy atrás, correccion.md Parte A tiene el paso a paso.
+Para destrabarse, no para copiar.
+-->
 
 ---
 
@@ -250,14 +493,16 @@ Buscá `TODO(S1)` en `lab/starter`. Están numerados del 1 al 4.
 ## Comparten pantalla
 
 <!--
-Dos alumnos. Uno que funciona y uno que no — con permiso.
+Dos personas: una que le funciona y una que no. A la segunda, pedile permiso
+antes.
 
-PREGUNTÁS, NO CORREGÍS. Aunque esté mal. Aunque duela.
-  ¿Qué esperabas que pasara? · ¿Qué pasó? · ¿Cómo lo averiguaste?
-  ¿Cómo se lo explicarías a alguien que no estuvo hoy?
+PREGUNTÁS, NO CORREGÍS. Aunque veas el error en el primer segundo.
+  ¿Qué esperabas que pasara? · ¿Qué pasó? · ¿Cómo te diste cuenta?
+  ¿Cómo se lo explicarías a alguien que no vino hoy?
 
-Lo más probable: alguien escribió class="producto--agotado" en vez de
-[class.producto--agotado]="…". Es la mejor pantalla posible para compartir.
+Lo más probable: alguien escribió class="product--soldout" en vez de
+[class.product--soldout]="…". Es la mejor pantalla posible para compartir —
+no la arregles vos.
 -->
 
 ---
@@ -270,7 +515,7 @@ Lo más probable: alguien escribió class="producto--agotado" en vez de
 
 ## 10 minutos
 
-<!-- Volver puntual: los quince minutos de después son los más densos. -->
+<!-- "Vuelvan puntuales, que lo que viene es lo mejor de la clase." -->
 
 ---
 
@@ -281,15 +526,16 @@ Lo más probable: alguien escribió class="producto--agotado" en vez de
 ## Predice y ejecuta
 
 <!--
-Mostrar el código. NO EJECUTAR.
-"¿Qué va a pasar? Escribilo en el chat." — 60 segundos.
-Recién ahí ejecutar.
+EL ORDEN NO SE SALTEA:
+  1. Mostrás el código. NO lo ejecutás.
+  2. "¿Qué va a pasar? Escribilo en el chat." — 60 SEGUNDOS DE RELOJ.
+  3. Recién ahí, ejecutás.
+  4. Explicás la diferencia entre lo que dijeron y lo que pasó.
 
-El paso de predecir es TODO el ejercicio. Ejecutar primero lo convierte en
-una demo y no aprende nadie.
+El paso 2 es todo el ejercicio. Si ejecutás primero, esto es una demo.
 
-Los tres están verificados en el navegador. Las respuestas, en
-predice-y-ejecuta/respuestas.md.
+Las respuestas están en predice-y-ejecuta/respuestas.md y están verificadas
+en el navegador. No las improvises.
 -->
 
 ---
@@ -300,22 +546,24 @@ predice-y-ejecuta/respuestas.md.
 
 ```html
 <p class="label {{ tone }}"
-   [class.etiqueta--activa]="activo">Hola</p>
+   [class.label--active]="isActive">Hola</p>
 ```
 
 ```ts
-tone = 'rojo';
-activo = true;
+tone = 'red';
+isActive = true;
 ```
 
 <!--
-No ejecutar. 60 segundos de predicciones.
+No ejecutar. 60 segundos.
 
-Casi todos dicen que se pisan. NO: quedan las TRES.
-  class="etiqueta rojo etiqueta--activa"
+Casi todos dicen que se pisan. NO: quedan LAS TRES.
+  class="label red label--active"
 
-class y [class.x] no compiten: se combinan. El binding específico es dueño de
-SU clase y nada más. Por eso en la Misión 2 van a usar las dos juntas.
+class y [class.x] no compiten: se combinan. El binding específico es dueño
+de SU clase y de ninguna otra.
+
+Por eso en la Misión 2 van a usar las dos juntas.
 -->
 
 ---
@@ -341,7 +589,7 @@ Opciones: 1) anda · 2) no se actualiza pero funciona · 3) no arranca ·
 Casi nadie dice la 4, y es la 4:
   NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
 
-Leer el mensaje completo en voz alta. Es de los mejores que da Angular.
+Ya lo vieron en el live coding. Si alguien lo reconoce, festejalo.
 -->
 
 ---
@@ -351,8 +599,8 @@ Leer el mensaje completo en voz alta. Es de los mejores que da Angular.
 ## 3 · ¿Cuánto marca después de 3 clics?
 
 ```html
-<button (click)="contador + 1">Sumar</button>
-<p>Llevo {{ contador }} clics</p>
+<button (click)="counter + 1">Sumar</button>
+<p>Llevo {{ counter }} clics</p>
 ```
 
 <!--
@@ -360,11 +608,13 @@ Se queda en 0. Y NO HAY NINGÚN ERROR — ni en consola, ni en el build.
 
 La expresión se evalúa y el resultado se tira. Nadie lo asignó.
 
-La regla: un binding que no falla no quiere decir que ande. El silencio es el
-peor síntoma que puede tener un bug.
+CERRÁ EL BLOQUE CON ESTA PREGUNTA:
+"De los tres, ¿cuál les habría costado más encontrar en un proyecto de
+verdad?"
 
-Si sobra tiempo, preguntar: "de los tres, ¿cuál les habría costado más
-encontrar en un proyecto de verdad?". Casi siempre eligen este, y tienen razón.
+Casi siempre eligen este, y tienen razón: los otros dos te frenan el build.
+"Un binding que no falla no quiere decir que ande. El silencio es el peor
+síntoma que puede tener un bug."
 -->
 
 ---
@@ -379,32 +629,36 @@ encontrar en un proyecto de verdad?". Casi siempre eligen este, y tienen razón.
 
 <!--
 En parejas, 20 min, project/frontend/starter.
-Conducción por turnos: 10 min escribe uno y dicta el otro, después se invierte.
+Conducción por turnos: 10 min escribe uno y dicta el otro, después se
+invierte. El que dicta no toca el teclado; el que escribe no decide.
 
-DOS COSAS PARA DECIR ANTES DE LARGAR:
-  · El @for se los damos hecho. El control flow es S3; hoy son los bindings.
-  · El starter YA FUNCIONA A MEDIAS. No arrancan de una hoja en blanco:
-    arrancan de algo que anda mal, que es más parecido al trabajo real.
+TRES COSAS PARA DECIR ANTES DE LARGAR:
+  1. La pantalla NO EXISTE. La crean ustedes, con el CLI.
+  2. Los datos ya están: las 8 carreras reales en core/mocks. No inventen.
+  3. El @for se los damos escrito en la corrección. Recorrer listas es S3;
+     hoy el trabajo son los bindings.
 
-Circular. Escuchar más que hablar. La pareja que termina recibe la extensión.
+Circulá. Escuchá más de lo que hablás.
 -->
 
 ---
 
 ## Misión 2 · El programa de carreras
 
-Las ocho carreras ya están. Falta conectarlas.
+**La pantalla no existe. La crean ustedes.**
 
 - **Interpolación** — estado, nombre, hora, competidores
 - **Property binding** — `race--live`, `race--finished`, `race--open`
-- **Event binding** — `(click)` → `select(view)`
+- **Event binding** — abrir y cerrar la parrilla
 - **Two-way** — el monto del simulador
 
-Y en el `.ts`: `payout` devuelve siempre 0, y `select()` nunca deselecciona.
+Los datos ya están en `core/mocks`. El CSS también.
 
 <!--
-Si alguien se queja del orden de la lista: BIEN. Que les moleste. Ordenar y
+Si alguien se queja del orden de la lista: BIEN, que les moleste. Ordenar y
 filtrar es S3. Hoy se pintan los datos como vienen.
+
+La pareja que termina recibe la extensión del final del enunciado.
 -->
 
 ---
@@ -416,14 +670,19 @@ filtrar es S3. Hoy se pintan los datos como vienen.
 ## Code review en vivo
 
 <!--
-Una solución de la Misión 2, con permiso. Rúbrica de docs/curriculum.md,
-en voz alta y en orden.
+Una solución de la Misión 2, con permiso. Tené correccion.md abierto al lado.
 
-En S1 el punto 4 —cargando/vacío/error— casi no aplica, y conviene decirlo:
-"hoy no hay estado de carga porque no hay nada que cargar. En S7 vuelve, y
-va a ser obligatorio."
+Rúbrica, en voz alta y en orden:
+  1. ¿standalone y OnPush? · 2. ¿actualiza sin mutar? · 3. ¿any, console.log,
+  imports de más? · 4. ¿el nombre dice lo que hace? · 5. ¿está en la carpeta
+  que le toca?
 
-Empezar por algo que está bien hecho. Siempre hay algo.
+EMPEZÁ POR ALGO QUE ESTÁ BIEN HECHO. Siempre hay algo.
+
+Y decí esto textual, porque si no lo van a esperar:
+"Se van a dar cuenta de que no hay estado de carga ni de error. Es correcto:
+hoy no hay NADA que cargar, los datos ya están en el código. En la clase 7,
+cuando los pidamos a un servidor, los tres estados van a ser obligatorios."
 -->
 
 ---
@@ -436,9 +695,12 @@ Empezar por algo que está bien hecho. Siempre hay algo.
 
 <!--
 Tres preguntas, 3 minutos.
-La tercera —"¿qué quedó confuso?"— arranca S2.
 
-Leer la tarea en voz alta antes de cortar.
+"La tercera es la que más me sirve: qué quedó confuso. Vale nada, vale todo,
+vale una palabra. Con eso arranco la clase que viene."
+
+Leé la tarea EN VOZ ALTA antes de cortar. Una tarea que solo se manda por
+chat no se hace.
 -->
 
 ---
@@ -447,4 +709,4 @@ Leer la tarea en voz alta antes de cortar.
 
 # Nos vemos en S2
 
-## Tarea en `tarea.md`
+## `input()`, `output()` y `ng-content`

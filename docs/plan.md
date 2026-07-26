@@ -7,7 +7,7 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **0** | Contrato y esqueleto | ✅ **terminada** |
 | **1** | Backend Go, completo y congelado | ✅ **terminada** |
 | **2** | Baseline visual del hipódromo | ✅ **terminada** |
-| **3** | S1 · Primer componente | ✅ **terminada** |
+| **3** | S1 · Primer componente | ✅ **terminada** — falta darla |
 | **4–13** | Una sesión por fase, S2 … S11 | ⬜ siguiente |
 | **14** | Publicación y deploy | ⬜ |
 
