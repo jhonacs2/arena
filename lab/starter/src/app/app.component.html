@@ -1,23 +1,23 @@
-<a class="saltar" href="#contenido">Saltar al contenido</a>
+<a class="skip-link" href="#content">Saltar al contenido</a>
 
 <div class="lab">
-  <aside class="barra">
-    <p class="barra__titulo">Lab</p>
-    <p class="barra__sub">Módulo Angular</p>
+  <aside class="sidebar">
+    <p class="sidebar__title">Lab</p>
+    <p class="sidebar__subtitle">Módulo Angular</p>
 
     <nav aria-label="Sesiones">
-      @if (sesiones.length === 0) {
-        <p class="barra__vacia">
+      @if (sessions.length === 0) {
+        <p class="sidebar__empty">
           Todavía no hay ninguna sesión acá.
           <span>Van a aparecer a medida que las hagas.</span>
         </p>
       } @else {
-        <ol class="sesiones" role="list">
-          @for (sesion of sesiones; track sesion.slug) {
+        <ol class="sessions" role="list">
+          @for (session of sessions; track session.slug) {
             <li>
-              <a [routerLink]="'/' + sesion.slug" routerLinkActive="activa">
-                <span class="sesiones__num">{{ sesion.numero }}</span>
-                <span class="sesiones__titulo">{{ sesion.titulo }}</span>
+              <a [routerLink]="'/' + session.slug" routerLinkActive="active">
+                <span class="sessions__number">{{ session.number }}</span>
+                <span class="sessions__title">{{ session.title }}</span>
               </a>
             </li>
           }
@@ -26,7 +26,7 @@
     </nav>
   </aside>
 
-  <main id="contenido" class="contenido" tabindex="-1">
+  <main id="content" class="content" tabindex="-1">
     <router-outlet />
   </main>
 </div>

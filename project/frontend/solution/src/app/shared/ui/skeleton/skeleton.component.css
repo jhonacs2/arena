@@ -2,13 +2,13 @@
   display: block;
 }
 
-.hueso {
+.bone {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.barra {
+.bar {
   display: block;
   block-size: 1rem;
   background: var(--chalk-200);
@@ -16,27 +16,27 @@
 }
 
 /* La última barra más corta: sugiere un párrafo, no un bloque. */
-.hueso--text .barra:last-child {
+.bone--text .bar:last-child {
   inline-size: 62%;
 }
 
-.hueso--card {
+.bone--card {
   padding: var(--space-4);
   border: var(--border-width) solid var(--border);
   box-shadow: var(--shadow-hard);
   background: var(--surface-raised);
 }
 
-.hueso--card .barra:first-child {
+.bone--card .bar:first-child {
   block-size: 2rem;
 }
 
-.hueso--row {
+.bone--row {
   flex-direction: row;
   align-items: center;
 }
 
-.hueso--row .barra {
+.bone--row .bar {
   flex: 1;
 }
 
@@ -44,22 +44,22 @@
    gradiente: los gradientes están prohibidos por docs/design/CLAUDE.md, y además un
    barrido a lo ancho de la pantalla es más caro de pintar. */
 @media (prefers-reduced-motion: no-preference) {
-  .barra {
-    animation: latido 1.4s ease-in-out infinite;
+  .bar {
+    animation: pulse 1.4s ease-in-out infinite;
   }
 
   /* Escalonar las barras hace que se lea como un bloque de texto cargando y
      no como tres cosas parpadeando a destiempo. */
-  .barra:nth-child(2) {
+  .bar:nth-child(2) {
     animation-delay: 0.12s;
   }
 
-  .barra:nth-child(3) {
+  .bar:nth-child(3) {
     animation-delay: 0.24s;
   }
 }
 
-@keyframes latido {
+@keyframes pulse {
   0%,
   100% {
     opacity: 1;
@@ -70,11 +70,11 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .barra {
+  .bar {
     background: var(--ink-700);
   }
 }
 
-[data-theme='dark'] .barra {
+[data-theme='dark'] .bar {
   background: var(--ink-700);
 }

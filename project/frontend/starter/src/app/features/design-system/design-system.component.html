@@ -1,7 +1,7 @@
-<header class="portada">
+<header class="hero">
   <p class="eyebrow">Base visual</p>
   <h1>Sistema de diseño</h1>
-  <p class="entrada">
+  <p class="intro">
     Neobrutalismo disciplinado: bordes de 3&nbsp;px, sombras duras sin blur, cero gradientes y radio
     cero. El cromo va desaturado a propósito — <strong>las sedas son lo único saturado en pantalla</strong>.
   </p>
@@ -10,7 +10,7 @@
 <!-- ── Sedas ─────────────────────────────────────────────────────────────
      Va primero porque es el elemento firma: todo lo demás está al servicio
      de que estas 8 casacas se distingan de un vistazo. -->
-<section class="seccion">
+<section class="section">
   <h2>Sedas de jockey</h2>
   <p class="bajada">
     Cada caballo tiene su casaca, derivada de su <code>id</code> con una función pura. No se elige
@@ -18,159 +18,159 @@
     imagen.
   </p>
 
-  <h3 class="rotulo">{{ carrera.name }} — {{ carrera.horses.length }} competidores</h3>
-  <ul class="parrilla" role="list">
-    @for (caballo of carrera.horses; track caballo.id) {
-      <li class="corredor">
+  <h3 class="label">{{ race.name }} — {{ race.horses.length }} competidores</h3>
+  <ul class="lineup" role="list">
+    @for (caballo of race.horses; track caballo.id) {
+      <li class="runner">
         <!-- El número NUNCA va sobre la seda: cuadrado aparte, tinta sobre
              tiza, 17,5:1 de contraste. Es lo que permite que los diez colores
              de seda sean los saturados de verdad sin romper AA. -->
-        <span class="dorsal num">{{ caballo.number }}</span>
+        <span class="saddlecloth num">{{ caballo.number }}</span>
         <app-silk [horseId]="caballo.id" [horseName]="caballo.name" size="lg" />
-        <span class="corredor__nombre">{{ caballo.name }}</span>
-        <span class="corredor__cuota num">{{ caballo.odds.toFixed(2) }}</span>
+        <span class="runner__name">{{ caballo.name }}</span>
+        <span class="runner__odds num">{{ caballo.odds.toFixed(2) }}</span>
       </li>
     }
   </ul>
 
-  <h3 class="rotulo">Los diez colores registrados del deporte</h3>
-  <ul class="muestrario" role="list">
-    @for (color of colores; track color) {
+  <h3 class="label">Los diez colores registrados del deporte</h3>
+  <ul class="swatches" role="list">
+    @for (color of colors; track color) {
       <li>
-        <span class="muestra" [style.background]="'var(--silk-' + color + ')'"></span>
-        <span class="muestra__nombre">{{ color }}</span>
+        <span class="swatch" [style.background]="'var(--silk-' + color + ')'"></span>
+        <span class="swatch__name">{{ color }}</span>
       </li>
     }
   </ul>
 </section>
 
 <!-- ── Color ─────────────────────────────────────────────────────────── -->
-<section class="seccion">
+<section class="section">
   <h2>Color</h2>
   <p class="bajada">
     Todo en <code>oklch()</code>. El modo oscuro está diseñado, no invertido: reasigna tokens
     semánticos y el borde pasa de tinta a tiza. Probalo con el interruptor de la cabecera.
   </p>
 
-  <ul class="muestrario muestrario--ancho" role="list">
-    @for (item of semanticos; track item.token) {
+  <ul class="swatches swatches--wide" role="list">
+    @for (item of semanticTokens; track item.token) {
       <li>
-        <span class="muestra muestra--grande" [style.background]="'var(--' + item.token + ')'"></span>
-        <span class="muestra__nombre num">--{{ item.token }}</span>
-        <span class="muestra__uso">{{ item.uso }}</span>
+        <span class="swatch swatch--large" [style.background]="'var(--' + item.token + ')'"></span>
+        <span class="swatch__name num">--{{ item.token }}</span>
+        <span class="swatch__use">{{ item.use }}</span>
       </li>
     }
   </ul>
 
-  <p class="nota">
+  <p class="note">
     Los pares de contraste se verifican con <code>node scripts/check-contrast.mjs</code>, que corre
     dentro de <code>verify.mjs</code>. Ninguno baja de 4,5:1.
   </p>
 </section>
 
 <!-- ── Tipografía ────────────────────────────────────────────────────── -->
-<section class="seccion">
+<section class="section">
   <h2>Tipografía</h2>
   <p class="bajada">
     Tres familias, tres trabajos. Auto-hospedadas en woff2: nada de CDN, porque un aula tiene wifi
     de aula.
   </p>
 
-  <div class="familias">
-    <div class="familia">
-      <p class="rotulo">Display · Bricolage Grotesque</p>
-      <p class="familia__muestra familia__muestra--display">Gran Premio Nacional</p>
-      <p class="familia__nota">Ancho variable: condensa los títulos largos sin cambiar de familia.</p>
+  <div class="families">
+    <div class="family">
+      <p class="label">Display · Bricolage Grotesque</p>
+      <p class="family__sample family__sample--display">Gran Premio Nacional</p>
+      <p class="family__note">Ancho variable: condensa los títulos largos sin cambiar de familia.</p>
     </div>
 
-    <div class="familia">
-      <p class="rotulo">Cuerpo · Public Sans</p>
-      <p class="familia__muestra">
+    <div class="family">
+      <p class="label">Cuerpo · Public Sans</p>
+      <p class="family__sample">
         Payador corre de atrás y remata en el disco. Neutra a propósito: su trabajo es no competir
         con las sedas.
       </p>
     </div>
 
-    <div class="familia">
-      <p class="rotulo">Números · Martian Mono</p>
-      <p class="familia__muestra familia__muestra--mono num">2.75 · 11.00 · 0123456789</p>
-      <p class="familia__nota">
+    <div class="family">
+      <p class="label">Números · Martian Mono</p>
+      <p class="family__sample family__sample--mono num">2.75 · 11.00 · 0123456789</p>
+      <p class="family__note">
         Cifras tabulares. En la carrera en vivo el marcador cambia 10 veces por segundo; con cifras
         proporcionales, cada tick correría el layout.
       </p>
     </div>
   </div>
 
-  <ul class="escala" role="list">
-    @for (paso of escala; track paso.token) {
+  <ul class="scale" role="list">
+    @for (paso of scale; track paso.token) {
       <li>
-        <span class="escala__token num">{{ paso.token }}</span>
-        <span class="escala__muestra" [style.font-size]="'var(--text-' + paso.token + ')'">Aa</span>
-        <span class="escala__uso">{{ paso.uso }}</span>
+        <span class="scale__token num">{{ paso.token }}</span>
+        <span class="scale__sample" [style.font-size]="'var(--text-' + paso.token + ')'">Aa</span>
+        <span class="scale__use">{{ paso.use }}</span>
       </li>
     }
   </ul>
 </section>
 
 <!-- ── Primitivas ────────────────────────────────────────────────────── -->
-<section class="seccion">
+<section class="section">
   <h2>Primitivas</h2>
   <p class="bajada">
     <code>&lt;app-badge&gt;</code> y <code>&lt;app-race-card&gt;</code> no están acá: son el
     ejercicio de S2.
   </p>
 
-  <h3 class="rotulo">Botones</h3>
-  <div class="fila">
+  <h3 class="label">Botones</h3>
+  <div class="row">
     <app-button>Apostar</app-button>
-    <app-button variant="secundario">Ver detalle</app-button>
-    <app-button variant="peligro">Cancelar apuesta</app-button>
-    <app-button variant="fantasma">Volver</app-button>
+    <app-button variant="secondary">Ver detalle</app-button>
+    <app-button variant="danger">Cancelar apuesta</app-button>
+    <app-button variant="ghost">Volver</app-button>
     <app-button [disabled]="true">Carrera cerrada</app-button>
   </div>
-  <p class="nota">
+  <p class="note">
     Al presionar, el botón se desplaza 2&nbsp;px y pierde 2&nbsp;px de sombra: se hunde de verdad.
     Es el único efecto de profundidad del sistema.
   </p>
 
-  <h3 class="rotulo">Estado de carga</h3>
-  <div class="rejilla-dos">
+  <h3 class="label">Estado de carga</h3>
+  <div class="grid-two">
     <app-skeleton [lines]="3" />
     <app-skeleton shape="card" [lines]="3" />
   </div>
 
-  <h3 class="rotulo">Estado vacío y estado de error</h3>
-  <div class="rejilla-dos">
+  <h3 class="label">Estado vacío y estado de error</h3>
+  <div class="grid-two">
     <app-empty-state
-      titulo="Todavía no apostaste"
-      mensaje="Elegí una carrera y probá suerte. Arrancás con 1000 de saldo virtual."
-      accion="Ver carreras"
+      title="Todavía no apostaste"
+      message="Elegí una race y probá suerte. Arrancás con 1000 de balance virtual."
+      action="Ver races"
     />
     <app-empty-state
-      tono="error"
-      titulo="No pudimos cargar las carreras"
-      mensaje="Revisá tu conexión. Si el problema sigue, avisanos."
-      accion="Reintentar"
+      tone="error"
+      title="No pudimos cargar las races"
+      message="Revisá tu conexión. Si el problema sigue, avisanos."
+      action="Reintentar"
     />
   </div>
 </section>
 
 <!-- ── Movimiento ────────────────────────────────────────────────────── -->
-<section class="seccion">
+<section class="section">
   <h2>Movimiento</h2>
   <p class="bajada">
     Tres momentos, y los tres comunican estado. Nada más se mueve. Todo respeta
     <code>prefers-reduced-motion</code>.
   </p>
 
-  <div class="tablero">
-    <p class="rotulo">Saldo</p>
+  <div class="board">
+    <p class="label">Saldo</p>
     <!-- El saldo salta como un split-flap, no hace fade: un fade diría "esto
          cambió despacio", y el saldo cambia de golpe. -->
-    <p class="tablero__saldo num" aria-live="polite">{{ saldo() }}</p>
-    <div class="fila">
-      <app-button size="sm" (accionar)="cobrar()">Cobrar 1100</app-button>
-      <app-button size="sm" variant="fantasma" (accionar)="reiniciarSaldo()">Reiniciar</app-button>
+    <p class="board__balance num" aria-live="polite">{{ balance() }}</p>
+    <div class="row">
+      <app-button size="sm" (pressed)="collect()">Cobrar 1100</app-button>
+      <app-button size="sm" variant="ghost" (pressed)="resetBalance()">Reiniciar</app-button>
     </div>
   </div>
 </section>

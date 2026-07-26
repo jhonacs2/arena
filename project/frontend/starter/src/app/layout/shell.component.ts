@@ -23,20 +23,20 @@ export class ShellComponent {
 
   protected readonly theme = this.themes.theme;
 
-  protected readonly temaEtiqueta = computed(
+  protected readonly themeLabel = computed(
     () =>
       ({
-        claro: 'Tema claro. Cambiar a oscuro.',
-        oscuro: 'Tema oscuro. Cambiar al del sistema.',
-        sistema: 'Tema del sistema. Cambiar a claro.',
+        light: 'Tema claro. Cambiar a oscuro.',
+        dark: 'Tema oscuro. Cambiar al del sistema.',
+        system: 'Tema del sistema. Cambiar a claro.',
       })[this.theme()],
   );
 
-  protected readonly temaIcono = computed(
-    () => ({ claro: '☀', oscuro: '☾', sistema: '◐' })[this.theme()],
+  protected readonly themeIcon = computed(
+    () => ({ light: '☀', dark: '☾', system: '◐' })[this.theme()],
   );
 
-  protected cambiarTema(): void {
-    this.themes.ciclar();
+  protected cycleTheme(): void {
+    this.themes.cycle();
   }
 }

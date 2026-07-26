@@ -147,13 +147,13 @@ Señalá cada flecha del diagrama mientras decís:
 
 **En pantalla:** VS Code y el navegador lado a lado. Proyecto: `lab/solution`.
 
-> Trabajás sobre `lab/solution`, que ya tiene el resultado. **Borrá `src/app/sesiones/s01/` antes de empezar** para escribirlo en vivo, o tené a mano `correccion.md`, que es exactamente esta secuencia.
+> Trabajás sobre `lab/solution`, que ya tiene el resultado. **Borrá `src/app/sessions/s01/` antes de empezar** para escribirlo en vivo, o tené a mano `correccion.md`, que es exactamente esta secuencia.
 
 ### 0:20 — El CLI crea el componente · 2 min
 
 ```bash
 cd lab/solution
-ng generate component sesiones/s01 --flat
+ng generate component sessions/s01 --flat
 ```
 
 > «Esto es el **CLI**, la herramienta de línea de comandos de Angular. Le pedí un componente y me creó cuatro archivos: el TypeScript, el HTML, el CSS y uno de tests.»
@@ -169,7 +169,7 @@ Abrí el `.ts` y leelo en voz alta, línea por línea:
 
 ### 0:22 — Que aparezca en pantalla · 2 min
 
-Sumá la ruta en `app.routes.ts` y `disponible: true` en `sesiones.ts`. Navegá a `/s01`.
+Sumá la ruta en `app.routes.ts` y `available: true` en `sessions.ts`. Navegá a `/s01`.
 
 > «Fíjense que hicieron falta **dos cosas**: la ruta, para que la dirección exista, y el índice, para que aparezca en el menú de la izquierda. Son dos archivos distintos y hay que tocar los dos. Es el error más común de la clase que viene.»
 
@@ -182,31 +182,31 @@ Sumá la ruta en `app.routes.ts` y `disponible: true` en `sesiones.ts`. Navegá 
 Escribí en la clase:
 
 ```ts
-protected cafe = { nombre: 'Yirgacheffe', origen: 'Etiopía', precio: 42, disponible: true };
+protected coffee = { name: 'Yirgacheffe', origin: 'Etiopía', price: 42, available: true };
 ```
 
 Y en el template:
 
 ```html
-<h2>{{ cafe.nombre }}</h2>
-<p>{{ cafe.origen }}</p>
-<p>{{ cafe.precio }}</p>
+<h2>{{ coffee.name }}</h2>
+<p>{{ coffee.origin }}</p>
+<p>{{ coffee.price }}</p>
 ```
 
 > «Las llaves dobles dicen: “Angular, poné acá el valor de esta expresión, como texto”.»
 
-**Ahora hacé la demostración que vale por toda la explicación:** cambiá `precio: 42` a `precio: 55` y guardá.
+**Ahora hacé la demostración que vale por toda la explicación:** cambiá `price: 42` a `price: 55` y guardá.
 
 > «Cambié **un solo lugar** —la clase— y la pantalla se actualizó sola. Eso es el trato: el dato vive en un lugar, y el template lo mira. Nunca más vas a ir a buscar un elemento para escribirle el número.»
 
 ### 0:27 — Property binding · 3 min
 
-> «Ahora quiero que la card se vea distinta cuando no hay stock. La clase CSS ya existe, se llama `producto--agotado`.»
+> «Ahora quiero que la card se vea distinta cuando no hay stock. La clase CSS ya existe, se llama `product--soldout`.»
 
 Escribí primero **el error**, a propósito:
 
 ```html
-<div class="producto producto--agotado">
+<div class="product product--soldout">
 ```
 
 > «Así queda puesta siempre, y no es lo que quiero. Necesito que dependa de un dato.»
@@ -214,14 +214,14 @@ Escribí primero **el error**, a propósito:
 Y ahora la forma correcta:
 
 ```html
-<div class="producto" [class.producto--agotado]="!cafe.disponible">
+<div class="product" [class.product--soldout]="!coffee.available">
 ```
 
 > «Los corchetes cambian todo. Sin corchetes, lo que va entre comillas es **texto literal**. Con corchetes, es **una expresión de TypeScript** que Angular evalúa.»
 >
 > «Y fíjense que puedo tener las dos cosas en el mismo elemento: `class` con lo que va siempre, y `[class.algo]` con lo que va a veces. **No se pisan, se suman.**»
 
-Cambiá `disponible` a `false` y mostrá el resultado.
+Cambiá `available` a `false` y mostrá el resultado.
 
 ### 0:30 — Event binding · 3 min
 
@@ -230,16 +230,16 @@ Cambiá `disponible` a `false` y mostrá el resultado.
 En la clase:
 
 ```ts
-protected alternarDisponibilidad(): void {
-  this.cafe = { ...this.cafe, disponible: !this.cafe.disponible };
+protected toggleAvailability(): void {
+  this.coffee = { ...this.coffee, available: !this.coffee.available };
 }
 ```
 
 En el template:
 
 ```html
-<button type="button" (click)="alternarDisponibilidad()">
-  {{ cafe.disponible ? 'Marcar agotado' : 'Marcar disponible' }}
+<button type="button" (click)="toggleAvailability()">
+  {{ coffee.available ? 'Marcar agotado' : 'Marcar available' }}
 </button>
 ```
 
@@ -249,19 +249,19 @@ Tocá el botón. Andá y volvé un par de veces.
 
 > «Y acá está lo de la detección de cambios: **tocaron el botón, entonces pasó algo, entonces Angular revisó**. Por eso el texto del botón y la clase del div se actualizaron los dos, sin que yo tocara nada más.»
 
-> Fijate en el `{ ...this.cafe, ... }`. Si alguien pregunta: «creo un objeto nuevo en vez de modificar el que estaba. Es una regla del curso y en la clase 3 van a ver por qué importa.» **No te extiendas más que eso.**
+> Fijate en el `{ ...this.coffee, ... }`. Si alguien pregunta: «creo un objeto nuevo en vez de modificar el que estaba. Es una regla del curso y en la clase 3 van a ver por qué importa.» **No te extiendas más que eso.**
 
 ### 0:33 — Two-way binding, y el error · 4 min
 
 > «Falta el cuarto: cuando la información tiene que ir en los dos sentidos. El caso típico es un input.»
 
-En la clase: `protected cliente = '';`
+En la clase: `protected customer = '';`
 
 En el template:
 
 ```html
-<input type="text" [(ngModel)]="cliente" />
-<p>Hola, {{ cliente }}</p>
+<input type="text" [(ngModel)]="customer" />
+<p>Hola, {{ customer }}</p>
 ```
 
 **Guardá. Va a fallar.** Leé el error completo en voz alta, del navegador o de la terminal:
@@ -318,7 +318,7 @@ Dos personas. **Una que le funciona y una que no** — a la segunda pedile permi
 3. «¿Cómo te diste cuenta?»
 4. «Si tuvieras que explicarle esta línea a alguien que no vino hoy, ¿qué le decís?»
 
-**Lo más probable que aparezca:** alguien escribió `class="producto--agotado"` en vez de `[class.producto--agotado]="…"`. Es la mejor pantalla posible para compartir — no la arregles vos, dejá que la encuentren entre todos.
+**Lo más probable que aparezca:** alguien escribió `class="product--soldout"` en vez de `[class.product--soldout]="…"`. Es la mejor pantalla posible para compartir — no la arregles vos, dejá que la encuentren entre todos.
 
 ---
 

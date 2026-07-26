@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { SESIONES_DISPONIBLES } from './sesiones';
+import { AVAILABLE_SESSIONS } from './sessions';
 
 /**
  * El armazón del lab: la barra lateral y el `router-outlet`.
@@ -19,5 +19,5 @@ import { SESIONES_DISPONIBLES } from './sesiones';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  protected readonly sesiones = SESIONES_DISPONIBLES;
+  protected readonly sessions = AVAILABLE_SESSIONS;
 }

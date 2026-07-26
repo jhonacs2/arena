@@ -9,18 +9,18 @@
   selector: 'app-demo',
   standalone: true,
   template: `
-    <p class="etiqueta {{ tono }}" [class.etiqueta--activa]="activo">
+    <p class="label {{ tone }}" [class.etiqueta--activa]="activo">
       Hola
     </p>
   `,
   styles: `
-    .etiqueta { border: 3px solid; padding: 8px; }
+    .label { border: 3px solid; padding: 8px; }
     .rojo { color: red; }
     .etiqueta--activa { background: gold; }
   `,
 })
 export class DemoComponent {
-  tono = 'rojo';
+  tone = 'rojo';
   activo = true;
 }
 ```
@@ -35,16 +35,16 @@ Escribí tu predicción en el chat antes de que ejecutemos.
 
 ## Cómo reproducirlo en clase
 
-En `lab/solution/src/app/sesiones/s01/s01.component.html`, en el `<div class="producto">`, agregá temporalmente:
+En `lab/solution/src/app/sessions/s01/s01.component.html`, en el `<div class="product">`, agregá temporalmente:
 
 ```html
-<p class="etiqueta {{ tono }}" [class.etiqueta--activa]="activo">Hola</p>
+<p class="label {{ tone }}" [class.etiqueta--activa]="activo">Hola</p>
 ```
 
 y en la clase:
 
 ```ts
-protected tono = 'rojo';
+protected tone = 'rojo';
 protected activo = true;
 ```
 

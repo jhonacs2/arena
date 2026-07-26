@@ -300,7 +300,7 @@
    Cuatro. No es un framework de utilidades: si hiciera falta una quinta, el
    estilo va en el componente. */
 @layer utilities {
-  .contenedor {
+  .container {
     width: 100%;
     max-width: var(--layout-max);
     margin-inline: auto;
@@ -314,7 +314,7 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .solo-lectores {
+  .sr-only {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -326,7 +326,7 @@
     border: 0;
   }
 
-  .apilado {
+  .stack {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);

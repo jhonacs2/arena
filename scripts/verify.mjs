@@ -342,6 +342,8 @@ check('contrato', 'los archivos generados están al día', () => {
 
 check('contrato', 'los mocks del frontend salen del seed', () => runScript('gen-mocks.mjs', ['--check']));
 
+check('código', 'los identificadores están en inglés', () => runScript('check-language.mjs', ['--quiet']));
+
 check('diseño', 'la paleta cumple contraste AA', () => runScript('check-contrast.mjs', ['--quiet']));
 
 check('diseño', 'la gramática de sedas no colisiona dentro de una carrera', () => runScript('gen-silks-specimen.mjs'));

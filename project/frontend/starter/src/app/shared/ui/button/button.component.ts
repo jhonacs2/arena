@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-export type ButtonVariant = 'primario' | 'secundario' | 'fantasma' | 'peligro';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**
  * El botón del sistema.
  *
- *   <app-button (accionar)="apostar()">Apostar</app-button>
- *   <app-button variant="fantasma" size="sm" [disabled]="cargando()">Cancelar</app-button>
+ *   <app-button (pressed)="placeBet()">Apostar</app-button>
+ *   <app-button variant="ghost" size="sm" [disabled]="cargando()">Cancelar</app-button>
  *
  * Envuelve un `<button>` nativo en vez de estilar un `<div>`: así el teclado,
  * el foco y los lectores de pantalla funcionan sin que haya que reimplementarlos.
@@ -19,10 +19,10 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   template: `
     <button
       [type]="type()"
-      [class]="'boton boton--' + variant() + ' boton--' + size()"
+      [class]="'button boton--' + variant() + ' boton--' + size()"
       [disabled]="disabled()"
       [attr.aria-busy]="loading() ? 'true' : null"
-      (click)="accionar.emit()"
+      (click)="pressed.emit()"
     >
       <ng-content />
     </button>
@@ -30,12 +30,12 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   styleUrl: './button.component.css',
 })
 export class ButtonComponent {
-  readonly variant = input<ButtonVariant>('primario');
+  readonly variant = input<ButtonVariant>('primary');
   readonly size = input<ButtonSize>('md');
   readonly type = input<'button' | 'submit'>('button');
   readonly disabled = input(false);
   /** Marca el botón como ocupado sin deshabilitarlo: el foco no se pierde. */
   readonly loading = input(false);
 
-  readonly accionar = output<void>();
+  readonly pressed = output<void>();
 }

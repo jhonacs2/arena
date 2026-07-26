@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  *   <app-skeleton [lines]="3" />
  *   <app-skeleton shape="card" />
  *
- * Es uno de los tres estados obligatorios de toda vista con datos
+ * Es uno de los tres estados obligatorios de toda view con datos
  * (`CLAUDE.md` §11). Ocupa aproximadamente el espacio del contenido real para
  * que la página no salte cuando llegan los datos.
  */
@@ -15,12 +15,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="hueso hueso--{{ shape() }}" [attr.aria-hidden]="true">
+    <div class="bone hueso--{{ shape() }}" [attr.aria-hidden]="true">
       @for (line of placeholders(); track $index) {
-        <span class="barra"></span>
+        <span class="bar"></span>
       }
     </div>
-    <span class="solo-lectores" role="status">{{ label() }}</span>
+    <span class="sr-only" role="status">{{ label() }}</span>
   `,
   styleUrl: './skeleton.component.css',
 })

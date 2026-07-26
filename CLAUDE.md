@@ -73,7 +73,31 @@ a/                              ← workspace del instructor. Tiene TODO.
 
 ---
 
-## 3. Stack y versiones — bloqueadas
+## 3. El idioma
+
+> **El texto que ve el usuario, en español. El código, en inglés.** Siempre, en todo el repo.
+
+«Código» es todo lo que se nombra: variables, funciones, tipos, propiedades, clases CSS, custom properties, nombres de archivo y de test. **No** es el contenido de los strings, ni los comentarios, ni el texto del HTML, ni las URLs — eso es lo que lee el alumno.
+
+```ts
+// bien
+protected readonly races = RACES.map((race) => …);
+<span class="race__name">{{ view.race.name }}</span>
+
+// mal
+protected readonly carreras = RACES.map((carrera) => …);
+<span class="carrera__nombre">{{ vista.carrera.name }}</span>
+```
+
+Por qué importa en un curso: el alumno va a leer código en inglés toda su vida profesional. Un proyecto con `carrera.seleccionada` le enseña un dialecto que no existe fuera de esta clase.
+
+Lo verifica `scripts/check-language.mjs`, que corre dentro de `verify.mjs`. Si aparece una palabra en español que la lista no conoce, se agrega ahí — sale más barato que revisar a ojo.
+
+**Las URLs no son código.** `/carreras` y `/sistema` son navegación que el usuario lee, y van en español. Lo que está adentro del `.ts` que las declara, no.
+
+---
+
+## 4. Stack y versiones — bloqueadas
 
 ```
 Angular      18.2.x   (exacto, sin ^)
@@ -87,7 +111,7 @@ Instalá con `npm install --save-exact`. `package.json` no debe contener `^` ni 
 
 ---
 
-## 4. APIs prohibidas (no existen en Angular 18)
+## 5. APIs prohibidas (no existen en Angular 18)
 
 **La sección más importante del repo.** Aparecen mucho en material reciente y **no compilan** en 18:
 
@@ -107,7 +131,7 @@ Sí disponibles en 18, usalas: `signal()`, `computed()`, `effect()`, `input()`, 
 
 ---
 
-## 5. Verificación mecánica (obligatoria)
+## 6. Verificación mecánica (obligatoria)
 
 Una lista en prosa se degrada a lo largo de una sesión larga. **Corré `node scripts/verify.mjs` después de cada feature.**
 
@@ -138,7 +162,7 @@ Saltea con gracia lo que todavía no existe. Si falla, **arreglá antes de segui
 
 ---
 
-## 6. Definición de terminado
+## 7. Definición de terminado
 
 | | Desde |
 |---|---|
@@ -158,11 +182,11 @@ Los puntos 10 y 11 **no aplican antes de S7**: hasta ahí los datos son constant
 
 ---
 
-## 7. Cómo trabajar
+## 8. Cómo trabajar
 
 - Avanzá **una sesión a la vez**. Terminá S(N) completa —solución, starter, lab, materiales, verificación— antes de tocar S(N+1).
 - Antes de escribir un archivo nuevo, decí en qué carpeta va y por qué.
 - Si el spec es ambiguo o falta un endpoint, **preguntá**. No inventes rutas.
-- Si necesitás una API que §4 prohíbe, **pará y decilo**. No busques un rodeo silencioso.
+- Si necesitás una API que §5 prohíbe, **pará y decilo**. No busques un rodeo silencioso.
 - Commits pequeños con prefijo de sesión: `feat(s04): pipe de cuotas`.
 - **Verificá antes de afirmar.** Si escribís que algo pasa, corrélo y miralo. En S1 la respuesta «obvia» de un ejercicio de predicción resultó ser la contraria.

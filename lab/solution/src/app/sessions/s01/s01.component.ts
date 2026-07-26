@@ -29,46 +29,46 @@ import { FormsModule } from '@angular/forms';
 })
 export class S01Component {
   /** El producto del mostrador. */
-  protected cafe = {
-    nombre: 'Yirgacheffe',
-    origen: 'Etiopía',
-    precio: 42,
-    disponible: true,
+  protected coffee = {
+    name: 'Yirgacheffe',
+    origin: 'Etiopía',
+    price: 42,
+    available: true,
   };
 
   /** Lo que el cliente escribe. Va y viene con `[(ngModel)]`. */
-  protected cliente = '';
-  protected cantidad = 1;
+  protected customer = '';
+  protected quantity = 1;
 
   /** Los pedidos ya tomados. */
-  protected pedidos: readonly string[] = [];
+  protected orders: readonly string[] = [];
 
   /** Se recalcula sola cada vez que Angular repinta. */
   protected get total(): number {
-    return this.cafe.precio * this.cantidad;
+    return this.coffee.price * this.quantity;
   }
 
-  protected get puedeAgregar(): boolean {
-    return this.cafe.disponible && this.cantidad > 0 && this.cliente.trim().length > 0;
+  protected get canAddOrder(): boolean {
+    return this.coffee.available && this.quantity > 0 && this.customer.trim().length > 0;
   }
 
-  protected agregar(): void {
-    if (!this.puedeAgregar) return;
+  protected addOrder(): void {
+    if (!this.canAddOrder) return;
 
     // Nunca `push` sobre el estado: se crea un array nuevo. Es la regla de
     // inmutabilidad de project/frontend/CLAUDE.md, y en S3 va a ser la diferencia entre que
     // la vista se actualice y que no.
-    this.pedidos = [...this.pedidos, `${this.cantidad} × ${this.cafe.nombre} para ${this.cliente.trim()}`];
+    this.orders = [...this.orders, `${this.quantity} × ${this.coffee.name} para ${this.customer.trim()}`];
 
-    this.cliente = '';
-    this.cantidad = 1;
+    this.customer = '';
+    this.quantity = 1;
   }
 
-  protected alternarDisponibilidad(): void {
-    this.cafe = { ...this.cafe, disponible: !this.cafe.disponible };
+  protected toggleAvailability(): void {
+    this.coffee = { ...this.coffee, available: !this.coffee.available };
   }
 
-  protected limpiar(): void {
-    this.pedidos = [];
+  protected clearOrders(): void {
+    this.orders = [];
   }
 }

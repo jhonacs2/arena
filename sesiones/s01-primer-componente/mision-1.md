@@ -25,11 +25,11 @@ Creá el componente con el CLI y hacelo alcanzable en `/s01`. Acordate: son **do
 
 > Antes de seguir, comprobalo: la dirección `/s01` tiene que abrir algo, y «Primer componente» tiene que aparecer en la barra.
 
-**2 · Interpolación.** Poné en la clase un objeto `cafe` con nombre, origen, precio y disponible. Mostralos.
+**2 · Interpolación.** Poné en la clase un objeto `coffee` con nombre, origen, precio y disponible. Mostralos.
 
 > Comprobalo: cambiá el precio en el `.ts`. Si la pantalla no cambia sola, todavía no está.
 
-**3 · Property binding.** Que el contenedor lleve la clase `producto--agotado` **solo** cuando no hay stock, y que el texto diga «Disponible» o «Agotado».
+**3 · Property binding.** Que el contenedor lleve la clase `product--soldout` **solo** cuando no hay stock, y que el texto diga «Disponible» o «Agotado».
 
 **4 · Event binding.** Un botón que alterne la disponibilidad, con el texto cambiando según el estado.
 

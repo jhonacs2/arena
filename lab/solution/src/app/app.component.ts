@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { SESIONES } from './sesiones';
+import { SESSIONS } from './sessions';
 
 /**
  * El armazón del lab.
@@ -18,5 +18,5 @@ import { SESIONES } from './sesiones';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  protected readonly sesiones = SESIONES;
+  protected readonly sessions = SESSIONS;
 }

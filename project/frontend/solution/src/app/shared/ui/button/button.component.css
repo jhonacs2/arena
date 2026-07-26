@@ -2,7 +2,7 @@
   display: inline-block;
 }
 
-.boton {
+.button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -27,62 +27,62 @@
 
 /* El único efecto de profundidad del sistema: al presionar, el objeto se
    hunde de verdad — se desplaza lo mismo que pierde de sombra. */
-.boton:active:not(:disabled) {
+.button:active:not(:disabled) {
   transform: translate(2px, 2px);
   box-shadow: var(--shadow-hard-sm);
 }
 
-.boton:disabled {
+.button:disabled {
   cursor: not-allowed;
   opacity: 0.45;
   box-shadow: none;
 }
 
 /* ── Variantes ─────────────────────────────────────────────────────────── */
-.boton--primario {
+.button--primary {
   background: var(--accent);
   color: var(--accent-ink);
 }
 
-.boton--secundario {
+.button--secondary {
   background: var(--surface);
   color: var(--text);
 }
 
-.boton--peligro {
+.button--danger {
   background: var(--danger);
   color: var(--danger-ink);
 }
 
 /* Fantasma: sin sombra ni borde hasta que se lo apunta. Es para acciones
    terciarias — cancelar, volver — que no tienen que competir con la principal. */
-.boton--fantasma {
+.button--ghost {
   background: transparent;
   color: var(--text);
   border-color: transparent;
   box-shadow: none;
 }
 
-.boton--fantasma:hover:not(:disabled),
-.boton--fantasma:focus-visible {
+.button--ghost:hover:not(:disabled),
+.button--ghost:focus-visible {
   border-color: var(--border);
   box-shadow: var(--shadow-hard-sm);
 }
 
 /* ── Tamaños ───────────────────────────────────────────────────────────── */
-.boton--sm {
+.button--sm {
   font-size: var(--text-xs);
   padding: var(--space-1) var(--space-3);
   min-block-size: 2rem;
 }
 
-.boton--md {
+.button--md {
   font-size: var(--text-sm);
   padding: var(--space-2) var(--space-4);
   min-block-size: 2.75rem;
 }
 
-.boton--lg {
+.button--lg {
   font-size: var(--text-lg);
   padding: var(--space-3) var(--space-6);
   min-block-size: 3.25rem;
@@ -95,7 +95,7 @@
     display: block;
   }
 
-  .boton--lg {
+  .button--lg {
     inline-size: 100%;
   }
 }

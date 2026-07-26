@@ -1,23 +1,23 @@
-<a class="saltar" href="#contenido">Saltar al contenido</a>
+<a class="skip-link" href="#content">Saltar al contenido</a>
 
 <div class="lab">
-  <aside class="barra">
-    <p class="barra__titulo">Lab</p>
-    <p class="barra__sub">Módulo Angular</p>
+  <aside class="sidebar">
+    <p class="sidebar__title">Lab</p>
+    <p class="sidebar__subtitle">Módulo Angular</p>
 
     <nav aria-label="Sesiones">
-      <ol class="sesiones" role="list">
-        @for (sesion of sesiones; track sesion.slug) {
+      <ol class="sessions" role="list">
+        @for (session of sessions; track session.slug) {
           <li>
-            @if (sesion.disponible) {
-              <a [routerLink]="'/' + sesion.slug" routerLinkActive="activa">
-                <span class="sesiones__num">{{ sesion.numero }}</span>
-                <span class="sesiones__titulo">{{ sesion.titulo }}</span>
+            @if (session.available) {
+              <a [routerLink]="'/' + session.slug" routerLinkActive="active">
+                <span class="sessions__number">{{ session.number }}</span>
+                <span class="sessions__title">{{ session.title }}</span>
               </a>
             } @else {
-              <span class="pendiente" aria-disabled="true">
-                <span class="sesiones__num">{{ sesion.numero }}</span>
-                <span class="sesiones__titulo">{{ sesion.titulo }}</span>
+              <span class="locked" aria-disabled="true">
+                <span class="sessions__number">{{ session.number }}</span>
+                <span class="sessions__title">{{ session.title }}</span>
               </span>
             }
           </li>
@@ -26,7 +26,7 @@
     </nav>
   </aside>
 
-  <main id="contenido" class="contenido" tabindex="-1">
+  <main id="content" class="content" tabindex="-1">
     <router-outlet />
   </main>
 </div>

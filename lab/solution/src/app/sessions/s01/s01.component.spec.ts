@@ -27,88 +27,88 @@ describe('S01Component · los cuatro bindings', () => {
 
   it('1 · interpola el producto desde la clase', () => {
     expect($('h2').textContent).toContain('Yirgacheffe');
-    expect($('.producto__origen').textContent).toContain('Etiopía');
-    expect($('.producto__precio').textContent).toContain('42');
+    expect($('.product__origin').textContent).toContain('Etiopía');
+    expect($('.product__price').textContent).toContain('42');
   });
 
   it('2 · pone la clase de agotado solo cuando corresponde', () => {
-    expect($('.producto').classList).not.toContain('producto--agotado');
+    expect($('.product').classList).not.toContain('product--soldout');
 
-    $('.producto .boton').click();
+    $('.product .button').click();
     fixture.detectChanges();
 
-    expect($('.producto').classList).toContain('producto--agotado');
-    expect($('.producto__estado').textContent).toContain('Agotado');
+    expect($('.product').classList).toContain('product--soldout');
+    expect($('.product__status').textContent).toContain('Agotado');
   });
 
   it('3 · el botón dispara el método de la clase', () => {
-    const antes = $('.producto__estado').textContent;
-    $('.producto .boton').click();
+    const before = $('.product__status').textContent;
+    $('.product .button').click();
     fixture.detectChanges();
 
-    expect($('.producto__estado').textContent).not.toBe(antes);
+    expect($('.product__status').textContent).not.toBe(before);
   });
 
   it('4 · el total se actualiza mientras se escribe', async () => {
-    const cantidad = $('input[name="cantidad"]') as HTMLInputElement;
-    cantidad.value = '3';
-    cantidad.dispatchEvent(new Event('input'));
+    const quantity = $('input[name="quantity"]') as HTMLInputElement;
+    quantity.value = '3';
+    quantity.dispatchEvent(new Event('input'));
     await fixture.whenStable();
     fixture.detectChanges();
 
     // 42 × 3
-    expect($('.pedido__total').textContent).toContain('126');
+    expect($('.order__total').textContent).toContain('126');
   });
 
   it('el botón de agregar está deshabilitado hasta que hay nombre', async () => {
-    const boton = $('.pedido .boton') as HTMLButtonElement;
-    expect(boton.disabled).withContext('sin nombre tendría que estar deshabilitado').toBe(true);
+    const button = $('.order .button') as HTMLButtonElement;
+    expect(button.disabled).withContext('sin nombre tendría que estar deshabilitado').toBe(true);
 
-    const cliente = $('input[name="cliente"]') as HTMLInputElement;
-    cliente.value = 'Ana';
-    cliente.dispatchEvent(new Event('input'));
+    const customer = $('input[name="customer"]') as HTMLInputElement;
+    customer.value = 'Ana';
+    customer.dispatchEvent(new Event('input'));
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(boton.disabled).toBe(false);
+    expect(button.disabled).toBe(false);
   });
 
   it('agregar suma una línea a la comanda y limpia el formulario', fakeAsync(() => {
-    const cliente = $('input[name="cliente"]') as HTMLInputElement;
-    cliente.value = 'Bruno';
-    cliente.dispatchEvent(new Event('input'));
+    const customer = $('input[name="customer"]') as HTMLInputElement;
+    customer.value = 'Bruno';
+    customer.dispatchEvent(new Event('input'));
     tick();
     fixture.detectChanges();
 
-    ($('.pedido .boton') as HTMLButtonElement).click();
+    ($('.order .button') as HTMLButtonElement).click();
     tick();
     fixture.detectChanges();
 
     // Lo que se ve: la línea nueva en la comanda.
-    const lineas = fixture.debugElement.queryAll(By.css('.comanda__lista li'));
-    expect(lineas.length).toBe(1);
-    expect((lineas[0]!.nativeElement as HTMLElement).textContent).toContain('Bruno');
+    const lines = fixture.debugElement.queryAll(By.css('.orders__list li'));
+    expect(lines.length).toBe(1);
+    expect((lines[0]!.nativeElement as HTMLElement).textContent).toContain('Bruno');
 
     // El vaciado se asserta sobre la clase y no sobre el `value` del input.
     // Que ngModel reescriba el DOM es tarea de Angular y su tiempo no se
     // estabiliza de forma confiable en el test; que la clase quede limpia es
     // la conducta que nos importa. La comprobación visual está en los
     // criterios de «Listo cuando» de mision-1.md.
-    const componente = fixture.componentInstance as unknown as { cliente: string; cantidad: number };
-    expect(componente.cliente).withContext('el nombre tendría que quedar vacío').toBe('');
-    expect(componente.cantidad).toBe(1);
+    const componente = fixture.componentInstance as unknown as { customer: string; quantity: number };
+    expect(componente.customer).withContext('el nombre tendría que quedar vacío').toBe('');
+    expect(componente.quantity).toBe(1);
   }));
 
   it('no muta el array de pedidos', () => {
     // La regla de inmutabilidad del curso. Si alguien usa push, la vista con
-    // OnPush deja de actualizarse y este test lo dice antes que el navegador.
-    const componente = fixture.componentInstance as unknown as { pedidos: readonly string[] };
-    const original = componente.pedidos;
+    // OnPush deja de actualizarse y este test lo dice before que el navegador.
+    const componente = fixture.componentInstance as unknown as { orders: readonly string[] };
+    const original = componente.orders;
 
-    (fixture.componentInstance as unknown as { cliente: string }).cliente = 'Caro';
-    (fixture.componentInstance as unknown as { agregar: () => void }).agregar();
+    (fixture.componentInstance as unknown as { customer: string }).customer = 'Caro';
+    (fixture.componentInstance as unknown as { addOrder: () => void }).addOrder();
 
-    expect(componente.pedidos).not.toBe(original);
+    expect(componente.orders).not.toBe(original);
     expect(original.length).toBe(0);
   });
 });

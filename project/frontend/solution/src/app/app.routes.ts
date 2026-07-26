@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 /**
  * Rutas de la aplicación.
  *
- * `loadComponent` carga la vista recién cuando se navega a ella. Se usa desde
+ * `loadComponent` carga la view recién cuando se navega a ella. Se usa desde
  * el principio para que en S9, cuando se explique lazy loading, el alumno lo
  * reconozca en lugar de verlo por primera vez.
  *
@@ -12,7 +12,7 @@ import { Routes } from '@angular/router';
  */
 export const routes: Routes = [
   {
-    path: 'carreras',
+    path: 'races',
     title: 'Carreras · Hipódromo',
     loadComponent: () =>
       import('./features/races/race-list.component').then((m) => m.RaceListComponent),
@@ -21,11 +21,11 @@ export const routes: Routes = [
     path: 'sistema',
     title: 'Sistema de diseño · Hipódromo',
     loadComponent: () =>
-      import('./features/sistema/sistema.component').then((m) => m.SistemaComponent),
+      import('./features/design-system/design-system.component').then((m) => m.DesignSystemComponent),
   },
-  { path: '', redirectTo: 'carreras', pathMatch: 'full' },
+  { path: '', redirectTo: 'races', pathMatch: 'full' },
   // La ruta comodín va SIEMPRE al final: el router toma la primera que
   // coincide, así que declarada arriba se comería todas las demás. Es uno de
   // los "predice y ejecuta" de S9.
-  { path: '**', redirectTo: 'carreras' },
+  { path: '**', redirectTo: 'races' },
 ];

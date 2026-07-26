@@ -28,12 +28,12 @@ svg {
 
 /* El contorno usa el color de borde del tema: tinta sobre tiza en claro, tiza
    sobre pizarra en oscuro. Es la misma inversión que el resto del sistema. */
-.contorno {
+.outline {
   stroke: var(--border);
   stroke-width: 1.5;
   stroke-linejoin: round;
 }
 
-.cuello {
+.collar {
   fill: var(--border);
 }

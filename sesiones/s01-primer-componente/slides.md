@@ -177,7 +177,7 @@ acá hace que a las 0:35 lo reconozcan solos.
   templateUrl: './s01.component.html',
 })
 export class S01Component {
-  protected cafe = { nombre: 'Yirgacheffe', precio: 42 };
+  protected coffee = { name: 'Yirgacheffe', price: 42 };
 }
 ```
 
@@ -193,13 +193,13 @@ no hay ningún NgModule que lo haga por él."
 ## Los cuatro, en cuatro líneas
 
 ```html
-<h2>{{ cafe.nombre }}</h2>
+<h2>{{ coffee.name }}</h2>
 
-<div [class.agotado]="!cafe.disponible">…</div>
+<div [class.agotado]="!coffee.available">…</div>
 
-<button (click)="agregar()">Pedir</button>
+<button (click)="addOrder()">Pedir</button>
 
-<input [(ngModel)]="cliente" />
+<input [(ngModel)]="customer" />
 ```
 
 <!--
@@ -235,7 +235,7 @@ todos en voz alta, sin resolver:
 Buscá `TODO(S1)` en `lab/starter`. Están numerados del 1 al 4.
 
 1. **Interpolación** — nombre, origen y precio
-2. **Property binding** — la clase `producto--agotado`
+2. **Property binding** — la clase `product--soldout`
 3. **Event binding** — el botón de disponibilidad
 4. **Two-way** — cliente y cantidad
 
@@ -299,12 +299,12 @@ predice-y-ejecuta/respuestas.md.
 ## 1 · ¿Qué clases quedan?
 
 ```html
-<p class="etiqueta {{ tono }}"
+<p class="label {{ tone }}"
    [class.etiqueta--activa]="activo">Hola</p>
 ```
 
 ```ts
-tono = 'rojo';
+tone = 'rojo';
 activo = true;
 ```
 
@@ -328,10 +328,10 @@ SU clase y nada más. Por eso en la Misión 2 van a usar las dos juntas.
 @Component({
   standalone: true,
   imports: [],
-  template: `<input [(ngModel)]="nombre" />
-             <p>Hola, {{ nombre }}</p>`,
+  template: `<input [(ngModel)]="name" />
+             <p>Hola, {{ name }}</p>`,
 })
-export class DemoComponent { nombre = ''; }
+export class DemoComponent { name = ''; }
 ```
 
 <!--
@@ -396,11 +396,11 @@ Circular. Escuchar más que hablar. La pareja que termina recibe la extensión.
 Las ocho carreras ya están. Falta conectarlas.
 
 - **Interpolación** — estado, nombre, hora, competidores
-- **Property binding** — `carrera--viva`, `carrera--terminada`, `carrera--abierta`
-- **Event binding** — `(click)` → `seleccionar(vista)`
+- **Property binding** — `race--live`, `race--finished`, `race--open`
+- **Event binding** — `(click)` → `select(view)`
 - **Two-way** — el monto del simulador
 
-Y en el `.ts`: `pagoPotencial` devuelve siempre 0, y `seleccionar()` nunca deselecciona.
+Y en el `.ts`: `payout` devuelve siempre 0, y `select()` nunca deselecciona.
 
 <!--
 Si alguien se queja del orden de la lista: BIEN. Que les moleste. Ordenar y

@@ -8,7 +8,7 @@ export const routes: Routes = [
   {
     path: 's01',
     title: 'S1 · Primer componente · Lab',
-    loadComponent: () => import('./sesiones/s01/s01.component').then((m) => m.S01Component),
+    loadComponent: () => import('./sessions/s01/s01.component').then((m) => m.S01Component),
   },
   { path: '', redirectTo: 's01', pathMatch: 'full' },
   { path: '**', redirectTo: 's01' },

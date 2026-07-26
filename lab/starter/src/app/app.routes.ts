@@ -15,17 +15,17 @@ export const routes: Routes = [
   //   {
   //     path: 's01',
   //     title: 'S1 · Primer componente · Lab',
-  //     loadComponent: () => import('./sesiones/s01/s01.component').then((m) => m.S01Component),
+  //     loadComponent: () => import('./sessions/s01/s01.component').then((m) => m.S01Component),
   //   },
   //
   // Y acordate de poner `disponible: true` en sesiones.ts, o el enlace no
   // aparece en la barra lateral.
 
   {
-    path: 'inicio',
+    path: 'home',
     title: 'Lab · Módulo Angular',
-    loadComponent: () => import('./inicio/inicio.component').then((m) => m.InicioComponent),
+    loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent),
   },
-  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-  { path: '**', redirectTo: 'inicio' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'home' },
 ];

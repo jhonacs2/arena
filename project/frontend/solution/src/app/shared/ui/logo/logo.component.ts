@@ -16,7 +16,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <svg viewBox="0 0 40 38" [attr.aria-label]="etiqueta()" role="img">
+    <svg viewBox="0 0 40 38" [attr.aria-label]="label()" role="img">
       <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
         <rect x="3.5" y="6.5" width="8" height="13" />
         <rect x="28.5" y="6.5" width="8" height="13" />
@@ -49,5 +49,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   `,
 })
 export class LogoComponent {
-  readonly etiqueta = input('Hipódromo');
+  readonly label = input('Hipódromo');
 }

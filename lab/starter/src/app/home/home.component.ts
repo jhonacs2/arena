@@ -11,28 +11,28 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header class="cabecera">
+    <header class="header">
       <p class="eyebrow">Módulo Angular · Talento DH</p>
       <h1>El lab</h1>
-      <p class="entrada">
-        Acá vas a practicar el concepto de cada clase, aislado y en chiquito, antes de aplicarlo al
+      <p class="intro">
+        Acá vas a practicar el concept de cada clase, aislado y en chiquito, antes de aplicarlo al
         proyecto del hipódromo.
       </p>
     </header>
 
-    <section class="aviso">
+    <section class="notice">
       <h2>Todavía no hay ninguna sesión</h2>
       <p>
-        La barra de la izquierda está vacía porque las rutas las declara alguien, y ese alguien vas
+        La sidebar de la izquierda está vacía porque las rutas las declara alguien, y ese alguien vas
         a ser vos. Al terminar la primera clase vas a ver aparecer <strong>S1</strong> ahí.
       </p>
-      <p class="chico">
+      <p class="small">
         Buscá <code>TODO(S1)</code> en <code>src/app/</code> para saber dónde empezar.
       </p>
     </section>
   `,
   styles: `
-    .cabecera {
+    .header {
       max-inline-size: 55ch;
       margin-block-end: var(--space-8);
     }
@@ -45,12 +45,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       color: var(--text-muted);
     }
 
-    .entrada {
+    .intro {
       margin-block-start: var(--space-3);
       color: var(--text-muted);
     }
 
-    .aviso {
+    .notice {
       max-inline-size: 60ch;
       padding: var(--space-6);
       border: var(--border-width) solid var(--border);
@@ -58,15 +58,15 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       background: var(--surface-raised);
     }
 
-    .aviso h2 {
+    .notice h2 {
       margin-block-end: var(--space-3);
     }
 
-    .aviso p + p {
+    .notice p + p {
       margin-block-start: var(--space-3);
     }
 
-    .chico {
+    .small {
       font-size: var(--text-sm);
       color: var(--text-muted);
     }
@@ -80,4 +80,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     }
   `,
 })
-export class InicioComponent {}
+export class HomeComponent {}

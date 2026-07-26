@@ -12,12 +12,12 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   template: `
-    <input type="text" [(ngModel)]="nombre" />
-    <p>Hola, {{ nombre }}</p>
+    <input type="text" [(ngModel)]="name" />
+    <p>Hola, {{ name }}</p>
   `,
 })
 export class DemoComponent {
-  nombre = '';
+  name = '';
 }
 ```
 
@@ -36,4 +36,4 @@ Escribí tu número en el chat antes de que ejecutemos.
 
 ## Cómo reproducirlo en clase
 
-En `lab/solution/src/app/sesiones/s01/s01.component.ts`, sacá `FormsModule` de `imports` y guardá. La consola de `ng serve` va a hablar sola.
+En `lab/solution/src/app/sessions/s01/s01.component.ts`, sacá `FormsModule` de `imports` y guardá. La consola de `ng serve` va a hablar sola.

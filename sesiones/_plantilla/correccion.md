@@ -27,7 +27,7 @@ ng generate component sesiones/sNN --flat
 Son **dos archivos** y hay que tocar los dos:
 
 - `app.routes.ts` — para que la dirección exista. Va antes del comodín `**`.
-- `sesiones.ts` — `disponible: true`, para que aparezca en la barra lateral.
+- `sessions.ts` — `available: true`, para que aparezca en la barra lateral.
 
 *Por qué dos: el router resuelve direcciones; el menú es una lista que dibuja un componente. Ninguno se entera del otro.*
 

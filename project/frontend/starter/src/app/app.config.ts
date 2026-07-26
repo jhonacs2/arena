@@ -11,7 +11,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     // El proyecto corre CON zone.js. En Angular 18 la alternativa sin zona se
     // llama `provideExperimentalZonelessChangeDetection` y no la usamos:
-    // CLAUDE.md §4. `eventCoalescing` junta varios eventos del mismo tick en
+    // CLAUDE.md §5. `eventCoalescing` junta varios eventos del mismo tick en
     // una sola detección de cambios.
     provideZoneChangeDetection({ eventCoalescing: true }),
 

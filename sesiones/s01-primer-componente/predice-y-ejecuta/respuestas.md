@@ -24,12 +24,12 @@ El paso 2 es todo el ejercicio. Ejecutar primero lo convierte en una demo y no a
 **Qué pasa de verdad:** quedan **las tres clases**. El atributo renderizado es exactamente:
 
 ```
-class="etiqueta rojo etiqueta--activa"
+class="label rojo etiqueta--activa"
 ```
 
 **Por qué:** `class="…"` y `[class.x]="…"` **no compiten, se combinan**. Angular trata el binding específico —`[class.x]`— como dueño de esa clase y nada más; el resto del atributo `class` queda intacto. Son dos mecanismos que escriben en lugares distintos del mismo atributo.
 
-**La regla que se llevan:** *podés usar `class` y `[class.x]` en el mismo elemento sin miedo.* Es exactamente lo que van a hacer en la Misión 2: `class="carrera"` fija, más `[class.carrera--viva]` condicional.
+**La regla que se llevan:** *podés usar `class` y `[class.x]` en el mismo elemento sin miedo.* Es exactamente lo que van a hacer en la Misión 2: `class="race"` fija, más `[class.race--live]` condicional.
 
 > Si alguien pregunta por `[class]="objeto"` —la forma que reemplaza todo el conjunto—: existe, y ahí sí hay reglas de precedencia. Se ve en S4 con directivas. Hoy no.
 

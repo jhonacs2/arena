@@ -1,0 +1,77 @@
+<header class="header">
+  <p class="eyebrow">Sesión 1 · Lab</p>
+  <h1>Café Compilado</h1>
+  <p class="intro">
+    Un componente standalone y los cuatro caminos entre la clase y el template.
+  </p>
+</header>
+
+<section class="counter">
+  <!-- 1 · INTERPOLACIÓN — clase → template.
+       Todo lo que va entre llaves sale de una propiedad de la clase. -->
+  <div class="product" [class.product--soldout]="!coffee.available">
+    <h2>{{ coffee.name }}</h2>
+    <p class="product__origin">{{ coffee.origin }}</p>
+    <p class="product__price num">{{ coffee.price }}</p>
+
+    <!-- 2 · PROPERTY BINDING — clase → template, pero a una PROPIEDAD del
+         elemento y no a texto. Los corchetes dicen "esto es una expresión de
+         TypeScript", no la cadena literal.
+
+         Escribir class="product--soldout" pondría la clase siempre;
+         [class.product--soldout]="!cafe.disponible" la pone solo si toca. -->
+    <p class="product__status">
+      {{ coffee.available ? 'Disponible' : 'Agotado' }}
+    </p>
+
+    <!-- 3 · EVENT BINDING — template → clase. Los paréntesis escuchan un
+         evento del DOM y llaman a un método. -->
+    <button type="button" class="button button--ghost" (click)="toggleAvailability()">
+      {{ coffee.available ? 'Marcar agotado' : 'Marcar available' }}
+    </button>
+  </div>
+
+  <!-- 4 · TWO-WAY BINDING — en los dos sentidos.
+       [(ngModel)] es azúcar sobre [ngModel] + (ngModelChange): si el usuario
+       escribe, cambia la propiedad; si la propiedad cambia, cambia el input.
+       NO funciona sin FormsModule en los imports del componente. -->
+  <form class="order" (submit)="$event.preventDefault(); addOrder()">
+    <h2>Tomar el pedido</h2>
+
+    <label class="field">
+      <span>Nombre del cliente</span>
+      <input name="customer" type="text" autocomplete="off" [(ngModel)]="customer" />
+    </label>
+
+    <label class="field">
+      <span>Cantidad</span>
+      <input name="quantity" type="number" min="1" max="20" [(ngModel)]="quantity" />
+    </label>
+
+    <!-- La interpolación se actualiza sola mientras se escribe: es el mismo
+         valor que el input, en el otro sentido. -->
+    <p class="order__total">
+      Total: <span class="num">{{ total }}</span>
+      @if (customer) {
+        <span class="order__for">para {{ customer }}</span>
+      }
+    </p>
+
+    <button type="submit" class="button" [disabled]="!canAddOrder">Agregar al pedido</button>
+  </form>
+</section>
+
+<section class="orders">
+  <h2>Comanda</h2>
+
+  @if (orders.length === 0) {
+    <p class="empty">Todavía no hay nada. Tomá el primer pedido.</p>
+  } @else {
+    <ol class="orders__list" role="list">
+      @for (linea of orders; track $index) {
+        <li>{{ linea }}</li>
+      }
+    </ol>
+    <button type="button" class="button button--ghost" (click)="clearOrders()">Vaciar comanda</button>
+  }
+</section>

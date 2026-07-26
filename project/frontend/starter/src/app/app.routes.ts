@@ -28,7 +28,7 @@ export const routes: Routes = [
     path: 'sistema',
     title: 'Sistema de diseño · Hipódromo',
     loadComponent: () =>
-      import('./features/sistema/sistema.component').then((m) => m.SistemaComponent),
+      import('./features/design-system/design-system.component').then((m) => m.DesignSystemComponent),
   },
   { path: '', redirectTo: 'sistema', pathMatch: 'full' },
   // La ruta comodín va SIEMPRE al final: el router toma la primera que

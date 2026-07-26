@@ -45,7 +45,7 @@ Los tres que más se repiten, y que conviene tener listos para el bloque 0:05 de
 |---|---|
 | `status: string` | Acepta `'galopando'`. La unión de literales es lo que lo impide. |
 | `horses: Horse[]` sin `readonly` | El curso exige inmutabilidad; `readonly Horse[]` la hace explícita. |
-| `favorito: Horse` | El contrato admite carreras sin favorito calculable. Va `Horse \| undefined`. |
+| `favourite: Horse` | El contrato admite carreras sin favorito calculable. Va `Horse \| undefined`. |
 
 ---
 

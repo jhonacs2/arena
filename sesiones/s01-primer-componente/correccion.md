@@ -16,10 +16,10 @@ Para tres momentos:
 
 ```bash
 cd lab/starter
-ng generate component sesiones/s01 --flat
+ng generate component sessions/s01 --flat
 ```
 
-Aparecen cuatro archivos en `src/app/sesiones/s01/`: el `.ts`, el `.html`, el `.css` y el `.spec.ts`.
+Aparecen cuatro archivos en `src/app/sessions/s01/`: el `.ts`, el `.html`, el `.css` y el `.spec.ts`.
 
 **Por qué con el CLI y no a mano:** los nombra igual siempre y no se olvida de ninguno. No hace nada mágico — se pueden crear a mano y funciona igual.
 
@@ -35,16 +35,16 @@ Son **dos archivos** y hay que tocar los dos. Este es el paso que más se olvida
 {
   path: 's01',
   title: 'S1 · Primer componente · Lab',
-  loadComponent: () => import('./sesiones/s01/s01.component').then((m) => m.S01Component),
+  loadComponent: () => import('./sessions/s01/s01.component').then((m) => m.S01Component),
 },
 ```
 
 Va **antes** de `{ path: '**' }`. El router toma la primera ruta que coincide, y el comodín coincide con todo: declarado arriba se comería a las demás.
 
-**`src/app/sesiones.ts`** — para que aparezca en la barra lateral:
+**`src/app/sessions.ts`** — para que aparezca en la barra lateral:
 
 ```ts
-{ numero: 1, slug: 's01', …, disponible: true },
+{ numero: 1, slug: 's01', …, available: true },
 ```
 
 **Por qué en dos lugares:** el router resuelve direcciones; el menú es una lista que dibuja el componente de la barra. Son dos cosas distintas y ninguna se entera de la otra. Si solo hacés la ruta, la página existe pero nadie la encuentra; si solo hacés el índice, el enlace no lleva a ningún lado.
@@ -56,11 +56,11 @@ Va **antes** de `{ path: '**' }`. El router toma la primera ruta que coincide, y
 En `s01.component.ts`:
 
 ```ts
-protected cafe = {
-  nombre: 'Yirgacheffe',
-  origen: 'Etiopía',
-  precio: 42,
-  disponible: true,
+protected coffee = {
+  name: 'Yirgacheffe',
+  origin: 'Etiopía',
+  price: 42,
+  available: true,
 };
 ```
 
@@ -73,27 +73,27 @@ protected cafe = {
 En `s01.component.html`:
 
 ```html
-<h2>{{ cafe.nombre }}</h2>
-<p class="producto__origen">{{ cafe.origen }}</p>
-<p class="producto__precio num">{{ cafe.precio }}</p>
+<h2>{{ coffee.name }}</h2>
+<p class="producto__origen">{{ coffee.origin }}</p>
+<p class="producto__precio num">{{ coffee.price }}</p>
 ```
 
-**La comprobación que importa:** cambiá `precio: 42` por `precio: 55` en el `.ts` y guardá. Si la pantalla no cambia sola, la interpolación no está puesta.
+**La comprobación que importa:** cambiá `price: 42` por `price: 55` en el `.ts` y guardá. Si la pantalla no cambia sola, la interpolación no está puesta.
 
 ## A5 · Property binding — la clase condicional
 
 ```html
-<div class="producto" [class.producto--agotado]="!cafe.disponible">
+<div class="product" [class.product--soldout]="!coffee.available">
 ```
 
-**Por qué los corchetes:** sin ellos, `class.producto--agotado="..."` sería un atributo con texto literal. Con ellos, lo de las comillas es **una expresión de TypeScript** que Angular evalúa.
+**Por qué los corchetes:** sin ellos, `class.product--soldout="..."` sería un atributo con texto literal. Con ellos, lo de las comillas es **una expresión de TypeScript** que Angular evalúa.
 
 **Por qué se pueden usar `class` y `[class.x]` juntos:** no compiten. `class` pone las que van siempre; `[class.x]` es dueño de **esa** clase y de ninguna más.
 
 Y el texto de estado:
 
 ```html
-<p class="producto__estado">{{ cafe.disponible ? 'Disponible' : 'Agotado' }}</p>
+<p class="product__status">{{ coffee.available ? 'Disponible' : 'Agotado' }}</p>
 ```
 
 ## A6 · Event binding — el botón
@@ -101,33 +101,33 @@ Y el texto de estado:
 En la clase:
 
 ```ts
-protected alternarDisponibilidad(): void {
-  this.cafe = { ...this.cafe, disponible: !this.cafe.disponible };
+protected toggleAvailability(): void {
+  this.coffee = { ...this.coffee, available: !this.coffee.available };
 }
 ```
 
 En el template:
 
 ```html
-<button type="button" class="boton boton--fantasma" (click)="alternarDisponibilidad()">
-  {{ cafe.disponible ? 'Marcar agotado' : 'Marcar disponible' }}
+<button type="button" class="button button--ghost" (click)="toggleAvailability()">
+  {{ coffee.available ? 'Marcar agotado' : 'Marcar available' }}
 </button>
 ```
 
-**Por qué `{ ...this.cafe }` y no `this.cafe.disponible = !...`:** se crea un objeto nuevo en vez de modificar el que estaba. Es una regla del curso, y en S3 va a ser la diferencia entre que la vista se actualice y que no. Hoy alcanza con hacerlo.
+**Por qué `{ ...this.coffee }` y no `this.coffee.available = !...`:** se crea un objeto nuevo en vez de modificar el que estaba. Es una regla del curso, y en S3 va a ser la diferencia entre que la vista se actualice y que no. Hoy alcanza con hacerlo.
 
 **Por qué se actualizan el botón *y* el div:** porque hubo un clic. Angular repinta **después de que pasa algo**, y revisa todos los bindings de la pantalla, no solo el que tocaste.
 
 ## A7 · Two-way binding — y el error que hay que ver
 
 ```ts
-protected cliente = '';
-protected cantidad = 1;
+protected customer = '';
+protected quantity = 1;
 ```
 
 ```html
-<input name="cliente" type="text" autocomplete="off" [(ngModel)]="cliente" />
-<input name="cantidad" type="number" min="1" max="20" [(ngModel)]="cantidad" />
+<input name="customer" type="text" autocomplete="off" [(ngModel)]="customer" />
+<input name="quantity" type="number" min="1" max="20" [(ngModel)]="quantity" />
 ```
 
 **Va a fallar**, y está bien:
@@ -155,23 +155,23 @@ import { FormsModule } from '@angular/forms';
 
 ```ts
 protected get total(): number {
-  return this.cafe.precio * this.cantidad;
+  return this.coffee.price * this.quantity;
 }
 
-protected get puedeAgregar(): boolean {
-  return this.cafe.disponible && this.cantidad > 0 && this.cliente.trim().length > 0;
+protected get canAddOrder(): boolean {
+  return this.coffee.available && this.quantity > 0 && this.customer.trim().length > 0;
 }
 ```
 
 ```html
 <p class="pedido__total">
   Total: <span class="num">{{ total }}</span>
-  @if (cliente) {
-    <span class="pedido__para">para {{ cliente }}</span>
+  @if (customer) {
+    <span class="pedido__para">para {{ customer }}</span>
   }
 </p>
 
-<button type="submit" class="boton" [disabled]="!puedeAgregar">Agregar al pedido</button>
+<button type="submit" class="button" [disabled]="!canAddOrder">Agregar al order</button>
 ```
 
 **Por qué un `get` y no una propiedad:** un `get` se recalcula cada vez que Angular repinta, así que siempre está al día. Una propiedad habría que acordarse de actualizarla en cada lugar que cambia el precio o la cantidad.
@@ -181,19 +181,19 @@ protected get puedeAgregar(): boolean {
 ## A9 · La comanda
 
 ```ts
-protected pedidos: readonly string[] = [];
+protected orders: readonly string[] = [];
 
-protected agregar(): void {
-  if (!this.puedeAgregar) return;
+protected addOrder(): void {
+  if (!this.canAddOrder) return;
 
-  this.pedidos = [...this.pedidos, `${this.cantidad} × ${this.cafe.nombre} para ${this.cliente.trim()}`];
+  this.orders = [...this.orders, `${this.quantity} × ${this.coffee.name} para ${this.customer.trim()}`];
 
-  this.cliente = '';
-  this.cantidad = 1;
+  this.customer = '';
+  this.quantity = 1;
 }
 ```
 
-**Por qué `[...this.pedidos, x]` y no `push`:** misma regla que en A6. En S3 se explica; hoy se cumple.
+**Por qué `[...this.orders, x]` y no `push`:** misma regla que en A6. En S3 se explica; hoy se cumple.
 
 ---
 
@@ -205,7 +205,7 @@ Misma mecánica, con los datos del proyecto.
 
 ```bash
 cd project/frontend/starter
-ng generate component features/races/race-list --flat
+ng generate component features/carreras/race-list --flat
 ```
 
 **Por qué en `features/`:** es una pantalla del producto. La regla de dependencias dice que `features/` puede usar `core/` y `shared/`, y nunca al revés.
@@ -219,7 +219,7 @@ ng generate component features/races/race-list --flat
   path: 'carreras',
   title: 'Carreras · Hipódromo',
   loadComponent: () =>
-    import('./features/races/race-list.component').then((m) => m.RaceListComponent),
+    import('./features/carreras/race-list.component').then((m) => m.RaceListComponent),
 },
 ```
 
@@ -237,14 +237,14 @@ Y cambiá los dos `redirectTo: 'sistema'` por `'carreras'`.
 import { RACES } from '../../core/mocks';
 import { favourite, potentialPayout, type Horse, type Race } from '../../core/models';
 
-interface CarreraVista {
-  readonly carrera: Race;
+interface RaceView {
+  readonly race: Race;
   readonly hora: string;
-  readonly favorito: Horse | undefined;
-  readonly etiquetaEstado: string;
+  readonly favourite: Horse | undefined;
+  readonly statusLabel: string;
 }
 
-const ETIQUETAS: Record<Race['status'], string> = {
+const STATUS_LABELS: Record<Race['status'], string> = {
   upcoming: 'Por largar',
   live: 'En vivo',
   finished: 'Terminada',
@@ -252,14 +252,14 @@ const ETIQUETAS: Record<Race['status'], string> = {
 ```
 
 ```ts
-protected readonly carreras: readonly CarreraVista[] = RACES.map((carrera) => ({
-  carrera,
-  hora: this.formatearHora(carrera.startsAt),
-  favorito: favourite(carrera),
-  etiquetaEstado: ETIQUETAS[carrera.status],
+protected readonly races: readonly RaceView[] = RACES.map((race) => ({
+  race,
+  hora: this.formatTime(race.startsAt),
+  favourite: favourite(race),
+  statusLabel: STATUS_LABELS[race.status],
 }));
 
-private formatearHora(iso: string): string {
+private formatTime(iso: string): string {
   return new Intl.DateTimeFormat('es', {
     day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
   }).format(new Date(iso));
@@ -275,25 +275,25 @@ private formatearHora(iso: string): string {
 ## B4 · La lista
 
 ```html
-<ul class="carreras" role="list">
-  @for (vista of carreras; track vista.carrera.id) {
+<ul class="races" role="list">
+  @for (view of races; track view.race.id) {
     <li>
       <button
         type="button"
-        class="carrera"
-        [class.carrera--viva]="vista.carrera.status === 'live'"
-        [class.carrera--terminada]="vista.carrera.status === 'finished'"
-        [class.carrera--abierta]="seleccionada?.carrera?.id === vista.carrera.id"
-        [attr.aria-pressed]="seleccionada?.carrera?.id === vista.carrera.id"
-        (click)="seleccionar(vista)"
+        class="race"
+        [class.race--live]="view.race.status === 'live'"
+        [class.race--finished]="view.race.status === 'finished'"
+        [class.race--open]="selected?.race?.id === view.race.id"
+        [attr.aria-pressed]="selected?.race?.id === view.race.id"
+        (click)="select(view)"
       >
-        <span class="carrera__estado">{{ vista.etiquetaEstado }}</span>
-        <span class="carrera__nombre">{{ vista.carrera.name }}</span>
-        <span class="carrera__hora num">{{ vista.hora }}</span>
+        <span class="carrera__estado">{{ view.statusLabel }}</span>
+        <span class="carrera__nombre">{{ view.race.name }}</span>
+        <span class="carrera__hora num">{{ view.hora }}</span>
         <span class="carrera__pie">
-          {{ vista.carrera.horses.length }} competidores
-          @if (vista.favorito) {
-            · favorito {{ vista.favorito.name }} a {{ vista.favorito.odds.toFixed(2) }}
+          {{ view.race.horses.length }} competidores
+          @if (view.favourite) {
+            · favourite {{ view.favourite.name }} a {{ view.favourite.odds.toFixed(2) }}
           }
         </span>
       </button>
@@ -311,10 +311,10 @@ private formatearHora(iso: string): string {
 ## B5 · La selección
 
 ```ts
-protected seleccionada: CarreraVista | null = null;
+protected selected: RaceView | null = null;
 
-protected seleccionar(vista: CarreraVista): void {
-  this.seleccionada = this.seleccionada?.carrera.id === vista.carrera.id ? null : vista;
+protected select(view: RaceView): void {
+  this.selected = this.selected?.race.id === view.race.id ? null : view;
 }
 ```
 
@@ -323,18 +323,18 @@ protected seleccionar(vista: CarreraVista): void {
 ## B6 · El panel y el simulador
 
 ```ts
-protected monto = 100;
+protected amount = 100;
 
-protected get pagoPotencial(): number {
-  const cuota = this.seleccionada?.favorito?.odds ?? 0;
-  return potentialPayout(this.monto, cuota);
+protected get payout(): number {
+  const odds = this.selected?.favourite?.odds ?? 0;
+  return potentialPayout(this.amount, odds);
 }
 ```
 
 ```html
-<input name="monto" type="number" min="10" max="5000" step="10" [(ngModel)]="monto" />
+<input name="amount" type="number" min="10" max="5000" step="10" [(ngModel)]="amount" />
 <p class="simulador__pago">
-  {{ seleccionada.favorito.name }} paga <strong class="num">{{ pagoPotencial }}</strong>
+  {{ selected.favourite.name }} paga <strong class="num">{{ payout }}</strong>
 </p>
 ```
 

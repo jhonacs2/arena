@@ -7,7 +7,7 @@
 /* ── Salto al contenido ──────────────────────────────────────────────────
    Fuera de pantalla hasta que recibe el foco. No se oculta con
    `display: none`: eso lo sacaría del orden de tabulación y dejaría de servir. */
-.saltar {
+.skip-link {
   position: absolute;
   inset-block-start: -100%;
   inset-inline-start: var(--space-4);
@@ -21,12 +21,12 @@
   text-decoration: none;
 }
 
-.saltar:focus {
+.skip-link:focus {
   inset-block-start: var(--space-4);
 }
 
 /* ── Cabecera ──────────────────────────────────────────────────────────── */
-.cabecera {
+.header {
   border-block-end: var(--border-width) solid var(--border);
   background: var(--surface);
   position: sticky;
@@ -34,14 +34,14 @@
   z-index: 5;
 }
 
-.cabecera__interior {
+.header__inner {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   min-block-size: 4rem;
 }
 
-.marca {
+.brand {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -49,7 +49,7 @@
   color: var(--text);
 }
 
-.marca__nombre {
+.brand__name {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: var(--text-lg);
@@ -77,14 +77,14 @@
 
 /* La ruta activa se marca con el borde y el acento, no con un subrayado:
    el subrayado ya significa "enlace". */
-.nav a.activo {
+.nav a.active {
   background: var(--accent);
   color: var(--accent-ink);
   border-color: var(--border);
   box-shadow: var(--shadow-hard-sm);
 }
 
-.tema {
+.theme {
   inline-size: 2.75rem;
   block-size: 2.75rem;
   display: grid;
@@ -100,45 +100,45 @@
     box-shadow var(--dur-instant) var(--ease-snap);
 }
 
-.tema:active {
+.theme:active {
   transform: translate(2px, 2px);
   box-shadow: none;
 }
 
 /* ── Contenido ─────────────────────────────────────────────────────────── */
-.principal {
+.main-area {
   flex: 1;
   padding-block: var(--space-8) var(--space-16);
 }
 
 /* El outline del <main> aparecería al usar el salto al contenido; el foco se
    mueve igual y los lectores de pantalla lo anuncian. */
-.principal:focus {
+.main-area:focus {
   outline: none;
 }
 
 /* ── Pie ───────────────────────────────────────────────────────────────── */
-.pie {
+.footer {
   border-block-start: var(--border-width) solid var(--border);
   padding-block: var(--space-4);
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
 
-.pie p {
+.footer p {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-4);
   justify-content: space-between;
 }
 
-.pie__curso {
+.footer__course {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
 }
 
 @media (width < 30rem) {
-  .marca__nombre {
+  .brand__name {
     /* A 360px la navegación y el interruptor necesitan el ancho más que el
        nombre: la marca queda identificada por el isotipo. */
     position: absolute;

@@ -30,16 +30,16 @@ Escribí tu predicción en el chat antes de que ejecutemos.
 
 ## Cómo reproducirlo en clase
 
-En `lab/solution/src/app/sesiones/s01/s01.component.html`, cambiá temporalmente:
+En `lab/solution/src/app/sessions/s01/s01.component.html`, cambiá temporalmente:
 
 ```html
-<button type="button" class="boton boton--fantasma" (click)="alternarDisponibilidad()">
+<button type="button" class="button button--ghost" (click)="toggleAvailability()">
 ```
 
 por:
 
 ```html
-<button type="button" class="boton boton--fantasma" (click)="cafe.disponible">
+<button type="button" class="button button--ghost" (click)="coffee.available">
 ```
 
 El botón deja de hacer nada. **No hay ningún error.** Eso es lo interesante.

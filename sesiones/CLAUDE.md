@@ -83,7 +83,7 @@ El bloque 0:05 de S1 usa `s00-typescript/wayground.csv`. El quiz de S11 va a la 
 
 1. Copiar `_plantilla/` a `sesiones/sNN-<slug>/`. Slug corto y en español: `s01-primer-componente`.
 2. Escribir **primero el glosario y después `guion.md`**. Si el glosario no cierra, la sesión tiene dos temas y hay que partirla.
-3. **Lab:** crear `lab/{solution,starter}/src/app/sesiones/sNN/`, poner `disponible: true` en `sesiones.ts` **y** sumar la ruta en `app.routes.ts` — ver [`lab/CLAUDE.md`](../lab/CLAUDE.md).
+3. **Lab:** crear `lab/{solution,starter}/src/app/sessions/sNN/`, poner `available: true` en `sessions.ts` **y** sumar la ruta en `app.routes.ts` — ver [`lab/CLAUDE.md`](../lab/CLAUDE.md).
 4. **Hipódromo:** el slice en `solution/`. En `starter/` **no existe**: se construye en clase, y `correccion.md` es el camino.
 5. `slides.md`, misiones, predicciones, `wayground.csv`, exit ticket, tarea.
 6. `node scripts/verify.mjs` y commit `feat(sNN): …`.

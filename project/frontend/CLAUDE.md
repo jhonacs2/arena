@@ -22,7 +22,6 @@
 - `provideRouter(routes, withComponentInputBinding())` para que los params lleguen como `input()`.
 - Nada de `any`. `strict` más `noUncheckedIndexedAccess`, `noUnusedLocals` y `noUnusedParameters`.
 - Archivos en kebab-case, con sufijo real: `race-card.component.ts`.
-- **Todo el texto de la UI en español. Los identificadores del código, en inglés.** Sin excepciones en ninguno de los dos sentidos.
 
 ---
 

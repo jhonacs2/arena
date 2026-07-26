@@ -197,10 +197,10 @@ func shapeFromResponse(t *testing.T, res *httptest.ResponseRecorder) string {
 	return shapeOf(value)
 }
 
-// TestRespuestasCoincidenConLosSamples es EL test de contrato de este paquete.
+// TestResponsesMatchContractSamples es EL test de contrato de este paquete.
 // El frontend tiene interfaces TypeScript con exactamente estos nombres de
 // campo; si acá cambia uno, el otro lado se rompe sin que nadie se entere.
-func TestRespuestasCoincidenConLosSamples(t *testing.T) {
+func TestResponsesMatchContractSamples(t *testing.T) {
 	h, _ := newHarness(t)
 	token := h.login("ana@hipodromo.test")
 
@@ -258,9 +258,9 @@ func TestRespuestasCoincidenConLosSamples(t *testing.T) {
 	}
 }
 
-// TestLeaderboardCoincideConElGolden compara el cálculo del servidor contra
+// TestLeaderboardMatchesGolden compara el cálculo del servidor contra
 // docs/contract/seed/leaderboard.json, que es la expectativa escrita a mano.
-func TestLeaderboardCoincideConElGolden(t *testing.T) {
+func TestLeaderboardMatchesGolden(t *testing.T) {
 	h, _ := newHarness(t)
 
 	raw, err := seed.SeedFile("leaderboard.json")
@@ -301,7 +301,7 @@ func TestLeaderboardCoincideConElGolden(t *testing.T) {
 
 // ── Carreras ──────────────────────────────────────────────────────────────
 
-func TestListadoDeCarreras(t *testing.T) {
+func TestRaceListing(t *testing.T) {
 	h, _ := newHarness(t)
 
 	t.Run("ordena en vivo, por venir y terminadas", func(t *testing.T) {
@@ -353,7 +353,7 @@ func TestListadoDeCarreras(t *testing.T) {
 	})
 }
 
-func TestResultados(t *testing.T) {
+func TestResults(t *testing.T) {
 	h, _ := newHarness(t)
 
 	t.Run("carrera que no terminó", func(t *testing.T) {
@@ -431,7 +431,7 @@ func TestMe(t *testing.T) {
 	})
 }
 
-func TestRefreshEsDeUnSoloUso(t *testing.T) {
+func TestRefreshTokenIsSingleUse(t *testing.T) {
 	h, _ := newHarness(t)
 
 	res := h.do(http.MethodPost, api.BasePath+"/auth/login", "",
@@ -451,7 +451,7 @@ func TestRefreshEsDeUnSoloUso(t *testing.T) {
 	expectError(t, second, http.StatusUnauthorized, contract.CodeInvalidRefreshToken)
 }
 
-func TestRegistroYVerificacion(t *testing.T) {
+func TestRegisterAndVerify(t *testing.T) {
 	h, mailer := newHarness(t)
 
 	res := h.do(http.MethodPost, api.BasePath+"/auth/register", "",
@@ -516,7 +516,7 @@ func waitForToken(t *testing.T, mailer *silentMailer) string {
 
 // ── Apuestas ──────────────────────────────────────────────────────────────
 
-func TestApostar(t *testing.T) {
+func TestPlaceBet(t *testing.T) {
 	h, _ := newHarness(t)
 	ana := h.login("ana@hipodromo.test")
 
@@ -603,7 +603,7 @@ func TestApostar(t *testing.T) {
 	})
 }
 
-func TestHistorialDeApuestas(t *testing.T) {
+func TestBetHistory(t *testing.T) {
 	h, _ := newHarness(t)
 
 	res := h.do(http.MethodGet, api.BasePath+"/bets/me?size=50", h.login("ana@hipodromo.test"), nil)
@@ -628,9 +628,9 @@ func TestHistorialDeApuestas(t *testing.T) {
 
 // ── Liquidación ───────────────────────────────────────────────────────────
 
-// TestLiquidacion recorre el ciclo completo: se apuesta, corre la carrera y se
+// TestSettlement recorre el ciclo completo: se apuesta, corre la carrera y se
 // paga. Es lo que el alumno ve en S10.
-func TestLiquidacion(t *testing.T) {
+func TestSettlement(t *testing.T) {
 	h, _ := newHarness(t)
 	ana := h.login("ana@hipodromo.test")
 
@@ -710,7 +710,7 @@ func TestLiquidacion(t *testing.T) {
 
 // ── Límite de intentos ────────────────────────────────────────────────────
 
-func TestLimiteDeIntentosDeLogin(t *testing.T) {
+func TestLoginRateLimit(t *testing.T) {
 	h, _ := newHarness(t)
 
 	var last *httptest.ResponseRecorder
@@ -729,7 +729,7 @@ func TestLimiteDeIntentosDeLogin(t *testing.T) {
 
 // ── CORS y salud ──────────────────────────────────────────────────────────
 
-func TestPreflightCORS(t *testing.T) {
+func TestCORSPreflight(t *testing.T) {
 	h, _ := newHarness(t)
 
 	req := httptest.NewRequest(http.MethodOptions, api.BasePath+"/bets", nil)
@@ -759,9 +759,9 @@ func TestHealth(t *testing.T) {
 	}
 }
 
-// TestTodosLosCodigosTienenEstadoYMensaje: un código sin entrada en el catálogo
+// TestEveryErrorCodeHasStatusAndMessage: un código sin entrada en el catálogo
 // se degradaría a 500 y el frontend nunca podría reaccionar a él.
-func TestTodosLosCodigosTienenEstadoYMensaje(t *testing.T) {
+func TestEveryErrorCodeHasStatusAndMessage(t *testing.T) {
 	for _, code := range contract.KnownCodes() {
 		fault := contract.Errorf(code)
 		if fault.Status() < 400 || fault.Status() > 599 {

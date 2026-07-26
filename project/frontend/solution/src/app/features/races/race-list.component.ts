@@ -17,15 +17,15 @@ import { SilkComponent } from '../../shared/ui/silk/silk.component';
  * es justamente la clase.
  */
 
-/** Lo que la vista necesita, ya preparado. */
-interface CarreraVista {
-  readonly carrera: Race;
-  readonly hora: string;
-  readonly favorito: Horse | undefined;
-  readonly etiquetaEstado: string;
+/** Lo que la view necesita, ya preparado. */
+interface RaceView {
+  readonly race: Race;
+  readonly time: string;
+  readonly favourite: Horse | undefined;
+  readonly statusLabel: string;
 }
 
-const ETIQUETAS: Record<Race['status'], string> = {
+const STATUS_LABELS: Record<Race['status'], string> = {
   upcoming: 'Por largar',
   live: 'En vivo',
   finished: 'Terminada',
@@ -47,28 +47,28 @@ export class RaceListComponent {
    * recalcularían en cada detección de cambios. Preparar acá es más rápido y
    * deja el template diciendo qué se ve, no cómo se calcula.
    */
-  protected readonly carreras: readonly CarreraVista[] = RACES.map((carrera) => ({
-    carrera,
-    hora: this.formatearHora(carrera.startsAt),
-    favorito: favourite(carrera),
-    etiquetaEstado: ETIQUETAS[carrera.status],
+  protected readonly races: readonly RaceView[] = RACES.map((race) => ({
+    race,
+    time: this.formatTime(race.startsAt),
+    favourite: favourite(race),
+    statusLabel: STATUS_LABELS[race.status],
   }));
 
   /** La carrera que el usuario tocó. `null` = ninguna. */
-  protected seleccionada: CarreraVista | null = null;
+  protected selected: RaceView | null = null;
 
   /** Lo que se escribe en el simulador. Va y viene con `[(ngModel)]`. */
-  protected monto = 100;
+  protected amount = 100;
 
-  protected get pagoPotencial(): number {
-    const cuota = this.seleccionada?.favorito?.odds ?? 0;
-    return potentialPayout(this.monto, cuota);
+  protected get payout(): number {
+    const odds = this.selected?.favourite?.odds ?? 0;
+    return potentialPayout(this.amount, odds);
   }
 
-  protected seleccionar(vista: CarreraVista): void {
+  protected select(view: RaceView): void {
     // Tocar la misma carrera dos veces la deselecciona: es lo que espera
     // cualquiera y ahorra un botón de cerrar.
-    this.seleccionada = this.seleccionada?.carrera.id === vista.carrera.id ? null : vista;
+    this.selected = this.selected?.race.id === view.race.id ? null : view;
   }
 
   /**
@@ -81,7 +81,7 @@ export class RaceListComponent {
    * solo «sáb, 20:41» no se entiende por qué una carrera de las 04:56 aparece
    * antes que una de las 19:21.
    */
-  private formatearHora(iso: string): string {
+  private formatTime(iso: string): string {
     return new Intl.DateTimeFormat('es', {
       day: '2-digit',
       month: 'short',

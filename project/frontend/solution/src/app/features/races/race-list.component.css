@@ -1,4 +1,4 @@
-.portada {
+.hero {
   max-inline-size: 55ch;
   margin-block-end: var(--space-8);
 }
@@ -11,12 +11,12 @@
   color: var(--text-muted);
 }
 
-.entrada {
+.intro {
   margin-block-start: var(--space-3);
   color: var(--text-muted);
 }
 
-.rotulo {
+.label {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
   font-weight: 700;
@@ -28,21 +28,21 @@
 
 /* Bento: la lista manda y el detalle acompaña. A partir de 60rem se acuestan;
    abajo de eso el detalle va debajo. */
-.programa {
+.program {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-6);
 }
 
 @media (width >= 60rem) {
-  .programa {
+  .program {
     grid-template-columns: 1.4fr 1fr;
     align-items: start;
   }
 }
 
 /* ── Listado ───────────────────────────────────────────────────────────── */
-.carreras {
+.races {
   display: grid;
   gap: var(--space-3);
 }
@@ -50,13 +50,13 @@
 /* Cada carrera es un <button>: se puede tabular, se activa con Enter y con
    barra espaciadora, y los lectores de pantalla la anuncian como control.
    Un <div> con (click) no hace nada de eso. */
-.carrera {
+.race {
   inline-size: 100%;
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-areas:
-    'estado hora'
-    'nombre hora'
+    'estado time'
+    'name time'
     'pie    pie';
   gap: var(--space-1) var(--space-4);
   text-align: start;
@@ -73,19 +73,19 @@
     box-shadow var(--dur-instant) var(--ease-snap);
 }
 
-.carrera:active {
+.race:active {
   transform: translate(2px, 2px);
   box-shadow: var(--shadow-hard-sm);
 }
 
 /* La carrera abierta se hunde y se queda hundida: el estado se ve sin leer. */
-.carrera--abierta {
+.race--open {
   transform: translate(2px, 2px);
   box-shadow: var(--shadow-hard-sm);
   border-color: var(--accent);
 }
 
-.carrera__estado {
+.race__status {
   grid-area: estado;
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
@@ -94,13 +94,13 @@
   color: var(--text-muted);
 }
 
-.carrera--viva .carrera__estado {
+.race--live .race__status {
   color: var(--live);
   font-weight: 700;
 }
 
-.carrera__nombre {
-  grid-area: nombre;
+.race__name {
+  grid-area: name;
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 800;
@@ -109,15 +109,15 @@
   line-height: 1.1;
 }
 
-.carrera__hora {
-  grid-area: hora;
+.race__time {
+  grid-area: time;
   align-self: center;
   font-size: var(--text-sm);
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-.carrera__pie {
+.race__meta {
   grid-area: pie;
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
@@ -126,13 +126,13 @@
 
 /* Lo que ya pasó pesa menos, pero sigue siendo legible: bajar la opacidad
    entera rompería el contraste AA. */
-.carrera--terminada .carrera__nombre {
+.race--finished .race__name {
   font-variation-settings: 'wdth' 92;
   color: var(--text-muted);
 }
 
 /* ── Detalle ───────────────────────────────────────────────────────────── */
-.detalle {
+.detail {
   padding: var(--space-6);
   border: var(--border-width) solid var(--border);
   box-shadow: var(--shadow-hard);
@@ -141,23 +141,23 @@
   inset-block-start: 5rem;
 }
 
-.detalle--vacio {
+.detail--empty {
   color: var(--text-muted);
   box-shadow: none;
   border-style: dashed;
 }
 
-.detalle__hora {
+.detail__time {
   font-size: var(--text-sm);
   color: var(--text-muted);
 }
 
-.parrilla {
+.lineup {
   display: grid;
   gap: var(--space-2);
 }
 
-.corredor {
+.runner {
   display: grid;
   grid-template-columns: auto auto 1fr auto;
   align-items: center;
@@ -165,14 +165,14 @@
   padding-block: var(--space-1);
 }
 
-.corredor + .corredor {
+.runner + .runner {
   border-block-start: 2px solid var(--border);
   padding-block-start: var(--space-2);
 }
 
 /* El dorsal es la posición de partida: información real, no numeración
    decorativa. Nunca va encima de la seda. */
-.dorsal {
+.saddlecloth {
   inline-size: 1.5rem;
   block-size: 1.5rem;
   display: grid;
@@ -183,31 +183,31 @@
   border: 2px solid var(--border);
 }
 
-.corredor__nombre {
+.runner__name {
   font-size: var(--text-sm);
   font-weight: 600;
 }
 
-.corredor__cuota {
+.runner__odds {
   font-size: var(--text-sm);
   color: var(--text-muted);
 }
 
 /* ── Simulador ─────────────────────────────────────────────────────────── */
-.simulador {
+.simulator {
   margin-block-start: var(--space-6);
   padding-block-start: var(--space-4);
   border-block-start: var(--border-width) solid var(--border);
 }
 
-.campo span {
+.field span {
   display: block;
   font-size: var(--text-xs);
   font-weight: 600;
   margin-block-end: var(--space-1);
 }
 
-.campo input {
+.field input {
   inline-size: 100%;
   min-block-size: 2.75rem;
   padding: var(--space-2) var(--space-3);
@@ -217,16 +217,16 @@
   border: var(--border-width) solid var(--border);
 }
 
-.simulador__pago {
+.simulator__payout {
   margin-block-start: var(--space-3);
   font-size: var(--text-lg);
 }
 
-.simulador__pago strong {
+.simulator__payout strong {
   font-size: var(--text-2xl);
 }
 
-.simulador__nota {
+.simulator__note {
   margin-block-start: var(--space-1);
   font-size: var(--text-2xs);
   color: var(--text-muted);

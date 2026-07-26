@@ -148,10 +148,10 @@ func TestPodiumMatchesFixture(t *testing.T) {
 	}
 }
 
-// TestDeterminista: la misma corrida siempre da lo mismo, y corridas distintas
+// TestDeterministic: la misma corrida siempre da lo mismo, y corridas distintas
 // dan carreras distintas. Sin lo primero el fixture no serviría; sin lo segundo
 // todas las carreras del programa serían la misma.
-func TestDeterminista(t *testing.T) {
+func TestDeterministic(t *testing.T) {
 	horses := loadHorses(t, fixtureRaceID)
 
 	a := sim.Simulate(fixtureRaceID, 7, horses)
@@ -166,9 +166,9 @@ func TestDeterminista(t *testing.T) {
 	}
 }
 
-// TestProgresoMonotono: un caballo nunca retrocede y nunca pasa de 1. Si esto
+// TestProgressIsMonotonic: un caballo nunca retrocede y nunca pasa de 1. Si esto
 // falla, en pantalla se ve un caballo yendo para atrás.
-func TestProgresoMonotono(t *testing.T) {
+func TestProgressIsMonotonic(t *testing.T) {
 	horses := loadHorses(t, fixtureRaceID)
 
 	for run := 0; run < 25; run++ {
@@ -208,11 +208,11 @@ func hasWinnerAtGoal(positions []sim.Position) bool {
 	return false
 }
 
-// TestFavoritoGanaLaMayoria: con las constantes actuales el favorito gana
+// TestFavouriteWinsAboutHalf: con las constantes actuales el favorito gana
 // alrededor de la mitad. Suficiente para que apostarle sea razonable, y no
 // tanto como para que sea aburrido. Si alguien toca ODDS_SPREAD o JITTER, este
 // test dice si se rompió el equilibrio.
-func TestFavoritoGanaLaMayoria(t *testing.T) {
+func TestFavouriteWinsAboutHalf(t *testing.T) {
 	horses := loadHorses(t, fixtureRaceID)
 	favourite := contract.Race{Horses: horses}
 	fav, _ := favourite.Favourite()

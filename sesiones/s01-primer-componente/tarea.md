@@ -14,9 +14,9 @@ Terminar la **Misión 2** si te quedó a medias, y sumarle una cosa: que cada ca
 
 ## Dónde
 
-`project/frontend/starter/src/app/features/races/race-list.component.ts`
+`project/frontend/starter/src/app/features/carreras/race-list.component.ts`
 
-Todo el cálculo va **en la clase**, no en el template. Agregá un campo a `CarreraVista` y llenalo donde se arma la lista.
+Todo el cálculo va **en la clase**, no en el template. Agregá un campo a `RaceView` y llenalo donde se arma la lista.
 
 ## Listo cuando
 
@@ -46,4 +46,4 @@ No hace falta ninguna librería. Si te tienta instalar una, ese es el momento de
 
 No se corrige una por una. Se revisa una al azar en el code review de S2, y lo que aparezca repetido en varias entregas se convierte en pregunta del `wayground.csv`.
 
-**Lo que más va a aparecer:** el cálculo hecho en el template con un método —`{{ tiempoRelativo(carrera) }}`—. No está *mal*, pero se recalcula en cada detección de cambios. Es la puerta de entrada perfecta a `computed()` en S3.
+**Lo que más va a aparecer:** el cálculo hecho en el template con un método —`{{ tiempoRelativo(race) }}`—. No está *mal*, pero se recalcula en cada detección de cambios. Es la puerta de entrada perfecta a `computed()` en S3.

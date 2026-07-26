@@ -22,7 +22,7 @@ El producto todavía no tiene ninguna pantalla. Esa es la de hoy.
 ## Lo que ya está
 
 - **Los datos.** Las 8 carreras con sus 54 caballos, en `core/mocks`. **No inventen datos.**
-- **Los tipos.** `Race`, `Horse`, y dos ayudantes: `favourite(carrera)` y `potentialPayout(monto, cuota)`, en `core/models`.
+- **Los tipos.** `Race`, `Horse`, y dos ayudantes: `favourite(race)` y `potentialPayout(amount, odds)`, en `core/models`.
 - **El diseño.** Colores, tipografías y `<app-silk>`, que dibuja la casaca de cada caballo.
 - **El CSS de esta pantalla.** Está en `solution/`: cópienlo tal cual. Hoy no se pelean con estilos.
 
@@ -36,9 +36,9 @@ El producto todavía no tiene ninguna pantalla. Esa es la de hoy.
 
 **4 · Property binding.** Las clases de estado del botón de cada carrera:
 
-- `carrera--viva` cuando el estado es `live`
-- `carrera--terminada` cuando es `finished`
-- `carrera--abierta` cuando **es** la seleccionada
+- `race--live` cuando el estado es `live`
+- `race--finished` cuando es `finished`
+- `race--open` cuando **es** la seleccionada
 - `[attr.aria-pressed]` con la misma condición que la anterior
 
 **5 · Event binding.** Tocar una carrera abre su parrilla. Tocar la misma la cierra.
@@ -69,4 +69,4 @@ El orden de la lista no ayuda: las terminadas aparecen mezcladas con las que fal
 
 Mostrá en cada carrera **cuánto falta para que largue**: «en 8 min», «hace 2 h», «largando». Todo el cálculo va en la clase.
 
-Pista: `new Date(carrera.startsAt).getTime() - Date.now()`.
+Pista: `new Date(race.startsAt).getTime() - Date.now()`.

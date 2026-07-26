@@ -1,40 +1,40 @@
 <!-- Salto al contenido: primer elemento enfocable de la página. Sin esto, cada
      visita con teclado tiene que recorrer toda la navegación. -->
-<a class="saltar" href="#contenido">Saltar al contenido</a>
+<a class="skip-link" href="#content">Saltar al contenido</a>
 
-<header class="cabecera">
-  <div class="contenedor cabecera__interior">
-    <a class="marca" routerLink="/" aria-label="Hipódromo — inicio">
+<header class="header">
+  <div class="container header__inner">
+    <a class="brand" routerLink="/" aria-label="Hipódromo — home">
       <app-logo />
-      <span class="marca__nombre">Hipódromo</span>
+      <span class="brand__name">Hipódromo</span>
     </a>
 
     <nav class="nav" aria-label="Principal">
       <!-- TODO(S1): sumar acá el enlace a /carreras, con routerLinkActive="activo". -->
-      <a routerLink="/sistema" routerLinkActive="activo">Sistema</a>
+      <a routerLink="/sistema" routerLinkActive="active">Sistema</a>
     </nav>
 
     <button
       type="button"
-      class="tema"
-      [attr.aria-label]="temaEtiqueta()"
-      [title]="temaEtiqueta()"
-      (click)="cambiarTema()"
+      class="theme"
+      [attr.aria-label]="themeLabel()"
+      [title]="themeLabel()"
+      (click)="cycleTheme()"
     >
-      <span aria-hidden="true">{{ temaIcono() }}</span>
+      <span aria-hidden="true">{{ themeIcon() }}</span>
     </button>
   </div>
 </header>
 
-<main id="contenido" class="contenedor principal" tabindex="-1">
+<main id="content" class="container main-area" tabindex="-1">
   <router-outlet />
 </main>
 
-<footer class="pie">
-  <div class="contenedor">
+<footer class="footer">
+  <div class="container">
     <p>
       Saldo virtual. No se mueve dinero real en ningún momento.
-      <span class="pie__curso">Módulo Angular · Talento DH 8va</span>
+      <span class="footer__course">Módulo Angular · Talento DH 8va</span>
     </p>
   </div>
 </footer>

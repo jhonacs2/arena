@@ -1,5 +1,5 @@
 /* ── Portada ───────────────────────────────────────────────────────────── */
-.portada {
+.hero {
   max-inline-size: 60ch;
   margin-block-end: var(--space-16);
 }
@@ -13,18 +13,18 @@
   margin-block-end: var(--space-2);
 }
 
-.entrada {
+.intro {
   margin-block-start: var(--space-4);
   font-size: var(--text-lg);
   color: var(--text-muted);
 }
 
 /* ── Secciones ─────────────────────────────────────────────────────────── */
-.seccion {
+.section {
   margin-block-end: var(--space-16);
 }
 
-.seccion > h2 {
+.section > h2 {
   border-block-end: var(--border-width) solid var(--border);
   padding-block-end: var(--space-2);
   margin-block-end: var(--space-4);
@@ -36,7 +36,7 @@
   margin-block-end: var(--space-6);
 }
 
-.rotulo {
+.label {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
   font-weight: 700;
@@ -46,7 +46,7 @@
   margin-block: var(--space-8) var(--space-3);
 }
 
-.nota {
+.note {
   margin-block-start: var(--space-4);
   font-size: var(--text-xs);
   color: var(--text-muted);
@@ -61,32 +61,32 @@ code {
   padding: 0 0.25em;
 }
 
-.fila {
+.row {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   align-items: center;
 }
 
-.rejilla-dos {
+.grid-two {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   gap: var(--space-4);
 }
 
 /* ── Parrilla de salida ────────────────────────────────────────────────── */
-.parrilla {
+.lineup {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
   gap: var(--space-3);
 }
 
-.corredor {
+.runner {
   display: grid;
   grid-template-columns: auto auto 1fr;
   grid-template-areas:
-    'dorsal seda nombre'
-    'dorsal seda cuota';
+    'saddlecloth seda name'
+    'saddlecloth seda odds';
   align-items: center;
   gap: 0 var(--space-3);
 
@@ -96,19 +96,19 @@ code {
   background: var(--surface-raised);
 }
 
-.corredor app-silk {
+.runner app-silk {
   grid-area: seda;
 }
 
-.corredor__nombre {
-  grid-area: nombre;
+.runner__name {
+  grid-area: name;
   font-weight: 600;
   font-size: var(--text-sm);
   align-self: end;
 }
 
-.corredor__cuota {
-  grid-area: cuota;
+.runner__odds {
+  grid-area: odds;
   font-size: var(--text-sm);
   color: var(--text-muted);
   align-self: start;
@@ -119,8 +119,8 @@ code {
    se pinta como en el programa de carreras, cuadrado y en mono.
 
    Va en su propia celda del grid, nunca encima de la seda. */
-.dorsal {
-  grid-area: dorsal;
+.saddlecloth {
+  grid-area: saddlecloth;
   align-self: center;
 
   inline-size: 1.5rem;
@@ -136,56 +136,56 @@ code {
 }
 
 /* ── Muestrarios de color ──────────────────────────────────────────────── */
-.muestrario {
+.swatches {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
   gap: var(--space-3);
 }
 
-.muestrario--ancho {
+.swatches--wide {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
 }
 
-.muestrario li {
+.swatches li {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
 }
 
-.muestra {
+.swatch {
   display: block;
   block-size: 3rem;
   border: var(--border-width) solid var(--border);
   box-shadow: var(--shadow-hard-sm);
 }
 
-.muestra--grande {
+.swatch--large {
   block-size: 4rem;
 }
 
-.muestra__nombre {
+.swatch__name {
   font-size: var(--text-2xs);
   font-weight: 600;
 }
 
-.muestra__uso {
+.swatch__use {
   font-size: var(--text-2xs);
   color: var(--text-muted);
 }
 
 /* ── Tipografía ────────────────────────────────────────────────────────── */
-.familias {
+.families {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
   gap: var(--space-6);
   margin-block-end: var(--space-8);
 }
 
-.familia__muestra {
+.family__sample {
   font-size: var(--text-lg);
 }
 
-.familia__muestra--display {
+.family__sample--display {
   font-family: var(--font-display);
   font-size: var(--text-3xl);
   font-weight: 800;
@@ -194,22 +194,22 @@ code {
   letter-spacing: -0.03em;
 }
 
-.familia__muestra--mono {
+.family__sample--mono {
   font-size: var(--text-base);
 }
 
-.familia__nota {
+.family__note {
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
 
-.escala {
+.scale {
   border: var(--border-width) solid var(--border);
   box-shadow: var(--shadow-hard);
 }
 
-.escala li {
+.scale li {
   display: grid;
   grid-template-columns: 4rem 1fr auto;
   align-items: baseline;
@@ -217,28 +217,28 @@ code {
   padding: var(--space-2) var(--space-4);
 }
 
-.escala li + li {
+.scale li + li {
   border-block-start: 2px solid var(--border);
 }
 
-.escala__token {
+.scale__token {
   font-size: var(--text-2xs);
   color: var(--text-muted);
 }
 
-.escala__muestra {
+.scale__sample {
   font-family: var(--font-display);
   font-weight: 800;
   line-height: 1;
 }
 
-.escala__uso {
+.scale__use {
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
 
 /* ── Tablero del saldo ─────────────────────────────────────────────────── */
-.tablero {
+.board {
   display: inline-flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -248,20 +248,20 @@ code {
   background: var(--surface-raised);
 }
 
-.tablero .rotulo {
+.board .label {
   margin: 0;
 }
 
-.tablero__saldo {
+.board__balance {
   font-size: var(--text-4xl);
   font-weight: 700;
   line-height: 1;
   /* La clave del salto tipo split-flap: la animación se re-dispara cada vez
      que Angular vuelve a pintar el nodo de texto. */
-  animation: saltar var(--dur-flip) var(--ease-snap);
+  animation: skip-link var(--dur-flip) var(--ease-snap);
 }
 
-@keyframes saltar {
+@keyframes skip-link {
   from {
     transform: translateY(-0.35em);
     opacity: 0.2;

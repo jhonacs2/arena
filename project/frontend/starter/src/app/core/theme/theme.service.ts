@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type Theme = 'claro' | 'oscuro' | 'sistema';
+export type Theme = 'light' | 'dark' | 'system';
 
 const STORAGE_KEY = 'hipodromo:tema';
 
@@ -15,19 +15,19 @@ const STORAGE_KEY = 'hipodromo:tema';
  */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly _theme = signal<Theme>(this.leerPreferencia());
+  private readonly _theme = signal<Theme>(this.readPreference());
   readonly theme = this._theme.asReadonly();
 
   constructor() {
-    this.aplicar(this._theme());
+    this.apply(this._theme());
   }
 
   set(theme: Theme): void {
     this._theme.set(theme);
-    this.aplicar(theme);
+    this.apply(theme);
 
     try {
-      if (theme === 'sistema') {
+      if (theme === 'system') {
         localStorage.removeItem(STORAGE_KEY);
       } else {
         localStorage.setItem(STORAGE_KEY, theme);
@@ -39,27 +39,27 @@ export class ThemeService {
   }
 
   /** Cicla claro → oscuro → sistema. */
-  ciclar(): void {
-    const siguiente: Record<Theme, Theme> = { claro: 'oscuro', oscuro: 'sistema', sistema: 'claro' };
-    this.set(siguiente[this._theme()]);
+  cycle(): void {
+    const next: Record<Theme, Theme> = { light: 'dark', dark: 'system', system: 'light' };
+    this.set(next[this._theme()]);
   }
 
-  private aplicar(theme: Theme): void {
+  private apply(theme: Theme): void {
     const root = document.documentElement;
-    if (theme === 'sistema') {
+    if (theme === 'system') {
       root.removeAttribute('data-theme');
     } else {
-      root.setAttribute('data-theme', theme === 'claro' ? 'light' : 'dark');
+      root.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
     }
   }
 
-  private leerPreferencia(): Theme {
+  private readPreference(): Theme {
     try {
-      const guardado = localStorage.getItem(STORAGE_KEY);
-      if (guardado === 'claro' || guardado === 'oscuro') return guardado;
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === 'light' || stored === 'dark') return stored;
     } catch {
       // Igual que arriba: sin almacenamiento se cae al valor por defecto.
     }
-    return 'sistema';
+    return 'system';
   }
 }
