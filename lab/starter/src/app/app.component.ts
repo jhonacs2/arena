@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { SESIONES } from './sesiones';
+import { SESIONES_DISPONIBLES } from './sesiones';
 
 /**
- * El armazón del lab.
+ * El armazón del lab: la barra lateral y el `router-outlet`.
  *
- * Acá no se practica nada: es solo la navegación entre sesiones. El ejercicio
- * de cada clase vive en `sesiones/sNN/`.
+ * La barra muestra **solo las sesiones que ya hiciste**. Arranca vacía y crece
+ * con vos: cada vez que habilitás una en `sesiones.ts` y le sumás su ruta,
+ * aparece acá.
  */
 @Component({
   selector: 'app-root',
@@ -18,5 +19,5 @@ import { SESIONES } from './sesiones';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  protected readonly sesiones = SESIONES;
+  protected readonly sesiones = SESIONES_DISPONIBLES;
 }

@@ -1,9 +1,19 @@
 /**
  * Índice de las sesiones del lab.
  *
- * Una entrada por sesión. La navegación y las rutas salen de acá, así que
- * sumar una sesión es agregar una línea y su carpeta — no hay que tocar dos
- * lugares y olvidarse de uno.
+ * De acá sale la **barra lateral**. Arranca todo en `disponible: false`: la
+ * barra está vacía a propósito, y la vas a ver crecer a medida que hagas cada
+ * sesión.
+ *
+ * Que la navegación no aparezca sola es parte de lo que se aprende: las rutas
+ * las declara alguien. Ese alguien vas a ser vos.
+ *
+ * Para habilitar una sesión hacen falta DOS cosas:
+ *   1. Poner `disponible: true` acá      → aparece en la barra lateral
+ *   2. Sumar la ruta en `app.routes.ts`  → el enlace lleva a algún lado
+ *
+ * Si hacés solo la primera, vas a tener un enlace que no va a ninguna parte.
+ * Si hacés solo la segunda, una página que existe pero que no se ve.
  */
 export interface Sesion {
   readonly numero: number;
@@ -15,12 +25,13 @@ export interface Sesion {
 }
 
 export const SESIONES: readonly Sesion[] = [
+  // TODO(S1): poner `disponible: true` cuando tu ruta /s01 funcione.
   {
     numero: 1,
     slug: 's01',
     titulo: 'Primer componente',
     concepto: 'Un componente standalone y los cuatro tipos de binding.',
-    disponible: true,
+    disponible: false,
   },
   { numero: 2, slug: 's02', titulo: 'Anatomía de un componente', concepto: 'input, output y ng-content.', disponible: false },
   { numero: 3, slug: 's03', titulo: 'Signals y control flow', concepto: 'signal, computed, @if y @for.', disponible: false },

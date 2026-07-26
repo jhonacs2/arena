@@ -20,6 +20,7 @@ sesiones/
 | `diagramas/*.svg` | 0:12 | El concepto dibujado. Editor cerrado. |
 | `mision-1.md` | 0:35 | Enunciado individual, en `lab/starter`. |
 | `mision-2.md` | 1:25 | Enunciado en parejas, en `project/frontend/starter`. |
+| `correccion.md` | 1:45 | **De vacío a funcionando, paso a paso.** Es lo que hace posible el starter vacío. |
 | `predice-y-ejecuta/` | 1:10 | Snippets rotos + `respuestas.md`. |
 | `wayground.csv` | 0:05 de la **sesión siguiente** | Preguntas sobre **esta** sesión. |
 | `exit-ticket.md` | 1:55 | Tres preguntas. |

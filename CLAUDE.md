@@ -149,7 +149,7 @@ Saltea con gracia lo que todavía no existe. Si falla, **arreglá antes de segui
 | 5. Se probó **en claro y en oscuro** | siempre |
 | 6. Recorrido por teclado con foco visible | siempre |
 | 7. El starter arranca sin el código de la sesión, y su `correccion.md` lleva de vacío a funcionando | siempre |
-| 8. La ruta `/sNN` del lab existe, en solución y starter | siempre |
+| 8. La ruta `/sNN` del lab existe en `solution/`. En `starter/` **no**: crearla es el ejercicio | siempre |
 | 9. Los materiales de `sesiones/sNN-*/` están completos | siempre |
 | 10. La vista maneja los tres estados: cargando, vacío, error | **S7** |
 | 11. Se probó contra el mock **y** contra el backend real, y se ve igual | **S7** |

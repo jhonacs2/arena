@@ -1,210 +1,423 @@
 # S1 · Primer componente — guión
 
-> Documento maestro de la sesión. Todo lo demás (slides, misiones, quiz) sale de acá.
-> **Antes de dar la clase:** cronometrar contra estos bloques. Si algo se pasa 3 minutos, se recorta acá y no en vivo.
+> **Esto es un teleprompter, no un resumen.** Lo que está entre comillas se dice. Lo que está en gris se hace. Leelo de corrido antes de dar la clase, con cronómetro: si tenés que parar a pensar qué sigue, avisame y lo arreglo.
 
 | | |
 |---|---|
-| **Concepto único** | Un componente es una clase con un template, y hay cuatro caminos entre los dos. |
-| **Al final saben** | Crear un componente standalone · usar los cuatro bindings · explicar por qué `[(ngModel)]` necesita `FormsModule`. |
-| **Requisito previo** | Tema 0 (TypeScript, asíncrono) |
-| **Archivos que se tocan** | `lab/starter/src/app/sesiones/s01/` · `project/frontend/starter/src/app/features/races/` |
-
-### Sobre la historia y la filosofía
-
-El temario pide «filosofía e historia de Angular · Web Components · CLI». Van **como encuadre de tres minutos dentro del bloque 0:12, no como clase aparte**.
-
-El motivo es concreto: en la primera sesión hay que salir con algo funcionando en pantalla. Una persona que escribió su primer componente entiende para qué sirvió AngularJS mucho mejor que una que escuchó veinte minutos de historia sin haber escrito nada. La historia vuelve, con contexto, en S11 con los NgModules.
+| **Concepto único** | Un componente es una clase y un template, y hay cuatro caminos entre los dos. |
+| **Al final saben** | Explicar qué es un componente · crear uno con el CLI · usar los cuatro bindings · decir por qué Angular repinta. |
+| **Requisito previo** | Tema 0 (TypeScript, asíncrono). Nada más. |
+| **Archivos** | `lab/starter/src/app/` · `project/frontend/starter/src/app/` |
 
 ---
 
-## 0:00 — Pregunta de apertura · 5 min
+## Glosario de la sesión
 
-> **«Pensá en una web que uses todos los días. Cuando cambia un número en pantalla —el carrito, un contador, un saldo— ¿quién lo cambió? Escribí lo primero que se te ocurra.»**
+Todo lo que se nombra hoy, en el orden en que aparece. **Ninguna de estas palabras se usa antes de definirla.** Si te escuchás diciendo una que no explicaste, parás y la explicás.
 
-Responden **en el chat**. Sin juicio, sin corregir, sin «casi». Se leen dos o tres en voz alta y se sigue.
-
-Va a haber de todo: «el servidor», «JavaScript», «React», «no sé». **Todas sirven.** La pregunta no busca la respuesta correcta: busca que noten que hay alguien moviendo el DOM, y que hoy ese alguien va a ser Angular.
-
-- [x] Pregunta abierta, sin respuesta correcta
-- [x] Se responde en una línea
-- [x] Conecta con el concepto de hoy sin adelantarlo
-
----
-
-## 0:05 — Wayground de Tema 0 · 7 min
-
-Correr **`sesiones/s00-typescript/wayground.csv`** — TypeScript, el material asíncrono.
-
-> Es la única sesión donde el quiz no es «de la anterior»: no hay anterior. De S2 en adelante se corre el de la sesión previa.
-
-| Si falla mucho | Decir |
+| Palabra | En una frase |
 |---|---|
-| `type RaceStatus = string` | «`string` acepta `'galopando'`. La unión de literales es lo que hace que el compilador te frene.» |
-| `Horse` en vez de `Horse \| undefined` | «Una carrera sin caballos no debería existir, pero el tipo no lo puede garantizar. `strictNullChecks` te obliga a decidir qué pasa.» |
+| **DOM** | El árbol de elementos que el navegador tiene en memoria y dibuja en pantalla. |
+| **Framework** | Un conjunto de reglas y herramientas que se encarga de las partes repetitivas por vos. |
+| **Componente** | Una pieza de interfaz con su propio HTML, su propio estilo y su propia lógica, en una carpeta. |
+| **Clase** | El archivo `.ts` del componente: los datos y las decisiones. |
+| **Template** | El archivo `.html` del componente: lo que se ve. No es HTML común — tiene instrucciones para Angular. |
+| **Standalone** | Un componente que declara solo lo que usa, sin depender de un archivo lejano que lo registre. |
+| **Binding** | Una conexión entre la clase y el template, para que no haya que sincronizarlos a mano. |
+| **Interpolación** | El binding que pone un valor como **texto**: `{{ }}`. |
+| **Property binding** | El binding que pone un valor en una **propiedad** de un elemento: `[ ]`. |
+| **Event binding** | El binding que escucha un **evento** del navegador: `( )`. |
+| **Two-way binding** | Los dos anteriores juntos, en un solo lugar: `[( )]`. |
+| **Detección de cambios** | El momento en que Angular revisa si algo cambió y repinta lo que haga falta. |
+| **CLI** | La herramienta de línea de comandos de Angular. Crea proyectos y archivos por vos. |
+
+---
+
+## 0:00 · Pregunta de apertura — 5 min
+
+**En pantalla:** diapositiva 2.
+
+> «Pensá en una web que uses todos los días. Cuando cambia un número en pantalla —el carrito, un contador, un saldo— **¿quién lo cambió?** Escribí en el chat lo primero que se te ocurra.»
+
+**Esperá 90 segundos en silencio.** Si nadie escribe, respondé vos primero para romper el hielo.
+
+Van a decir «el servidor», «JavaScript», «React», «no sé». **Todas sirven.** No corrijas ninguna.
+
+Leé dos o tres en voz alta y cerrá así:
+
+> «Todas tienen algo de razón. Lo que quiero que se lleven es que **alguien tuvo que agarrar ese pedazo de pantalla y cambiarlo**. No se actualizó solo. Hoy vamos a ver quién hace eso en Angular, y por qué eso es todo el asunto.»
+
+> ⚠️ No expliques nada todavía. Este bloque es para que hablen, no para que aprendan.
+
+---
+
+## 0:05 · Wayground de Tema 0 — 7 min
+
+**Correr:** `sesiones/s00-typescript/wayground.csv`.
+
+> «Es la única vez que el quiz no es de la clase anterior, porque no hay clase anterior. De la próxima en adelante, arrancamos siempre repasando lo de la vez pasada.»
+
+Máximo **30 segundos** de explicación por pregunta, y solo si la falló más de un tercio:
+
+| Si falla | Decir |
+|---|---|
+| `type RaceStatus = string` | «`string` acepta `'galopando'`. La unión de literales es lo que hace que el compilador te frene antes de que llegue al navegador.» |
+| `Horse` en vez de `Horse \| undefined` | «Una carrera sin caballos no debería existir, pero el tipo no lo puede garantizar. TypeScript te obliga a decidir qué pasa si no hay.» |
 | `readonly` | «`readonly` no congela el objeto: impide `push` y asignar por índice. Hoy alcanza con eso.» |
 
-**No más de 30 segundos por pregunta.** Si necesita más, va a la tarea.
+Si algo necesita más de 30 segundos, va a la tarea. **No te enganches acá.**
 
 ---
 
-## 0:12 — Concepto en diagrama · 8 min
+## 0:12 · El concepto — 8 min
 
-**El editor está cerrado.** No hay VS Code en pantalla. Solo el diagrama.
+> **El editor está cerrado.** No hay VS Code en pantalla, no hay terminal. Solo diapositivas.
+> Si alguien pregunta «¿y el código?», la respuesta es: «en diez minutos. Primero quiero que puedan dibujar esto en una servilleta.»
 
-Diapositivas: `slides.md` · Diagrama: `diagramas/componente-y-template.svg`
+### 0:12 — El problema, antes de nombrar nada · 2 min
 
-### 0:12 — Tres minutos de encuadre
+**En pantalla:** diapositiva 5.
 
-- **2010, AngularJS.** La idea nueva era que el HTML pudiera tener lógica declarativa. Funcionó tan bien que se copió en todos lados.
-- **2016, Angular 2.** Reescritura completa. Se trajo de los **Web Components** la idea central: *el navegador ya sabe de componentes*. Un `@Component` de Angular es esa idea, con tipado y herramientas encima.
-- **2023–2024, standalone.** Angular sacó del medio la capa de `NgModule`. Hoy un componente declara sus propias dependencias en `imports`, sin intermediarios. **Así vamos a trabajar todo el curso.** Los NgModules se ven en S11, como contexto para leer código viejo.
+> «Imaginate que tenés un contador en una página, sin ningún framework. Escribís el número en el HTML. El usuario toca un botón, vos sumás uno a una variable… y la pantalla sigue mostrando el número viejo.»
+>
+> «¿Por qué? Porque **el HTML ya se dibujó**. Ese número dejó de ser tu variable en el momento en que se pintó. Para que cambie, tenés que ir a buscar el elemento y escribirle el valor nuevo, a mano.»
+>
+> «Con un contador es molesto. Con veinte carreras, cada una con ocho caballos y sus cuotas, es **imposible de sostener**: cada vez que cambia un dato tenés que acordarte de todos los lugares de la pantalla que lo muestran.»
 
-> Una frase para dejar: *«Angular no inventó los componentes. Los hizo tipados, con herramientas y con un ciclo de vida.»*
+**El término que se define acá:** *DOM* — el árbol de elementos que el navegador tiene en memoria y dibuja.
 
-### 0:15 — Cinco minutos de diagrama
+> «Ese árbol es el DOM. Sin framework, mantenerlo sincronizado con tus datos es trabajo tuyo, y es el trabajo que más bugs genera en cualquier interfaz.»
 
-Dos cajas: **la clase** (TypeScript, los datos) y **el template** (HTML, lo que se ve). Cuatro flechas entre ellas:
+### 0:14 — De dónde viene Angular, en tres minutos · 3 min
+
+**En pantalla:** diapositiva 6.
+
+> «En 2010 apareció **AngularJS** con una idea nueva: que el HTML pudiera decir de dónde salen sus datos. En vez de ir a buscar el elemento, escribías en el HTML *acá va el nombre*, y el framework se encargaba.»
+>
+> «En 2016 lo reescribieron entero: **Angular 2**, que es el que llega hasta hoy. Se trajeron una idea del propio navegador —los **Web Components**—: que una parte de la pantalla pueda ser una pieza cerrada, con su HTML, su estilo y su comportamiento adentro.»
+>
+> «Eso es un **componente**. Angular no lo inventó: lo hizo tipado, con herramientas y con un ciclo de vida.»
+>
+> «Y en 2024 sacaron del medio una capa que molestaba: antes, cada componente había que anotarlo en un archivo aparte llamado NgModule. Hoy un componente **se declara solo**. A eso se le dice **standalone**, y así vamos a trabajar todo el curso.»
+
+**Preguntas que van a hacer:**
+
+| Preguntan | Respondé |
+|---|---|
+| «¿Y los NgModules ya no existen?» | «Existen, y hay miles de proyectos con ellos. Los vemos en S11, para que puedan leer código de antes. Hoy no los necesitamos.» |
+| «¿Angular y AngularJS son lo mismo?» | «No. Comparten el nombre y nada más. Si buscan algo y ven `$scope`, es AngularJS y no les sirve.» |
+| «¿Por qué 18 y no la última?» | «Porque es la que vamos a ver en proyectos reales ahora. Y porque hay APIs de 19 y 20 que no compilan acá: la lista está en el repo.» |
+
+### 0:17 — Un componente son dos cosas · 3 min
+
+**En pantalla:** diapositiva 7 — `diagramas/componente-y-template.svg`.
+
+> «Un componente son **dos archivos que se hablan**.»
+>
+> «A la izquierda, **la clase**: un archivo TypeScript. Ahí viven los datos y las decisiones. Cuánto sale el café, si hay stock, qué pasa cuando alguien pide.»
+>
+> «A la derecha, **el template**: un archivo HTML. Es lo que se ve. Y ojo con esto, porque es la primera trampa: **el template no es HTML común**. Es HTML con instrucciones adentro, y esas instrucciones las lee Angular antes de dibujar.»
+>
+> «Entre los dos hay cuatro caminos. A cada camino se le dice **binding**, que quiere decir *atadura*: atás un pedazo del template a un pedazo de la clase, y Angular se encarga de que no se despeguen.»
+
+Señalá cada flecha del diagrama mientras decís:
+
+> «Uno. De la clase al template, como **texto**: eso es la **interpolación**.»
+> «Dos. De la clase al template, pero a una **propiedad** del elemento —si está deshabilitado, qué clase tiene—: eso es **property binding**.»
+> «Tres. Del template a la clase: el usuario hizo algo y hay que enterarse. **Event binding**.»
+> «Cuatro. Los dos sentidos a la vez, en un solo lugar. **Two-way binding**.»
+
+**Y ahora la pregunta que casi nadie hace y todos necesitan:**
+
+> «¿Cómo se entera Angular de que algo cambió?»
+>
+> «No hay magia y no hay un vigilante mirando tus variables. Angular espera a que pase **algo**: un clic, una tecla, una respuesta del servidor. Cuando eso pasa, revisa los bindings de la pantalla y repinta lo que haga falta. A ese momento se le dice **detección de cambios**.»
+>
+> «Guardensé esa frase: **Angular repinta después de que pasó algo.** En la clase 10 vamos a ver un caso donde “pasa algo” pero Angular no se entera, y va a tener todo el sentido del mundo.»
+
+> **Si vas tarde:** lo único que se puede recortar de este bloque son los tres minutos de historia. El diagrama y la detección de cambios, no.
+
+---
+
+## 0:20 · Live coding — 15 min
+
+**Decilo textual antes de empezar:**
+
+> «Cierren el editor. Los próximos quince minutos yo escribo y ustedes miran. No copien: van a hacer esto mismo después, y con las manos libres se entiende mejor. Si me equivoco, avisen.»
+
+**En pantalla:** VS Code y el navegador lado a lado. Proyecto: `lab/solution`.
+
+> Trabajás sobre `lab/solution`, que ya tiene el resultado. **Borrá `src/app/sesiones/s01/` antes de empezar** para escribirlo en vivo, o tené a mano `correccion.md`, que es exactamente esta secuencia.
+
+### 0:20 — El CLI crea el componente · 2 min
+
+```bash
+cd lab/solution
+ng generate component sesiones/s01 --flat
+```
+
+> «Esto es el **CLI**, la herramienta de línea de comandos de Angular. Le pedí un componente y me creó cuatro archivos: el TypeScript, el HTML, el CSS y uno de tests.»
+>
+> «Podría haberlos creado a mano. Uso el CLI porque los nombra igual siempre y porque no me olvido de ninguno. **No hace nada mágico**: mírenlos, están vacíos.»
+
+Abrí el `.ts` y leelo en voz alta, línea por línea:
+
+> «`@Component` es un **decorador**: le dice a Angular “esta clase no es una clase cualquiera, es un componente”. Y adentro va la configuración.»
+> «`selector` es el nombre de la etiqueta con la que se usa.»
+> «`standalone: true` es lo que hablamos: se declara solo.»
+> «`templateUrl` y `styleUrl` apuntan a los otros dos archivos.»
+
+### 0:22 — Que aparezca en pantalla · 2 min
+
+Sumá la ruta en `app.routes.ts` y `disponible: true` en `sesiones.ts`. Navegá a `/s01`.
+
+> «Fíjense que hicieron falta **dos cosas**: la ruta, para que la dirección exista, y el índice, para que aparezca en el menú de la izquierda. Son dos archivos distintos y hay que tocar los dos. Es el error más común de la clase que viene.»
+
+**Ahora se ve una página en blanco con el texto que el CLI dejó.** Señalalo:
+
+> «Eso es lo mínimo que existe. De acá para arriba, todo lo que aparezca lo vamos a poner nosotros.»
+
+### 0:24 — Interpolación · 3 min
+
+Escribí en la clase:
+
+```ts
+protected cafe = { nombre: 'Yirgacheffe', origen: 'Etiopía', precio: 42, disponible: true };
+```
+
+Y en el template:
+
+```html
+<h2>{{ cafe.nombre }}</h2>
+<p>{{ cafe.origen }}</p>
+<p>{{ cafe.precio }}</p>
+```
+
+> «Las llaves dobles dicen: “Angular, poné acá el valor de esta expresión, como texto”.»
+
+**Ahora hacé la demostración que vale por toda la explicación:** cambiá `precio: 42` a `precio: 55` y guardá.
+
+> «Cambié **un solo lugar** —la clase— y la pantalla se actualizó sola. Eso es el trato: el dato vive en un lugar, y el template lo mira. Nunca más vas a ir a buscar un elemento para escribirle el número.»
+
+### 0:27 — Property binding · 3 min
+
+> «Ahora quiero que la card se vea distinta cuando no hay stock. La clase CSS ya existe, se llama `producto--agotado`.»
+
+Escribí primero **el error**, a propósito:
+
+```html
+<div class="producto producto--agotado">
+```
+
+> «Así queda puesta siempre, y no es lo que quiero. Necesito que dependa de un dato.»
+
+Y ahora la forma correcta:
+
+```html
+<div class="producto" [class.producto--agotado]="!cafe.disponible">
+```
+
+> «Los corchetes cambian todo. Sin corchetes, lo que va entre comillas es **texto literal**. Con corchetes, es **una expresión de TypeScript** que Angular evalúa.»
+>
+> «Y fíjense que puedo tener las dos cosas en el mismo elemento: `class` con lo que va siempre, y `[class.algo]` con lo que va a veces. **No se pisan, se suman.**»
+
+Cambiá `disponible` a `false` y mostrá el resultado.
+
+### 0:30 — Event binding · 3 min
+
+> «Hasta acá la información va en un solo sentido: de la clase al template. Ahora el otro.»
+
+En la clase:
+
+```ts
+protected alternarDisponibilidad(): void {
+  this.cafe = { ...this.cafe, disponible: !this.cafe.disponible };
+}
+```
+
+En el template:
+
+```html
+<button type="button" (click)="alternarDisponibilidad()">
+  {{ cafe.disponible ? 'Marcar agotado' : 'Marcar disponible' }}
+</button>
+```
+
+> «Los paréntesis escuchan un evento del navegador. `click` no lo inventó Angular: es el mismo de siempre. Lo que agrega Angular es que en vez de escribir un `addEventListener`, decís qué método llamar.»
+
+Tocá el botón. Andá y volvé un par de veces.
+
+> «Y acá está lo de la detección de cambios: **tocaron el botón, entonces pasó algo, entonces Angular revisó**. Por eso el texto del botón y la clase del div se actualizaron los dos, sin que yo tocara nada más.»
+
+> Fijate en el `{ ...this.cafe, ... }`. Si alguien pregunta: «creo un objeto nuevo en vez de modificar el que estaba. Es una regla del curso y en la clase 3 van a ver por qué importa.» **No te extiendas más que eso.**
+
+### 0:33 — Two-way binding, y el error · 4 min
+
+> «Falta el cuarto: cuando la información tiene que ir en los dos sentidos. El caso típico es un input.»
+
+En la clase: `protected cliente = '';`
+
+En el template:
+
+```html
+<input type="text" [(ngModel)]="cliente" />
+<p>Hola, {{ cliente }}</p>
+```
+
+**Guardá. Va a fallar.** Leé el error completo en voz alta, del navegador o de la terminal:
 
 ```
-             ┌──────────────┐                    ┌──────────────┐
-             │              │  {{ interpolación }}│              │
-             │    CLASE     │ ──────────────────▶ │   TEMPLATE   │
-             │              │   [property]="…"    │              │
-             │  nombre      │ ──────────────────▶ │   lo que se  │
-             │  precio      │                     │      ve      │
-             │  agregar()   │ ◀────────────────── │              │
-             │              │    (evento)="…"     │              │
-             │              │ ◀──────────────────▶│              │
-             └──────────────┘   [(ngModel)]="…"   └──────────────┘
+NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
 ```
 
-**La analogía:** un mostrador de cafetería. La clase es la trastienda —lo que hay, cuánto cuesta, quién atiende—; el template es la vidriera. Interpolación es escribir el precio en el cartel. Property binding es apagar la luz del cartel cuando se acabó. Event binding es el timbre que suena cuando alguien pide. Y two-way es la libreta del pedido: la escribe el cliente y la lee el mozo.
+> «Buenísimo que falle. Léanlo conmigo: *no puedo enlazar a `ngModel` porque no es una propiedad conocida de `input`*.»
+>
+> «Y tiene razón: `ngModel` no existe en HTML. Es algo que trae Angular. Y acá está la parte importante — **este componente es standalone, o sea que declara solo lo que usa**. Yo nunca le dije que iba a usar `ngModel`.»
 
-**Que puedan dibujar las dos cajas y las cuatro flechas antes de escribir una línea.** Si arranca el código acá, copian sintaxis sin modelo mental.
+Agregá el import:
 
----
+```ts
+import { FormsModule } from '@angular/forms';
+// …
+imports: [FormsModule],
+```
 
-## 0:20 — Live coding narrado · 15 min
+> «Ahora sí. Y quiero que se lleven la regla completa: **si el template usa algo de Angular, tiene que estar en `imports`.** Vale para esto, para el router, y desde la clase que viene, para cada componente que usen adentro de otro.»
 
-**Ellos no copian. Miran.** Decirlo explícito al empezar: *«cierren el editor, esto lo hacemos juntos en 15 minutos y después lo hacen ustedes»*.
+Escribí en el input y mostrá cómo el `<p>` de abajo cambia mientras escribís.
 
-Proyecto: `lab/solution` → ruta `/s01`
-
-| Min | Qué escribo | Qué narro mientras escribo |
-|---|---|---|
-| 0:20 | `ng serve` y recorro la estructura | «Esto lo generó el CLI. `main.ts` arranca la app, `app.config.ts` la configura. Cero `NgModule`.» |
-| 0:22 | El `@Component` vacío: selector, `standalone: true`, template | «`standalone: true` en Angular 18 hay que escribirlo. En 19 pasa a ser el valor por defecto — si copian código de un blog reciente, ojo con eso.» |
-| 0:25 | La propiedad `cafe` y su interpolación | «Escribo el precio una sola vez, en la clase. El template lo lee.» **Cambiar el precio en vivo y que vean la recarga.** |
-| 0:29 | `[class.producto--agotado]` | «Sin corchetes es la cadena literal; con corchetes es una expresión de TypeScript. Es *la* diferencia.» |
-| 0:33 | `(click)="alternarDisponibilidad()"` | «Los paréntesis van del template a la clase. El DOM avisa, la clase decide.» |
-| 0:37 | `[(ngModel)]` **sin** `FormsModule` → error | **Romperlo a propósito.** Leer el error en voz alta antes de arreglarlo. |
-| 0:39 | Agregar `FormsModule` a `imports` | «Los imports son de ESTE componente. Standalone quiere decir que se declara solo.» |
-
-> El error de `ngModel` es el más frecuente de la sesión. Que lo vean acá, con la pantalla del instructor, hace que a las 0:35 lo reconozcan solos.
+> «Los dos sentidos: lo que escribo va a la clase, y lo que está en la clase se ve abajo. `[(ngModel)]` es literalmente `[ngModel]` más `(ngModelChange)` — property binding y event binding juntos, con azúcar sintáctica.»
 
 ---
 
-## 0:35 — Misión 1 · 15 min
+## 0:35 · Misión 1 — 15 min
 
-Enunciado: `mision-1.md` · Trabajan en `lab/starter`, ruta `/s01` · **Individual**
+**En pantalla:** diapositiva 15 con el enunciado. Enunciado completo en `mision-1.md`.
 
-**Estás en silencio.** Disponible si preguntan, pero no circulás ofreciendo ayuda. Los quince minutos de pelearse solo con el error son la clase.
+> «Ahora ustedes. Mismo mostrador, en `lab/starter`. El componente **no existe**: lo crean con el CLI, igual que recién. Quince minutos.»
 
-Si a los 8 minutos más de la mitad está trabada en lo mismo → una pista para todos, en voz alta, sin resolver. La más probable: *«¿alguien ya vio el error de `ngModel`? ¿Dónde dice Angular que hay que declarar lo que usa un componente?»*
+> **Estás en silencio.** Disponible si preguntan, pero no circulás ofreciendo ayuda. Los quince minutos de pelearse con el error **son la clase**.
 
----
+**Reloj de pistas** — solo si más de la mitad está trabada en lo mismo:
 
-## 0:50 — Dos alumnos comparten pantalla · 10 min
-
-**Preguntás, no corregís.** Aunque esté mal. Aunque duela.
-
-1. ¿Qué esperabas que pasara acá?
-2. ¿Qué pasó?
-3. ¿Cómo lo averiguaste?
-4. Si tuvieras que explicarle esta línea a alguien que no estuvo hoy, ¿qué le decís?
-
-Elegir **una que funciona y una que no**. La que no funciona enseña más — pedir permiso antes.
-
-Lo más probable que aparezca: alguien escribió `class="producto--agotado"` en vez de `[class.producto--agotado]="…"`. Es la mejor pantalla posible para compartir.
+| Min | Pista, en voz alta, sin resolver |
+|---|---|
+| 0:43 | «¿A alguien le apareció un error con `ngModel`? Vuelvan a leerlo entero: dice dónde está el problema.» |
+| 0:47 | «Acordate: para que la ruta aparezca en el menú hay que tocar **dos** archivos.» |
 
 ---
 
-## 1:00 — Descanso · 10 min
+## 0:50 · Comparten pantalla — 10 min
 
-Volver puntual: los quince minutos de después son los más densos.
+Dos personas. **Una que le funciona y una que no** — a la segunda pedile permiso antes.
+
+> **Preguntás, no corregís.** Aunque veas el error en el primer segundo.
+
+1. «¿Qué esperabas que pasara acá?»
+2. «¿Qué pasó?»
+3. «¿Cómo te diste cuenta?»
+4. «Si tuvieras que explicarle esta línea a alguien que no vino hoy, ¿qué le decís?»
+
+**Lo más probable que aparezca:** alguien escribió `class="producto--agotado"` en vez de `[class.producto--agotado]="…"`. Es la mejor pantalla posible para compartir — no la arregles vos, dejá que la encuentren entre todos.
 
 ---
 
-## 1:10 — Predice y ejecuta · 15 min
+## 1:00 · Descanso — 10 min
 
-Carpeta: `predice-y-ejecuta/` · Respuestas: `predice-y-ejecuta/respuestas.md`
+> «Diez minutos. Vuelvan puntuales, que lo que viene es lo mejor de la clase.»
 
-Para cada snippet, en este orden y sin saltearse pasos:
+---
 
-1. Se muestra el código. **No se ejecuta.**
-2. *«¿Qué va a pasar? Escribilo en el chat.»* — 60 segundos.
-3. Se ejecuta.
-4. Se explica la diferencia entre lo que dijeron y lo que pasó.
+## 1:10 · Predice y ejecuta — 15 min
 
-**El paso 2 es todo el ejercicio.** Ejecutar primero lo convierte en una demo.
+**Los archivos:** `predice-y-ejecuta/`. **Las respuestas:** `predice-y-ejecuta/respuestas.md`, y están verificadas en el navegador — no las improvises.
 
-| # | Qué está roto | Qué predicen casi todos | Qué pasa de verdad |
+**El orden no se saltea:**
+
+1. Mostrás el código. **No lo ejecutás.**
+2. «¿Qué va a pasar? Escribilo en el chat.» — **60 segundos de reloj.**
+3. Recién ahí, ejecutás.
+4. Explicás la diferencia entre lo que dijeron y lo que pasó.
+
+> El paso 2 es todo el ejercicio. Si ejecutás primero, esto es una demo y no aprende nadie.
+
+| Min | Snippet | Casi todos predicen | Pasa |
 |---|---|---|---|
-| 1 | `class="a {{ b }}"` mezclado con `[class.x]` | «Se pisan; gana una» | **Se combinan.** Quedan las tres clases — verificado en el navegador |
-| 2 | `[(ngModel)]` sin `FormsModule` | «Anda igual, ngModel es de Angular» | **No compila.** `Can't bind to 'ngModel'…` |
-| 3 | `(click)="contador + 1"` en vez de `contador = contador + 1` | «Suma uno» | Evalúa la expresión y tira el resultado. El número no se mueve |
+| 1:10 | `class="a {{ b }}"` junto a `[class.x]` | «se pisan, gana una» | **Quedan las tres clases.** Se combinan |
+| 1:15 | `[(ngModel)]` sin `FormsModule` | «anda igual» | **No compila.** `NG8002` |
+| 1:20 | `(click)="contador + 1"` | «suma uno» | Se queda en **0**, y **no hay ningún error** |
+
+Cerrá el bloque con esta pregunta:
+
+> «De los tres, ¿cuál les habría costado más encontrar en un proyecto de verdad?»
+
+Casi siempre eligen el tercero, y tienen razón:
+
+> «Exacto. Los otros dos te frenan el build. Este te deja seguir. **Un binding que no falla no quiere decir que ande** — el silencio es el peor síntoma que puede tener un bug.»
 
 ---
 
-## 1:25 — Misión 2, en parejas · 20 min
+## 1:25 · Misión 2, en parejas — 20 min
 
-Enunciado: `mision-2.md` · Trabajan en `project/frontend/starter` · **En parejas**
+**En pantalla:** diapositiva 21. Enunciado en `mision-2.md`.
 
-Acá el concepto aterriza en el hipódromo. Es el único bloque que toca el proyecto ancla.
+> «Ahora al proyecto de verdad. En parejas, veinte minutos: diez escribe uno y dicta el otro, y a los diez se invierten. El que dicta no toca el teclado; el que escribe no decide.»
 
-**Conducción por turnos:** 10 minutos escribe uno y dicta el otro; a los 10 se invierte.
+**Tres cosas para decir antes de largar:**
 
-Dos cosas para decir antes de largar:
+> «Uno: la pantalla **no existe**. La crean ustedes, con el CLI, igual que en el lab.»
+>
+> «Dos: los datos ya están. Son las ocho carreras de verdad, con sus 54 caballos, en `core/mocks`. No inventen datos.»
+>
+> «Tres: el `@for` para recorrer la lista se los damos escrito en la corrección. Recorrer listas es la clase 3; **hoy el trabajo son los bindings**.»
 
-- **El `@for` se los damos hecho.** El control flow es S3. Hoy el trabajo son los bindings de adentro.
-- **El starter ya funciona a medias.** No arrancan de una pantalla en blanco: arrancan de algo que anda mal, y eso es más parecido al trabajo real que a un ejercicio.
-
-Circulás entre las parejas. Escuchás más de lo que hablás. La pareja que termina recibe la extensión del final del enunciado.
+Circulás entre las parejas. **Escuchás más de lo que hablás.** La pareja que termina recibe la extensión del final del enunciado.
 
 ---
 
-## 1:45 — Code review en vivo · 10 min
+## 1:45 · Code review en vivo — 10 min
 
-Una solución de la Misión 2, con permiso de la pareja. Con la rúbrica de `docs/curriculum.md`, en voz alta y en este orden:
+Una solución de la Misión 2, con permiso. **En pantalla, al lado, `correccion.md`.**
+
+Rúbrica, en voz alta y en este orden:
 
 1. ¿`standalone: true` y `OnPush`?
 2. ¿Actualiza el estado sin mutar?
 3. ¿`any`, `console.log`, imports sin usar?
-4. ¿Maneja cargando, vacío y error?
-5. ¿El nombre dice lo que la cosa hace?
-6. ¿Respeta la regla de dependencias?
+4. ¿El nombre dice lo que la cosa hace?
+5. ¿Está en la carpeta que le toca?
 
-En S1, el punto 4 casi no aplica —los datos son hardcodeados— y conviene decirlo: *«hoy no hay estado de carga porque no hay nada que cargar. En S7 vuelve, y va a ser obligatorio.»*
+**Empezá por algo que está bien hecho.** Siempre hay algo.
 
-Empezar por algo que está bien hecho. Siempre hay algo.
+Y decí esto, textual, porque si no lo van a esperar:
+
+> «Se van a dar cuenta de que en la lista no hay estado de carga ni de error. Es correcto: **hoy no hay nada que cargar**, los datos ya están en el código. En la clase 7, cuando los pidamos a un servidor, los tres estados van a ser obligatorios.»
 
 ---
 
-## 1:55 — Exit ticket y tarea · 5 min
+## 1:55 · Exit ticket y tarea — 5 min
 
-Formulario: `exit-ticket.md` — tres preguntas, tres minutos.
+**Exit ticket:** `exit-ticket.md`. Tres preguntas, tres minutos.
 
-Tarea: `tarea.md`. **Leerla en voz alta antes de cortar.** Si se manda solo por chat, no se hace.
+> «La tercera es la que más me sirve: qué quedó confuso. Vale “nada”, vale “todo”, vale una palabra. Con eso arranco la clase que viene.»
+
+**Tarea:** `tarea.md`. **Leela en voz alta antes de cortar.** Una tarea que solo se manda por chat no se hace.
 
 ---
 
 ## Después de la clase
 
 - [ ] Leer los exit tickets. Lo confuso arranca S2.
-- [ ] Escribir `sesiones/s01-primer-componente/wayground.csv` con lo que más falló hoy — se corre al empezar S2.
-- [ ] Anotar acá abajo qué bloque se pasó de tiempo y por qué.
+- [ ] Escribir `wayground.csv` de **esta** sesión con lo que más falló — se corre al empezar S2.
+- [ ] Completar las notas de abajo.
 
 ### Notas de la corrida real
 
-*Se completa después de dar la clase. Es lo que hace que S2 salga mejor.*
+*Completá después de dar la clase. Es lo que hace que S2 salga mejor.*
+
+| | |
+|---|---|
+| ¿Qué bloque se pasó de tiempo? | |
+| ¿Qué pregunta no supe contestar? | |
+| ¿Qué error apareció que no estaba previsto? | |
+| ¿Qué sacaría o agregaría? | |

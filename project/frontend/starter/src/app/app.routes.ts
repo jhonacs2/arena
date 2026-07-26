@@ -1,31 +1,37 @@
 import { Routes } from '@angular/router';
 
 /**
- * Rutas de la aplicación.
+ * Las rutas de la aplicación.
  *
- * `loadComponent` carga la vista recién cuando se navega a ella. Se usa desde
- * el principio para que en S9, cuando se explique lazy loading, el alumno lo
- * reconozca en lugar de verlo por primera vez.
+ * Hoy hay una sola: `/sistema`, la muestra del sistema de diseño. No es una
+ * pantalla del producto — es tu referencia: están todos los colores, las
+ * tipografías, los botones y las sedas de los caballos. Cuando algo se vea
+ * raro, mirá ahí primero.
  *
- * `/sistema` es la muestra del sistema de diseño: no es una pantalla del
- * producto, pero se queda como referencia.
+ * `loadComponent` es carga diferida: el navegador descarga el código de una
+ * pantalla recién cuando entrás. Se ve a fondo en S9.
  */
 export const routes: Routes = [
-  {
-    path: 'carreras',
-    title: 'Carreras · Hipódromo',
-    loadComponent: () =>
-      import('./features/races/race-list.component').then((m) => m.RaceListComponent),
-  },
+  // TODO(S1): sumar la ruta del listado de carreras y hacerla la principal.
+  //
+  //   {
+  //     path: 'carreras',
+  //     title: 'Carreras · Hipódromo',
+  //     loadComponent: () =>
+  //       import('./features/races/race-list.component').then((m) => m.RaceListComponent),
+  //   },
+  //
+  // Después cambiá los dos redirectTo de abajo para que apunten a 'carreras',
+  // y sumá el enlace en el encabezado (layout/shell.component.html).
+
   {
     path: 'sistema',
     title: 'Sistema de diseño · Hipódromo',
     loadComponent: () =>
       import('./features/sistema/sistema.component').then((m) => m.SistemaComponent),
   },
-  { path: '', redirectTo: 'carreras', pathMatch: 'full' },
+  { path: '', redirectTo: 'sistema', pathMatch: 'full' },
   // La ruta comodín va SIEMPRE al final: el router toma la primera que
-  // coincide, así que declarada arriba se comería todas las demás. Es uno de
-  // los "predice y ejecuta" de S9.
-  { path: '**', redirectTo: 'carreras' },
+  // coincide, así que declarada arriba se comería todas las demás.
+  { path: '**', redirectTo: 'sistema' },
 ];

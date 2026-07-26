@@ -6,23 +6,23 @@
     <p class="barra__sub">Módulo Angular</p>
 
     <nav aria-label="Sesiones">
-      <ol class="sesiones" role="list">
-        @for (sesion of sesiones; track sesion.slug) {
-          <li>
-            @if (sesion.disponible) {
+      @if (sesiones.length === 0) {
+        <p class="barra__vacia">
+          Todavía no hay ninguna sesión acá.
+          <span>Van a aparecer a medida que las hagas.</span>
+        </p>
+      } @else {
+        <ol class="sesiones" role="list">
+          @for (sesion of sesiones; track sesion.slug) {
+            <li>
               <a [routerLink]="'/' + sesion.slug" routerLinkActive="activa">
                 <span class="sesiones__num">{{ sesion.numero }}</span>
                 <span class="sesiones__titulo">{{ sesion.titulo }}</span>
               </a>
-            } @else {
-              <span class="pendiente" aria-disabled="true">
-                <span class="sesiones__num">{{ sesion.numero }}</span>
-                <span class="sesiones__titulo">{{ sesion.titulo }}</span>
-              </span>
-            }
-          </li>
-        }
-      </ol>
+            </li>
+          }
+        </ol>
+      }
     </nav>
   </aside>
 
