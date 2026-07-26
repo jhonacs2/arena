@@ -302,6 +302,39 @@ Toda sesión tiene la misma forma. Está en `sesiones/_plantilla/guion.md` y no 
 
 S11 rompe el molde a propósito (30 min de NgModules + deploy + review cruzado). Va documentado en su propio `guion.md`.
 
+### Cómo se produce una sesión
+
+Es el procedimiento de las fases 4–13. Los nueve archivos y para qué sirve cada uno están en `sesiones/README.md`.
+
+1. Copiar `sesiones/_plantilla/` a `sesiones/sNN-<slug>/`. El slug va corto y en español: `s01-primer-componente`.
+2. Escribir **primero `guion.md`**. Es el documento maestro: slides, misiones y quiz salen de ahí, no al revés.
+3. **Lab:** crear `lab/{solution,starter}/src/app/sesiones/sNN/`, poner `disponible: true` en `src/app/sesiones.ts` **y** sumar la ruta en `app.routes.ts`. Son dos lugares: la barra lateral sale del índice, la navegación del router.
+4. **Hipódromo:** el slice en `solution/`, y el mismo archivo en `starter/` andando a medias con sus `// TODO(SNN)`.
+5. `wayground.csv` de **esta** sesión — se corre en la siguiente.
+6. `node scripts/verify.mjs` y commit `feat(sNN): …`.
+
+**El lab tiene su propio mundo.** El dominio es una cafetería, *Café Compilado*, y se mantiene en las once rutas. El lab **no usa `shared/ui`** del hipódromo: escribe HTML y CSS a mano, para que no haya nada entre el alumno y el concepto.
+
+**Qué testea cada uno.** `lab/solution` testea lo que el alumno tiene que lograr —los bindings, lo que se ve en pantalla—: es la referencia de la misión. `lab/starter` testea **solo la lógica de clase que ya viene hecha**, así pasa desde el minuto cero. Lo visual va en los criterios de «Listo cuando» del enunciado, no en un test.
+
+**Si un tema se necesita antes de su sesión, se da hecho y se nombra.** `@for` es de S3 pero S1 necesita una lista: viene escrito en el starter y el enunciado aclara en qué sesión se ve a fondo. La regla completa está en `docs/curriculum.md`.
+
+> **Las respuestas de «predice y ejecuta» se verifican en el navegador antes de escribirlas.** En S1 la respuesta que parecía obvia era la contraria: `class="a {{ b }}"` y `[class.x]` **no compiten, se combinan**. Escribir la respuesta de memoria es cómo se le enseña algo falso a treinta personas a la vez.
+
+### El tema de las diapositivas tiene tres trampas
+
+Marp no es CSS normal, y las tres ya costaron tiempo una vez:
+
+1. **Nunca escribas `*/` dentro de un comentario del tema.** Un glob como `sesiones/s01-*/slides.md` cierra el comentario ahí mismo y corrompe todo lo que sigue. El deck sale **sin un solo color** y nada avisa.
+2. **Los tokens se declaran en `section`, no en `:root`** — y tampoco en `:root, section`: Marp reescribe la lista de selectores y el navegador la descarta entera. `gen-tokens-css.mjs` ya lo resuelve; no lo «arregles».
+3. **`::after` es de Marp** (la paginación) y `<header>` también. Lo que pongas ahí hereda su `opacity` y se ve apagado.
+
+Las diapositivas se exportan **siempre en claro**, sin `prefers-color-scheme`: si dependieran del tema del sistema, el mismo archivo saldría distinto según la máquina desde la que se genere.
+
+```bash
+npx @marp-team/marp-cli --theme-set theme/ --html --allow-local-files sesiones/sNN-*/slides.md
+```
+
 ---
 
 ## 10. UI
@@ -343,15 +376,20 @@ Si necesitás una imagen que no está en `IMAGES.md`, **agregala ahí primero** 
 
 Una feature no está lista hasta que:
 
-1. `node scripts/verify.mjs` pasa.
-2. No hay `any`, ni `console.log`, ni imports sin usar.
-3. Todos los componentes son `standalone: true` y `OnPush`.
-4. La vista maneja los tres estados: cargando (skeleton), vacío (con acción), error (con reintento).
-5. Se probó en el navegador **contra el mock y contra el backend real**, y se ve igual en los dos.
-6. Recorrido por teclado con foco visible.
-7. El equivalente en `starter/` existe, compila, y tiene su `// TODO(Sn)`.
-8. La ruta `/sNN` del lab existe, en solución y starter.
-9. Los materiales de `sesiones/sNN-*/` están completos.
+| | Desde |
+|---|---|
+| 1. `node scripts/verify.mjs` pasa | siempre |
+| 2. No hay `any`, ni `console.log`, ni imports sin usar | siempre |
+| 3. Todos los componentes son `standalone: true` y `OnPush` | siempre |
+| 4. Se probó **en el navegador**, no solo compilando | siempre |
+| 5. Recorrido por teclado con foco visible | siempre |
+| 6. El equivalente en `starter/` existe, compila, anda a medias y tiene su `// TODO(Sn)` | siempre |
+| 7. La ruta `/sNN` del lab existe, en solución y starter | siempre |
+| 8. Los materiales de `sesiones/sNN-*/` están completos | siempre |
+| 9. La vista maneja los tres estados: cargando (skeleton), vacío (con acción), error (con reintento) | **S7** |
+| 10. Se probó contra el mock **y** contra el backend real, y se ve igual en los dos | **S7** |
+
+Los puntos 9 y 10 **no aplican antes de S7**: hasta ahí los datos son constantes tipadas y no hay nada que cargar ni que pueda fallar. Decirlo en voz alta durante el code review de las sesiones tempranas —*«hoy no hay estado de carga porque no hay nada que cargar; en S7 vuelve y es obligatorio»*— es mejor que exigir algo imposible y acostumbrar a saltear la lista.
 
 ---
 
