@@ -1,6 +1,8 @@
 # CLAUDE.md — Hipódromo · Módulo Angular · Talento DH 8va
 
-> **Regla cero: este proyecto es Angular 18. No Angular 19, 20 ni 21.**
+> **Regla cero: el material didáctico es Angular 18. No Angular 19, 20 ni 21.**
+>
+> Vale para `project/` y `lab/` — todo lo que el alumno lee o escribe. **`arena/` es la excepción y es Angular 22**: es una app que los alumnos *usan*, no material que leen, y tiene su propio [`arena/CLAUDE.md`](arena/CLAUDE.md).
 
 Este archivo tiene solo lo que vale **en todo el repo**. El resto está repartido por carpeta y se carga cuando trabajás ahí:
 
@@ -12,6 +14,7 @@ Este archivo tiene solo lo que vale **en todo el repo**. El resto está repartid
 | `docs/design/` o cualquier `.css` | [`docs/design/CLAUDE.md`](docs/design/CLAUDE.md) — la paleta y las reglas visuales |
 | `docs/contract/` | [`docs/contract/CLAUDE.md`](docs/contract/CLAUDE.md) — regla contrato-primero |
 | `project/backend/` | [`project/backend/CLAUDE.md`](project/backend/CLAUDE.md) — está congelado |
+| `arena/` | [`arena/CLAUDE.md`](arena/CLAUDE.md) — **otro producto: Angular 22, Go, Supabase** |
 
 **Estado actual y qué sigue: [`docs/plan.md`](docs/plan.md).**
 
@@ -127,7 +130,9 @@ Instalá con `npm install --save-exact`. `package.json` no debe contener `^` ni 
 
 ## 5. APIs prohibidas (no existen en Angular 18)
 
-**La sección más importante del repo.** Aparecen mucho en material reciente y **no compilan** en 18:
+**La sección más importante del repo.** Aparecen mucho en material reciente y **no compilan** en 18.
+
+> Esta tabla rige en `project/` y `lab/`. **En `arena/` no** — ahí corre Angular 22 y estas APIs existen. `verify.mjs` solo escanea los cuatro proyectos del material; Arena tiene su propio verificador.
 
 | API | Llega en | Qué usar en 18 |
 |---|---|---|

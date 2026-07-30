@@ -50,3 +50,8 @@ sesiones/**/slides.html
 # scripts/prep-demo.mjs. Ver el encabezado de ese script.
 lab/demo/
 project/frontend/demo/
+
+# arena — dependencias y binarios
+arena/backend/bin/
+arena/backend/arena
+arena/backend/arena.exe
