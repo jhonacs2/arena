@@ -19,7 +19,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   template: `
     <button
       [type]="type()"
-      [class]="'button boton--' + variant() + ' boton--' + size()"
+      [class]="'button button--' + variant() + ' button--' + size()"
       [disabled]="disabled()"
       [attr.aria-busy]="loading() ? 'true' : null"
       (click)="pressed.emit()"
