@@ -7,6 +7,7 @@ sesiones/
 ├── _plantilla/            copiar de acá para arrancar una sesión nueva
 ├── s00-typescript/        la primera clase
 ├── s01-primer-componente/
+├── s02-anatomia-componente/
 ├── …
 └── s10-websockets/        + los 30 min de NgModules legacy
 ```

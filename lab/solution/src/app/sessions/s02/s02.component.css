@@ -1,0 +1,97 @@
+.header {
+  max-inline-size: 55ch;
+  margin-block-end: var(--space-8);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.intro {
+  margin-block-start: var(--space-3);
+  color: var(--text-muted);
+}
+
+h2 {
+  margin-block-end: var(--space-3);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-sunken);
+  border: 2px solid var(--border);
+  padding: 0 0.25em;
+}
+
+.menu {
+  margin-block-end: var(--space-8);
+}
+
+.menu__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-4);
+  margin-block-end: var(--space-4);
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2em 0.5em;
+  border: 2px solid currentcolor;
+}
+
+.note {
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--space-4);
+}
+
+.panel {
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  background: var(--surface-raised);
+}
+
+.panel__hint {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-block-end: var(--space-3);
+}
+
+.panel__list {
+  display: grid;
+  gap: var(--space-2);
+  margin-block-end: var(--space-3);
+}
+
+.panel__count {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-block-end: var(--space-3);
+}
+
+.empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

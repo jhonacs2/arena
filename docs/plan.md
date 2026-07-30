@@ -10,7 +10,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **3** | S1 · Primer componente | ✅ **terminada** — falta darla |
 | **3.5** | Revisión del formato de los materiales | ✅ **terminada** |
 | **3.75** | S0 · TypeScript, y S11 repartida | ✅ **terminada** — falta darla |
-| **4–12** | Una sesión por fase, S2 … S10 | ⬜ siguiente |
+| **4** | S2 · Anatomía de un componente | ✅ **terminada** — falta darla |
+| **5–12** | Una sesión por fase, S3 … S10 | ⬜ siguiente |
 | **13** | Publicación y deploy | ⬜ |
 
 ---
@@ -122,7 +123,22 @@ Dos excepciones que quedaron escritas como regla, no como caso particular:
 
 Y una decisión de método que se pagó sola: **los ocho mensajes de error del material están copiados de la salida de `tsc`, no escritos de memoria.** Dos de las tres respuestas del bloque «predice y ejecuta» son contraintuitivas —`readonly lines: OrderLine[]` **sí** deja hacer `push`, y `JSON.parse(t) as Race` **compila sin una advertencia**—, y son justamente las que no se pueden improvisar en clase.
 
-## Fases 4–12 — Una sesión por fase
+## Fase 4 — S2 · Anatomía de un componente ✅
+
+De una pantalla que funciona a dos piezas que se pueden mover. La sesión no agrega **ni una función**: la pantalla se ve igual al empezar y al terminar, y eso es lo que hay que decir en voz alta en el code review.
+
+- **Lab `/s02`**: `<app-coffee-card>` con las cuatro puertas —`input()`, `input.required()`, `model()`, `output()`—, dos `<ng-content>` y los tres ganchos del ciclo de vida. El starter trae la pantalla **entera adentro de un componente**: hoy no se construye, se parte
+- **Hipódromo**: `<app-badge>` en `shared/ui/` —el texto entra por `ng-content`, el tono por `input()`— y `<app-race-card>` en `features/races/`. `race-list` se queda con lo suyo: preparar datos y decidir cuál está abierta
+- **`sesiones/s02-anatomia-componente/`**: los 12 archivos, diagrama incluido
+
+Dos defectos reales que aparecieron por verificar en vez de suponer:
+
+- **`<app-button>` emitía las clases `boton--*` y el CSS define `.button--*`.** Ninguna variante ni tamaño se estaba aplicando desde Fase 2, en los dos proyectos. Además de un bug, era un §3: los nombres de clase son código
+- **Escribí en el guión que `ngOnChanges` no corre cuando el hijo cambia su propio `model()`.** Es al revés y lo dijo el navegador: el valor sube al padre y **vuelve a bajar** por el mismo binding, así que corre. Quedó convertido en la pregunta que se hace en vivo, que es mejor material que la afirmación equivocada
+
+Y una respuesta de «predice y ejecuta» que la intuición falla: **dos `<ng-content>` iguales compilan sin una queja y el contenido aparece una sola vez** — el contenido proyectado se *mueve*, no se copia, y un nodo del DOM no puede estar en dos lugares.
+
+## Fases 5–12 — Una sesión por fase
 
 Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
 

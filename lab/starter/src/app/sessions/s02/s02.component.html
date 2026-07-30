@@ -1,0 +1,90 @@
+<header class="header">
+  <p class="eyebrow">Sesión 2 · Lab</p>
+  <h1>Café Compilado</h1>
+  <p class="intro">
+    Toda la carta en un solo componente. Anda — y no se puede reutilizar ni un pedazo.
+  </p>
+</header>
+
+<section class="menu">
+  <h2>La carta</h2>
+
+  <div class="menu__grid">
+    @for (item of items; track item.coffee.id) {
+      <!--
+        TODO(S2) · 1 — Todo este <article> es la tarjeta, y tiene que
+        convertirse en <app-coffee-card>. Fijate qué necesita de afuera:
+        el café, si está destacado y la cantidad. Eso son sus inputs.
+      -->
+      <article
+        class="card"
+        [class.card--featured]="item.coffee.id === featuredId"
+        [class.card--soldout]="!item.coffee.available"
+      >
+        <div class="card__tag">
+          @if (item.coffee.id === featuredId) {
+            <span class="tag">Café del día</span>
+          }
+        </div>
+
+        <h3 class="card__name">{{ item.coffee.name }}</h3>
+        <p class="card__origin">{{ item.coffee.origin }}</p>
+        <p class="card__price num">{{ item.coffee.price }}</p>
+
+        <div class="card__slot">
+          @if (!item.coffee.available) {
+            <p class="note">Vuelve el jueves.</p>
+          }
+        </div>
+
+        <div class="card__quantity">
+          <button type="button" class="stepper" (click)="add(item, -1)" [disabled]="item.quantity <= 1">
+            <span aria-hidden="true">−</span>
+            <span class="sr-only">Quitar uno</span>
+          </button>
+
+          <output class="num">{{ item.quantity }}</output>
+
+          <button type="button" class="stepper" (click)="add(item, 1)" [disabled]="item.quantity >= 20">
+            <span aria-hidden="true">+</span>
+            <span class="sr-only">Agregar uno</span>
+          </button>
+        </div>
+
+        <p class="card__total">
+          Total: <strong class="num">{{ totalFor(item) }}</strong>
+        </p>
+
+        <button type="button" class="button" [disabled]="!item.coffee.available" (click)="order(item)">
+          {{ item.coffee.available ? 'Pedir' : 'Sin stock' }}
+        </button>
+      </article>
+    }
+  </div>
+</section>
+
+<div class="panels">
+  <section class="panel">
+    <h2>Comanda</h2>
+
+    @if (orders.length === 0) {
+      <p class="empty">Todavía no pidió nadie.</p>
+    } @else {
+      <ol class="panel__list" role="list">
+        @for (order of orders; track $index) {
+          <li>{{ order }}</li>
+        }
+      </ol>
+      <p class="panel__count">
+        <span class="num">{{ total }}</span> pedidos
+      </p>
+      <button type="button" class="button button--ghost" (click)="clear()">Vaciar comanda</button>
+    }
+  </section>
+
+  <!--
+    TODO(S2) · 5 — Acá va el panel de ciclo de vida. Se llena con lo que
+    avisen las tarjetas al destruirse, y para eso hace falta un segundo
+    output() en el hijo.
+  -->
+</div>

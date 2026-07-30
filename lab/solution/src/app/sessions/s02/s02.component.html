@@ -1,0 +1,81 @@
+<header class="header">
+  <p class="eyebrow">Sesión 2 · Lab</p>
+  <h1>Café Compilado</h1>
+  <p class="intro">
+    La misma carta que en S1, pero cada café es ahora un componente aparte. Los datos bajan por
+    <code>input()</code> y los avisos suben por <code>output()</code>.
+  </p>
+</header>
+
+<section class="menu">
+  <h2>La carta</h2>
+
+  <div class="menu__grid">
+    @for (item of visibleItems; track item.coffee.id) {
+      <!--
+        [coffee]     input.required — sin esto no compila
+        [featured]   input opcional — sin esto vale false
+        [(quantity)] model — va y vuelve
+        (ordered)    output — $event es un OrderRequest, no un evento del DOM
+      -->
+      <app-coffee-card
+        [coffee]="item.coffee"
+        [featured]="item.coffee.id === featuredId"
+        [(quantity)]="item.quantity"
+        (ordered)="take($event)"
+        (destroyed)="sayGoodbye($event)"
+      >
+        <!-- Esto viaja al <ng-content select="[card-tag]"> del hijo. -->
+        @if (item.coffee.id === featuredId) {
+          <span card-tag class="tag">Café del día</span>
+        }
+
+        <!-- Y esto, al <ng-content> sin select. El hijo no sabe qué es. -->
+        @if (!item.coffee.available) {
+          <p class="note">Vuelve el jueves.</p>
+        }
+      </app-coffee-card>
+    }
+  </div>
+
+  <button type="button" class="button button--ghost" (click)="toggleLast()">
+    {{ showLast ? 'Sacar el Antigua de la carta' : 'Devolver el Antigua a la carta' }}
+  </button>
+</section>
+
+<div class="panels">
+  <section class="panel">
+    <h2>Comanda</h2>
+
+    @if (orders.length === 0) {
+      <p class="empty">Todavía no pidió nadie.</p>
+    } @else {
+      <ol class="panel__list" role="list">
+        @for (order of orders; track $index) {
+          <li>{{ order }}</li>
+        }
+      </ol>
+      <p class="panel__count">
+        <span class="num">{{ total }}</span> pedidos
+      </p>
+      <button type="button" class="button button--ghost" (click)="clear()">Vaciar comanda</button>
+    }
+  </section>
+
+  <section class="panel">
+    <h2>Ciclo de vida</h2>
+    <p class="panel__hint">
+      Cada tarjeta avisa al destruirse. Sacá el Antigua de la carta y mirá aparecer su nombre acá.
+    </p>
+
+    @if (farewells.length === 0) {
+      <p class="empty">Todavía no se desmontó ninguna.</p>
+    } @else {
+      <ol class="panel__list" role="list">
+        @for (name of farewells; track $index) {
+          <li><code>ngOnDestroy</code> · {{ name }}</li>
+        }
+      </ol>
+    }
+  </section>
+</div>

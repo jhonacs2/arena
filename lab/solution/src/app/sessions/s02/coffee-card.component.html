@@ -1,0 +1,46 @@
+<article class="card" [class.card--featured]="featured()" [class.card--soldout]="!coffee().available">
+  <!-- NG-CONTENT CON SELECT: acá cae lo que el padre marcó con [card-tag].
+       Si el padre no manda nada, no aparece nada: no hay hueco vacío. -->
+  <div class="card__tag">
+    <ng-content select="[card-tag]" />
+  </div>
+
+  <h3 class="card__name">{{ coffee().name }}</h3>
+  <p class="card__origin">{{ coffee().origin }}</p>
+  <p class="card__price num">{{ coffee().price }}</p>
+
+  <!-- NG-CONTENT SIN SELECT: acá cae TODO lo demás que el padre puso adentro
+       de la etiqueta. Es el cajón de sastre, y va uno solo por componente. -->
+  <div class="card__slot">
+    <ng-content />
+  </div>
+
+  <div class="card__quantity">
+    <button type="button" class="stepper" (click)="add(-1)" [disabled]="quantity() <= 1">
+      <span aria-hidden="true">−</span>
+      <span class="sr-only">Quitar uno</span>
+    </button>
+
+    <!-- model() en acción: este número es del hijo Y del padre a la vez. -->
+    <output class="num">{{ quantity() }}</output>
+
+    <button type="button" class="stepper" (click)="add(1)" [disabled]="quantity() >= 20">
+      <span aria-hidden="true">+</span>
+      <span class="sr-only">Agregar uno</span>
+    </button>
+  </div>
+
+  <p class="card__total">
+    Total: <strong class="num">{{ total }}</strong>
+  </p>
+
+  <button type="button" class="button" [disabled]="!coffee().available" (click)="order()">
+    {{ coffee().available ? 'Pedir' : 'Sin stock' }}
+  </button>
+
+  <!-- La prueba visible del ciclo de vida. En un componente de verdad esto no
+       va: está acá para que se vea cuándo corre cada gancho. -->
+  <p class="card__lifecycle">
+    montado {{ mountedAt }} · ngOnChanges ×<span class="num">{{ changes }}</span>
+  </p>
+</article>

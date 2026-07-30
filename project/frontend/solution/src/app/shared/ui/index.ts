@@ -1,10 +1,12 @@
 /**
  * Primitivas del sistema de diseño.
  *
- * `<app-badge>` y `<app-race-card>` NO están acá a propósito: son el ejercicio
- * de S2. Estas son las que el alumno recibe hechas.
+ * `<app-race-card>` no está acá: no es una primitiva, es una pieza del
+ * dominio y vive en `features/races/`. La regla es la de siempre —
+ * `shared/` no sabe qué es una carrera.
  */
 
+export * from './badge/badge.component';
 export * from './button/button.component';
 export * from './empty-state/empty-state.component';
 export * from './logo/logo.component';

@@ -7,35 +7,29 @@
 </header>
 
 <div class="program">
-  <!-- El listado. En S2 todo esto se convierte en <app-race-card>. -->
+  <!-- S2 · El listado ya no dibuja carreras: las compone.
+       Los datos bajan por input, el aviso sube por output. -->
   <ul class="races" role="list">
     @for (view of races; track view.race.id) {
       <li>
-        <!-- PROPERTY BINDING: las clases de estado salen de una expresión, no
-             de una cadena fija. Y `aria-pressed` le dice al lector de pantalla
-             cuál está abierta. -->
-        <button
-          type="button"
-          class="race"
-          [class.race--live]="view.race.status === 'live'"
-          [class.race--finished]="view.race.status === 'finished'"
-          [class.race--open]="selected?.race?.id === view.race.id"
-          [attr.aria-pressed]="selected?.race?.id === view.race.id"
-          (click)="select(view)"
+        <app-race-card
+          [race]="view.race"
+          [time]="view.time"
+          [favourite]="view.favourite"
+          [selected]="selected?.race?.id === view.race.id"
+          (toggled)="select(view)"
         >
-          <span class="race__status">{{ view.statusLabel }}</span>
+          <!-- La pastilla viaja al <ng-content select="[card-status]">.
+               El tono lo decide el listado porque es una decisión de esta
+               pantalla, no de la tarjeta. -->
+          <app-badge card-status [tone]="view.tone">{{ view.statusLabel }}</app-badge>
 
-          <!-- INTERPOLACIÓN: el texto sale de las propiedades de la clase. -->
-          <span class="race__name">{{ view.race.name }}</span>
-          <span class="race__time num">{{ view.time }}</span>
-
-          <span class="race__meta">
-            {{ view.race.horses.length }} competidores
-            @if (view.favourite) {
-              · favorito {{ view.favourite.name }} a {{ view.favourite.odds.toFixed(2) }}
-            }
-          </span>
-        </button>
+          <!-- Y esto al <ng-content> sin select, solo en la que está en vivo.
+               La tarjeta no sabe que existe. -->
+          @if (view.race.status === 'live') {
+            <span class="live-note">Se está corriendo ahora</span>
+          }
+        </app-race-card>
       </li>
     }
   </ul>
@@ -48,14 +42,14 @@
 
       <h3 class="label">Parrilla</h3>
       <ul class="lineup" role="list">
-        @for (caballo of selected.race.horses; track caballo.id) {
+        @for (horse of selected.race.horses; track horse.id) {
           <li class="runner">
-            <span class="saddlecloth num">{{ caballo.number }}</span>
-            <app-silk [horseId]="caballo.id" [horseName]="caballo.name" size="sm" />
-            <span class="runner__name">{{ caballo.name }}</span>
+            <span class="saddlecloth num">{{ horse.number }}</span>
+            <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
+            <span class="runner__name">{{ horse.name }}</span>
             <!-- toFixed mantiene dos decimales: sin esto conviven «9» y «2.4» en la
                  misma columna. En S4 esto se convierte en un pipe reutilizable. -->
-            <span class="runner__odds num">{{ caballo.odds.toFixed(2) }}</span>
+            <span class="runner__odds num">{{ horse.odds.toFixed(2) }}</span>
           </li>
         }
       </ul>

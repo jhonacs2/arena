@@ -3,18 +3,22 @@ import { FormsModule } from '@angular/forms';
 
 import { RACES } from '../../core/mocks';
 import { favourite, potentialPayout, type Horse, type Race } from '../../core/models';
+import { BadgeComponent, type BadgeTone } from '../../shared/ui/badge/badge.component';
 import { SilkComponent } from '../../shared/ui/silk/silk.component';
+import { RaceCardComponent } from './race-card.component';
 
 /**
- * S1 · Listado de carreras.
+ * S1 + S2 · Listado de carreras.
  *
  * Primera pantalla del producto. Datos hardcodeados: vienen de `core/mocks`,
  * que sale del mismo dataset que carga el backend — así, cuando en S7 se
  * conecte al servidor real, esta pantalla no cambia.
  *
- * Todo el marcado está acá adentro a propósito. En S2 se extrae a
- * `<app-race-card>`, y ese salto —de "todo junto" a "una pieza reutilizable"—
- * es justamente la clase.
+ * En S1 el marcado de cada carrera estaba acá adentro. En S2 se fue a
+ * `<app-race-card>`, y lo que quedó es lo que de verdad es del listado:
+ * **preparar los datos y decidir cuál está abierta.** Ese es el corte, y es
+ * el que hay que saber hacer: si la tarjeta supiera cuál está abierta, no
+ * podría usarse en ningún otro lado.
  */
 
 /** Lo que la view necesita, ya preparado. */
@@ -23,6 +27,7 @@ interface RaceView {
   readonly time: string;
   readonly favourite: Horse | undefined;
   readonly statusLabel: string;
+  readonly tone: BadgeTone;
 }
 
 const STATUS_LABELS: Record<Race['status'], string> = {
@@ -31,11 +36,17 @@ const STATUS_LABELS: Record<Race['status'], string> = {
   finished: 'Terminada',
 };
 
+const STATUS_TONES: Record<Race['status'], BadgeTone> = {
+  upcoming: 'neutral',
+  live: 'live',
+  finished: 'neutral',
+};
+
 @Component({
   selector: 'app-race-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, SilkComponent],
+  imports: [FormsModule, SilkComponent, RaceCardComponent, BadgeComponent],
   templateUrl: './race-list.component.html',
   styleUrl: './race-list.component.css',
 })
@@ -52,6 +63,7 @@ export class RaceListComponent {
     time: this.formatTime(race.startsAt),
     favourite: favourite(race),
     statusLabel: STATUS_LABELS[race.status],
+    tone: STATUS_TONES[race.status],
   }));
 
   /** La carrera que el usuario tocó. `null` = ninguna. */

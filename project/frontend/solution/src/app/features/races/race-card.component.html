@@ -1,0 +1,31 @@
+<button
+  type="button"
+  class="race"
+  [class.race--live]="race().status === 'live'"
+  [class.race--finished]="race().status === 'finished'"
+  [class.race--open]="selected()"
+  [attr.aria-pressed]="selected()"
+  (click)="toggled.emit(race())"
+>
+  <!-- La pastilla de estado la pone el padre con <ng-content>: la tarjeta
+       reserva el lugar y no decide qué texto ni qué color va. -->
+  <span class="race__status">
+    <ng-content select="[card-status]" />
+  </span>
+
+  <span class="race__name">{{ race().name }}</span>
+  <span class="race__time num">{{ time() }}</span>
+
+  <span class="race__meta">
+    {{ race().horses.length }} competidores
+    @if (favourite(); as best) {
+      · favorito {{ best.name }} a {{ best.odds.toFixed(2) }}
+    }
+  </span>
+
+  <!-- El cajón de sastre: lo que el padre quiera agregar abajo. Hoy lo usa
+       el listado para el aviso de la carrera en vivo. -->
+  <span class="race__extra">
+    <ng-content />
+  </span>
+</button>

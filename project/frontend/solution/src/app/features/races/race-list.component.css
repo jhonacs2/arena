@@ -47,88 +47,14 @@
   gap: var(--space-3);
 }
 
-/* Cada carrera es un <button>: se puede tabular, se activa con Enter y con
-   barra espaciadora, y los lectores de pantalla la anuncian como control.
-   Un <div> con (click) no hace nada de eso. */
-.race {
-  inline-size: 100%;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas:
-    'estado time'
-    'name time'
-    'pie    pie';
-  gap: var(--space-1) var(--space-4);
-  text-align: start;
+/* El estilo de cada tarjeta se fue con ella, a race-card.component.css. Acá
+   solo queda cómo se acomodan entre sí, que es lo único que el listado tiene
+   derecho a decidir. */
 
-  padding: var(--space-4);
-  background: var(--surface-raised);
-  color: var(--text);
-  border: var(--border-width) solid var(--border);
-  box-shadow: var(--shadow-hard);
-  cursor: pointer;
-
-  transition:
-    transform var(--dur-instant) var(--ease-snap),
-    box-shadow var(--dur-instant) var(--ease-snap);
-}
-
-.race:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-hard-sm);
-}
-
-/* La carrera abierta se hunde y se queda hundida: el estado se ve sin leer. */
-.race--open {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-hard-sm);
-  border-color: var(--accent);
-}
-
-.race__status {
-  grid-area: estado;
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.race--live .race__status {
+/* El aviso que el listado proyecta dentro de la tarjeta en vivo. */
+.live-note {
   color: var(--live);
   font-weight: 700;
-}
-
-.race__name {
-  grid-area: name;
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  font-variation-settings: 'wdth' 92;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.race__time {
-  grid-area: time;
-  align-self: center;
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.race__meta {
-  grid-area: pie;
-  margin-block-start: var(--space-2);
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-}
-
-/* Lo que ya pasó pesa menos, pero sigue siendo legible: bajar la opacidad
-   entera rompería el contraste AA. */
-.race--finished .race__name {
-  font-variation-settings: 'wdth' 92;
-  color: var(--text-muted);
 }
 
 /* ── Detalle ───────────────────────────────────────────────────────────── */
