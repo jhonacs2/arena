@@ -59,7 +59,6 @@ export class AdminScores {
   );
 
   protected open(row: ScoreRow): void {
-    console.log(row);
     this._target.set(row);
     this.coins.set(100);
     this.note.set('');

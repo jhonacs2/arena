@@ -36,7 +36,12 @@ ingress:
   # Cloudflare Pages. Ver la opción A del README para el shim que hace que el
   # frontend pueda llamar a `/api` en su propio dominio.
   - hostname: REEMPLAZAR-api.arena.ejemplo.com
-    service: http://127.0.0.1:8080
+    # 18099 es el `API_PORT` que publica `docker-compose.prod.yml` en loopback, y
+    # no el 8080 de adentro del contenedor. En un VPS compartido —acá corre
+    # también WorkAdventure— el 8080 del host es el primero que ya está ocupado.
+    # Si cambiás `API_PORT`, cambiá este número: son los dos extremos del cable, y
+    # el síntoma de tenerlos distintos es un 502 que no explica nada.
+    service: http://127.0.0.1:18099
     originRequest:
       # El backend habla HTTP plano en loopback: el TLS lo termina Cloudflare.
       noTLSVerify: false

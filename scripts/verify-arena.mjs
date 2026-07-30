@@ -269,6 +269,15 @@ const HAS_PSQL = hasBinary('psql');
 /** Con el daemon corriendo, no solo el CLI: `docker info` falla si no está. */
 const HAS_DOCKER = hasBinary('docker', ['info', '--format', '{{.ServerVersion}}']);
 const PSQL_IMAGE = process.env['ARENA_PSQL_IMAGE'] ?? 'postgres:17-alpine';
+/**
+ * Contenedor donde correr el psql, con `docker exec`. Es la única manera de
+ * llegar a la base en el VPS: ahí Postgres corre en la red privada del compose y
+ * no publica ningún puerto, así que desde el host no hay a dónde conectarse — y
+ * la reconciliación del ledger es justo el check que hay que poder correr en
+ * producción. Con `ARENA_PSQL_CONTAINER=arena-db`, `DATABASE_URL` es la que ve
+ * ese contenedor: `postgres://arena:…@localhost:5432/arena`.
+ */
+const PSQL_CONTAINER = process.env['ARENA_PSQL_CONTAINER'] ?? '';
 
 /**
  * Corre SQL contra $DATABASE_URL. Devuelve { ok, out }, o null si no hay con qué.
@@ -282,6 +291,10 @@ function runSql(sql, { tuplesOnly = false } = {}) {
   const flags = ['-v', 'ON_ERROR_STOP=1', ...(tuplesOnly ? ['-t', '-A', '-q'] : []), '-f', '-'];
   const opts = { input: sql, stdio: 'pipe', encoding: 'utf8' };
   try {
+    if (PSQL_CONTAINER && HAS_DOCKER) {
+      const cmd = ['exec', '-i', PSQL_CONTAINER, 'psql', DB_URL, ...flags];
+      return { ok: true, out: execFileSync('docker', cmd, opts) };
+    }
     if (HAS_PSQL) return { ok: true, out: execFileSync('psql', [DB_URL, ...flags], opts) };
     if (HAS_DOCKER) {
       // Desde adentro del contenedor, `localhost` es el contenedor. Un Postgres
@@ -658,6 +671,7 @@ check('diseño', 'la paleta cumple contraste AA', () => runScript('check-contras
 const DEPLOY_FILES = [
   'Dockerfile',
   'docker-compose.yml',
+  'docker-compose.prod.yml',
   '.env.example',
   'README.md',
   'arena-api.service',
@@ -703,21 +717,38 @@ check('deploy', 'el Dockerfile produce un binario estático en una imagen sin sh
 check('deploy', 'nada publica el puerto del backend fuera de la máquina', () => {
   const bad = [];
 
-  const compose = deployFile('docker-compose.yml', { code: true });
-  if (compose) {
+  // El de producción también, y sobre todo: es el que corre en el VPS que
+  // comparte máquina con otras cosas.
+  for (const name of ['docker-compose.yml', 'docker-compose.prod.yml']) {
+    const compose = deployFile(name, { code: true });
+    if (!compose) continue;
     // Una publicación sin interfaz (`"8080:8080"`) escucha en 0.0.0.0. El backend
     // no tiene que ser alcanzable desde afuera: el túnel sale hacia Cloudflare.
     for (const m of compose.matchAll(/^\s*-\s*"?([\d.:]+:)?(\d+):(\d+)"?\s*$/gm)) {
       const iface = m[1] ?? '';
       if (!iface.startsWith('127.0.0.1:')) {
-        bad.push(`docker-compose.yml publica ${m[0].trim()} sin atarlo a 127.0.0.1`);
+        bad.push(`${name} publica ${m[0].trim()} sin atarlo a 127.0.0.1`);
+      }
+    }
+    // Y la misma publicación con el puerto en una variable —`"127.0.0.1:${API_PORT}:8080"`—,
+    // que el patrón de arriba no ve porque `${…}` no son dígitos. Es justo la
+    // forma que tienen los dos composes, así que sin esto el check no miraba nada.
+    for (const m of compose.matchAll(/^\s*-\s*"([^"\n]*\$\{[^"\n]*:\d+)"\s*$/gm)) {
+      if (!m[1].startsWith('127.0.0.1:')) {
+        bad.push(`${name} publica ${m[0].trim()} sin atarlo a 127.0.0.1`);
       }
     }
   }
 
   // Acá sí se lee el README con sus comentarios: es prosa, y un procedimiento que
   // le dice al usuario que abra un puerto es igual de malo escrito en prosa.
-  for (const f of ['README.md', 'docker-compose.yml', 'arena-api.service', 'cloudflared/config.yml']) {
+  for (const f of [
+    'README.md',
+    'docker-compose.yml',
+    'docker-compose.prod.yml',
+    'arena-api.service',
+    'cloudflared/config.yml',
+  ]) {
     const text = deployFile(f);
     if (!text) continue;
     if (/ufw\s+allow\s+\d+|firewall-cmd\s+--add-port|0\.0\.0\.0:\d+/.test(text)) {
@@ -758,6 +789,27 @@ check('deploy', 'el túnel apunta al backend por loopback y cierra con un 404', 
   return bad;
 });
 
+check('deploy', 'el túnel y el compose de producción hablan del mismo puerto', () => {
+  const tunnel = deployFile('cloudflared/config.yml', { code: true });
+  const compose = deployFile('docker-compose.prod.yml', { code: true });
+  if (!tunnel || !compose) return SKIP('falta config.yml o docker-compose.prod.yml');
+
+  // El puerto al que apunta el ingress y el que publica el compose son los dos
+  // extremos del mismo cable. Tenerlos distintos da un 502 que no dice por qué, y
+  // se descubre con la clase empezada.
+  const ingress = tunnel.match(/service:\s*https?:\/\/(?:127\.0\.0\.1|localhost):(\d+)/);
+  const published = compose.match(/"127\.0\.0\.1:\$\{API_PORT:-(\d+)\}:\d+"/);
+  if (!ingress) return ['cloudflared/config.yml no apunta a un puerto de loopback'];
+  if (!published) return ['docker-compose.prod.yml no publica el backend con ${API_PORT:-…}'];
+
+  return ingress[1] === published[1]
+    ? []
+    : [
+        `el túnel va al ${ingress[1]} y el compose publica el ${published[1]}: ` +
+          'uno de los dos quedó sin cambiar',
+      ];
+});
+
 check('deploy', 'las units de systemd arrancan solas y se reinician', () => {
   const bad = [];
   for (const f of ['arena-api.service', 'cloudflared/cloudflared.service']) {
@@ -782,7 +834,7 @@ check('deploy', 'el compose y las units solo usan variables documentadas en .env
   const declared = new Set([...example.matchAll(/^\s*(?:#\s*)?([A-Z][A-Z0-9_]*)=/gm)].map((m) => m[1]));
 
   const bad = [];
-  for (const f of ['docker-compose.yml', 'arena-api.service']) {
+  for (const f of ['docker-compose.yml', 'docker-compose.prod.yml', 'arena-api.service']) {
     const text = deployFile(f, { code: true });
     if (!text) continue;
     for (const m of text.matchAll(/\$\{([A-Z][A-Z0-9_]*)(?::?[-?][^}]*)?\}/g)) {

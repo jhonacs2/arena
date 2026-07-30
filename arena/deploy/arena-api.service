@@ -1,4 +1,4 @@
-# El backend de Arena como servicio del VPS.
+# Arena en el VPS: el backend **y su Postgres**, como un solo servicio.
 #
 #   sudo mkdir -p /etc/arena
 #   sudo cp .env.example /etc/arena/arena.env   # y completarlo
@@ -8,37 +8,49 @@
 #   sudo systemctl enable --now arena-api
 #   journalctl -u arena-api -f
 #
-# Corre el contenedor bajo systemd en vez de dejárselo a la política de reinicio
-# de Docker: así el backend y el túnel se administran con los mismos comandos y
-# `systemctl status` cuenta toda la historia.
+# La unit se sigue llamando `arena-api` —es el nombre que dice el README y el que
+# vas a tipear a las apuradas— pero levanta el compose entero: `arena-db` y
+# `arena-api`. La base dejó de ser de otro (era Supabase) y pasó a vivir en el
+# mismo VPS, así que arrancan y paran juntos o no arranca ninguno.
 #
-# El puerto se publica **atado a 127.0.0.1**. Es la línea más importante de este
-# archivo: el backend no es alcanzable desde fuera del VPS, y el único que le
-# habla es cloudflared, que corre en la misma máquina.
+# ── Las dos líneas que importan ─────────────────────────────────────────────
+#
+# `--env-file /etc/arena/arena.env` alimenta la interpolación de `${…}` del
+# compose: los límites de memoria, el puerto y la contraseña de la base. El
+# entorno del contenedor lo llena el `env_file:` de adentro del compose, que
+# apunta al mismo archivo. Son dos mecanismos distintos sobre un solo archivo.
+#
+# El puerto se publica **atado a 127.0.0.1** y la base no se publica en absoluto.
+# El backend no es alcanzable desde fuera del VPS: el único que le habla es
+# cloudflared, que corre en la misma máquina.
 
 [Unit]
-Description=Arena API
-Documentation=file:///opt/arena/deploy/README.md
+Description=Arena — API y Postgres
+Documentation=file:///opt/arena/arena/deploy/README.md
 After=network-online.target docker.service
 Wants=network-online.target
 Requires=docker.service
 
 [Service]
 Type=exec
-EnvironmentFile=/etc/arena/arena.env
+WorkingDirectory=/opt/arena/arena/deploy
 
-# `docker run` en primer plano: systemd sigue el proceso y `journalctl -u
-# arena-api` muestra los logs del backend sin pasar por `docker logs`.
-ExecStartPre=-/usr/bin/docker rm -f arena-api
-ExecStart=/usr/bin/docker run --rm --name arena-api \
-  --env-file /etc/arena/arena.env \
-  --publish 127.0.0.1:8080:8080 \
-  --read-only \
-  --cap-drop ALL \
-  --security-opt no-new-privileges \
-  --log-driver journald \
-  ${ARENA_IMAGE}
-ExecStop=/usr/bin/docker stop --time 20 arena-api
+# `up` en primer plano: systemd sigue el proceso y `journalctl -u arena-api`
+# muestra los logs de los dos contenedores sin pasar por `docker logs`.
+# `--remove-orphans` limpia el contenedor que quedó de una versión anterior del
+# compose; sin esto un servicio renombrado sigue corriendo, invisible.
+ExecStart=/usr/bin/docker compose --env-file /etc/arena/arena.env \
+  -f docker-compose.prod.yml up --remove-orphans
+
+# `stop` y no `down`: `down` borra la red y los contenedores en cada reinicio
+# —lento y ruidoso— y una sola letra de más (`down -v`) borraría el volumen con
+# las monedas de todos. `stop` frena y deja todo en su lugar.
+ExecStop=/usr/bin/docker compose --env-file /etc/arena/arena.env \
+  -f docker-compose.prod.yml stop --timeout 20
+
+# El primer arranque construye el cluster de Postgres y puede tardar. Que systemd
+# no declare el arranque fallido mientras la base todavía se está creando.
+TimeoutStartSec=0
 
 Restart=always
 RestartSec=5s

@@ -4,10 +4,13 @@
 #   cp .env.example .env        # y completar JWT_SECRET
 #   docker compose up --build
 #
-# Esto **no** es el despliegue de producción. En producción no hay Postgres local:
-# la base es Supabase y el backend corre solo, bajo `arena-api.service`. Este
-# compose existe para desarrollar y para probar el esquema contra un Postgres
-# descartable antes de tocar el de verdad.
+# Esto **no** es el despliegue de producción: eso es `docker-compose.prod.yml`,
+# que levanta los mismos dos servicios pero con techo de memoria, sin publicar la
+# base y con los puertos elegidos para convivir con lo que ya hay en el VPS.
+#
+# Este compose existe para desarrollar y para probar el esquema contra un Postgres
+# descartable antes de tocar el de verdad. La diferencia que más se nota: acá la
+# base **sí** publica el 5432 en loopback, para poder abrirle un psql sin rodeos.
 #
 # Los dos puertos se publican atados a 127.0.0.1. Nada de este proyecto abre un
 # puerto de entrada: el tráfico entra por el túnel, que sale desde adentro.
@@ -48,7 +51,7 @@ services:
     environment:
       PORT: "8080"
       # `db` es el nombre del servicio: la resolución la hace la red del compose.
-      # En producción esta variable apunta al pooler de Supabase.
+      # En producción es igual, contra el `db` de `docker-compose.prod.yml`.
       DATABASE_URL: postgres://${POSTGRES_USER:-arena}:${POSTGRES_PASSWORD:-arena}@db:5432/${POSTGRES_DB:-arena}?sslmode=disable
       JWT_SECRET: ${JWT_SECRET:?falta JWT_SECRET, ver .env.example}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200}

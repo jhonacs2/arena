@@ -25,9 +25,10 @@ COPY backend/ ./
 # libc. -trimpath saca las rutas de compilación y -s -w la tabla de símbolos.
 RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/arena .
 
-# distroless/static trae los certificados raíz, que hacen falta para hablar TLS
-# con Supabase (`sslmode=require`). No trae shell: si alguien entra al
-# contenedor, no tiene con qué moverse.
+# distroless/static trae los certificados raíz. Hoy la base es Postgres en el
+# mismo VPS y la conexión no sale del bridge de Docker, pero el día que esté
+# afuera (`sslmode=require`) el TLS funciona sin tocar la imagen. No trae shell:
+# si alguien entra al contenedor, no tiene con qué moverse.
 FROM gcr.io/distroless/static-debian12:nonroot
 
 COPY --from=build /out/arena /arena

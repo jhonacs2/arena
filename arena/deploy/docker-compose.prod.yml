@@ -1,0 +1,204 @@
+# Arena en el VPS — Postgres + el backend, los dos con la memoria acotada.
+#
+# Este SÍ es el despliegue de producción. `docker-compose.yml` (sin `.prod`) es el
+# entorno de desarrollo de la máquina del instructor: ese publica la base en el
+# 5432 para poder abrirle un psql, éste no publica la base en ningún lado.
+#
+#   sudo systemctl enable --now arena-api      # lo levanta esta unit
+#
+# o a mano, que es lo que hace la unit:
+#
+#   cd /opt/arena/arena/deploy
+#   docker compose --env-file /etc/arena/arena.env -f docker-compose.prod.yml up -d
+#
+# ── Por qué este archivo existe aparte ──────────────────────────────────────
+#
+# El VPS comparte máquina con WorkAdventure. Eso impone tres cosas que el compose
+# de desarrollo no tiene por qué respetar:
+#
+#   1. **Ningún puerto común.** El backend sale a 127.0.0.1:18099 y la base no
+#      sale a ninguna parte. Los 80/443 son de WorkAdventure y Arena no los
+#      necesita: el tráfico entra por el túnel, que se abre desde adentro.
+#   2. **Memoria con techo.** Sin `mem_limit`, Postgres se cree dueño de la RAM de
+#      la máquina y el que muere por OOM es el vecino, no él. Ver §Memoria.
+#   3. **Logs con techo.** Un contenedor sin `logging` escribe hasta llenar el
+#      disco, y el disco también es compartido.
+
+name: arena-prod
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: arena-db
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-arena}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD en /etc/arena/arena.env}
+      POSTGRES_DB: ${POSTGRES_DB:-arena}
+      # Checksums de página. Solo se puede pedir al crear el cluster —después hay
+      # que recrearlo entero— y acá los datos son la nota de alguien: que una
+      # corrupción silenciosa de disco dé error en vez de devolver un saldo mal.
+      POSTGRES_INITDB_ARGS: --data-checksums
+
+    # ── El ajuste de memoria de Postgres ────────────────────────────────────
+    #
+    # Los defaults de la imagen están pensados para una base sola en su máquina.
+    # Acá la base convive con WorkAdventure, así que se le dice explícitamente
+    # cuánto puede usar. Los números salen de 30 alumnos y un pool de 10
+    # conexiones (`DB_MAX_CONNS`), no de una regla general:
+    #
+    #   max_connections    las 10 del pool + margen para un psql y el autovacuum.
+    #                      Cada conexión cuesta memoria aunque esté ociosa.
+    #   shared_buffers     el 25% del límite del contenedor, que es la regla de
+    #                      siempre. Con una base de pocos MB, entra entera.
+    #   effective_cache_size  no reserva nada: es lo que el planner *cree* que hay
+    #                      de caché. Se pone alto para que elija índices.
+    #   work_mem           por operación de orden, no por conexión. 4MB × unas
+    #                      pocas ordenaciones concurrentes es ruido.
+    #   parallel workers   en cero: no hay una sola consulta grande en Arena y
+    #                      cada worker es un proceso más.
+    command:
+      - postgres
+      - -c
+      - max_connections=${PG_MAX_CONNECTIONS:-25}
+      - -c
+      - shared_buffers=${PG_SHARED_BUFFERS:-64MB}
+      - -c
+      - effective_cache_size=192MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - max_parallel_workers_per_gather=0
+      - -c
+      - max_parallel_workers=0
+      # El WAL también ocupa disco. 512MB de techo es de sobra para el volumen de
+      # escritura de una clase y evita que crezca sin que nadie lo mire.
+      - -c
+      - max_wal_size=512MB
+      - -c
+      - min_wal_size=80MB
+      # Una consulta que tarda medio segundo en esta base es una consulta rota.
+      # Que quede en el log con su texto, que es lo que vas a querer el día que
+      # una carrera se sienta lenta.
+      - -c
+      - log_min_duration_statement=500ms
+
+    volumes:
+      - arena-pgdata:/var/lib/postgresql/data
+
+    # **La base no publica ningún puerto.** No hay `ports:` acá y no es un olvido:
+    # el backend le habla por el nombre `db` dentro de la red del compose, que no
+    # sale de la máquina. Para un psql, `docker compose exec` — ver el README.
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-arena} -d ${POSTGRES_DB:-arena}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      # El primer arranque crea el cluster y eso tarda. Sin esto, el healthcheck
+      # empieza a contar reintentos contra una base que todavía está naciendo.
+      start_period: 30s
+
+    # ── Los techos ──────────────────────────────────────────────────────────
+    #
+    # `memswap_limit` igual a `mem_limit` = swap prohibido. Si le dejás usar swap,
+    # la base no muere: se arrastra, y una carrera a 10 Hz contra una base que
+    # swapea se ve como la app colgada.
+    mem_limit: ${DB_MEM_LIMIT:-256m}
+    memswap_limit: ${DB_MEM_LIMIT:-256m}
+    mem_reservation: 128m
+    cpus: 0.75
+    pids_limit: 128
+    # /dev/shm lo usa Postgres para los workers en paralelo, que acá están en
+    # cero. 64m es el default de Docker y alcanza; se declara para que no sorprenda.
+    shm_size: 64mb
+
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+    restart: unless-stopped
+    networks: [arena]
+
+  api:
+    image: ${ARENA_IMAGE:-arena-api:latest}
+    container_name: arena-api
+
+    # Todo lo demás —`JWT_SECRET`, `ADMIN_*`, `COOKIE_*`— sale de este archivo,
+    # que vive fuera del repo y con permisos 600. Es el mismo archivo que usa
+    # `--env-file` en la unit de systemd, pero por otra vía: `--env-file` alimenta
+    # la interpolación de `${…}` de ESTE compose, y `env_file` alimenta el entorno
+    # DEL contenedor. Son dos cosas distintas y hacen falta las dos.
+    env_file:
+      - /etc/arena/arena.env
+
+    environment:
+      # Adentro del contenedor siempre 8080. El puerto de afuera se elige en `ports`.
+      PORT: "8080"
+      # Pisa lo que venga del env_file: dentro de esta red la base es `db`, y como
+      # la conexión no sale de la máquina, `sslmode=disable` no expone nada.
+      DATABASE_URL: postgres://${POSTGRES_USER:-arena}:${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-arena}?sslmode=disable
+      # Postgres directo, no un pooler: las sentencias preparadas funcionan y son
+      # más rápidas. `true` acá es lo que pedía Supabase, y ya no hay Supabase.
+      DB_SIMPLE_PROTOCOL: "false"
+
+      # Límite blando del heap de Go. Va por debajo de `mem_limit` a propósito: le
+      # avisa al recolector que junte antes de llegar al techo del contenedor. Sin
+      # esto, Go no sabe que hay un cgroup y el kernel lo mata sin aviso ni panic:
+      # el backend simplemente desaparece en medio de una carrera.
+      GOMEMLIMIT: 150MiB
+      # Go cuenta los cores de la máquina, no los del cgroup. Sin esto arma sus
+      # estructuras para las CPU del VPS entero, que también son de WorkAdventure.
+      GOMAXPROCS: "2"
+
+    ports:
+      # 18099 y no 8080: en un VPS compartido el 8080 es el puerto que ya tiene
+      # ocupado otra cosa, y el error de Docker cuando eso pasa no dice quién.
+      # **Atado a 127.0.0.1**: el backend no es alcanzable desde afuera del VPS.
+      # El único que le habla es `cloudflared`, que corre en la misma máquina.
+      # Si cambiás este número, cambiá el `service:` de cloudflared/config.yml.
+      - "127.0.0.1:${API_PORT:-18099}:8080"
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # Sin `healthcheck`: la imagen es distroless y no tiene shell ni curl con qué
+    # hacerlo, y el contrato (`docs/contract/api.md`) no declara un `/api/health`.
+    # Agregar el endpoint primero, el healthcheck después — contrato primero.
+
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: ${API_MEM_LIMIT:-192m}
+    memswap_limit: ${API_MEM_LIMIT:-192m}
+    mem_reservation: 96m
+    cpus: 1.0
+    pids_limit: 128
+
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+    restart: unless-stopped
+    networks: [arena]
+
+# Red propia y con nombre propio. WorkAdventure tiene la suya: dos stacks de
+# compose no comparten red salvo que se lo pidas, y acá no se lo pedimos.
+networks:
+  arena:
+    name: arena-prod
+
+volumes:
+  # Los datos viven acá, no en el repo. `docker compose down` NO lo borra;
+  # `down -v` sí, y eso borra las monedas de todos. Ver el backup en el README.
+  arena-pgdata:
+    name: arena-prod-pgdata
