@@ -48,7 +48,9 @@ src/app/
 
 ### Lo que NO está acá, a propósito
 
-`<app-badge>` y `<app-race-card>` son el **ejercicio de S2**. Si estuvieran hechos, esa sesión se quedaría sin práctica.
+Cada pieza se escribe **cuando se escribe su clase**, no antes: si estuviera hecha de antemano, esa sesión se quedaría sin práctica.
+
+Por eso `<app-badge>` (S2) y `<app-race-card>` (S2) ya están, y los pipes de S4, los stores de S5 y la pantalla en vivo de S10 todavía no. En `starter/` no está ninguna: ahí aparecen recién al cerrar cada clase.
 
 ---
 

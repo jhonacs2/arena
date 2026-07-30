@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import { RACES } from '../../core/mocks';
+import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { ButtonComponent } from '../../shared/ui/button/button.component';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { SilkComponent } from '../../shared/ui/silk/silk.component';
@@ -21,7 +22,7 @@ import { SILK_COLORS } from '../../shared/ui/silk/silk.util';
   selector: 'app-design-system',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SilkComponent, ButtonComponent, SkeletonComponent, EmptyStateComponent],
+  imports: [SilkComponent, ButtonComponent, BadgeComponent, SkeletonComponent, EmptyStateComponent],
   templateUrl: './design-system.component.html',
   styleUrl: './design-system.component.css',
 })

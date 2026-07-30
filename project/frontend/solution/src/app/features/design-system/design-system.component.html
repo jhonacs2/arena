@@ -116,8 +116,20 @@
 <section class="section">
   <h2>Primitivas</h2>
   <p class="bajada">
-    <code>&lt;app-badge&gt;</code> y <code>&lt;app-race-card&gt;</code> no están acá: son el
-    ejercicio de S2.
+    <code>&lt;app-race-card&gt;</code> no está acá: sabe qué es una carrera, así que vive en
+    <code>features/races/</code>. Las primitivas no saben nada del dominio.
+  </p>
+
+  <h3 class="label">Pastillas</h3>
+  <div class="row">
+    <app-badge>Por largar</app-badge>
+    <app-badge tone="live">En vivo</app-badge>
+    <app-badge tone="success">Cobrada</app-badge>
+    <app-badge tone="accent">Destacada</app-badge>
+  </div>
+  <p class="note">
+    El texto entra por <code>&lt;ng-content&gt;</code> y no por un <code>input()</code>: así el que
+    la usa puede meter adentro lo que quiera, sin que la pastilla tenga que prever cada caso.
   </p>
 
   <h3 class="label">Botones</h3>
