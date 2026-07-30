@@ -52,7 +52,12 @@ services:
       PORT: "8080"
       # `db` es el nombre del servicio: la resolución la hace la red del compose.
       # En producción es igual, contra el `db` de `docker-compose.prod.yml`.
-      DATABASE_URL: postgres://${POSTGRES_USER:-arena}:${POSTGRES_PASSWORD:-arena}@db:5432/${POSTGRES_DB:-arena}?sslmode=disable
+      #
+      # En forma `clave=valor` y no como URL, por el mismo motivo que allá: una
+      # contraseña con un `@`, un `/` o un `:` parte la URL donde no va, y el error
+      # que sale acusa al puerto. Acá la contraseña suele ser `arena` y no se nota
+      # nunca — hasta que alguien copia esta línea al VPS.
+      DATABASE_URL: host=db port=5432 user=${POSTGRES_USER:-arena} password=${POSTGRES_PASSWORD:-arena} dbname=${POSTGRES_DB:-arena} sslmode=disable
       JWT_SECRET: ${JWT_SECRET:?falta JWT_SECRET, ver .env.example}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200}
       LOG_LEVEL: ${LOG_LEVEL:-info}

@@ -733,10 +733,14 @@ check('deploy', 'nada publica el puerto del backend fuera de la máquina', () =>
     // Y la misma publicación con el puerto en una variable —`"127.0.0.1:${API_PORT}:8080"`—,
     // que el patrón de arriba no ve porque `${…}` no son dígitos. Es justo la
     // forma que tienen los dos composes, así que sin esto el check no miraba nada.
+    //
+    // La interfaz también puede venir en una variable, y ahí lo que se exige es
+    // que **el default sea loopback**: exponer el backend es una decisión que se
+    // toma en el archivo de entorno del VPS, que este script no ve, y no algo que
+    // se herede por haber copiado el compose. `${API_BIND:-0.0.0.0}` sí falla.
     for (const m of compose.matchAll(/^\s*-\s*"([^"\n]*\$\{[^"\n]*:\d+)"\s*$/gm)) {
-      if (!m[1].startsWith('127.0.0.1:')) {
-        bad.push(`${name} publica ${m[0].trim()} sin atarlo a 127.0.0.1`);
-      }
+      const loopback = /^(127\.0\.0\.1|\$\{[A-Z_]+:-127\.0\.0\.1\}):/.test(m[1]);
+      if (!loopback) bad.push(`${name} publica ${m[0].trim()} sin atarlo a 127.0.0.1`);
     }
   }
 
@@ -798,7 +802,7 @@ check('deploy', 'el túnel y el compose de producción hablan del mismo puerto',
   // extremos del mismo cable. Tenerlos distintos da un 502 que no dice por qué, y
   // se descubre con la clase empezada.
   const ingress = tunnel.match(/service:\s*https?:\/\/(?:127\.0\.0\.1|localhost):(\d+)/);
-  const published = compose.match(/"127\.0\.0\.1:\$\{API_PORT:-(\d+)\}:\d+"/);
+  const published = compose.match(/"(?:127\.0\.0\.1|\$\{[A-Z_]+:-127\.0\.0\.1\}):\$\{API_PORT:-(\d+)\}:\d+"/);
   if (!ingress) return ['cloudflared/config.yml no apunta a un puerto de loopback'];
   if (!published) return ['docker-compose.prod.yml no publica el backend con ${API_PORT:-…}'];
 

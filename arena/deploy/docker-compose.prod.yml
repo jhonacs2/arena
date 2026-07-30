@@ -141,7 +141,16 @@ services:
       PORT: "8080"
       # Pisa lo que venga del env_file: dentro de esta red la base es `db`, y como
       # la conexión no sale de la máquina, `sslmode=disable` no expone nada.
-      DATABASE_URL: postgres://${POSTGRES_USER:-arena}:${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-arena}?sslmode=disable
+      #
+      # **En forma `clave=valor`, no como URL, y eso no es cosmético:** una
+      # contraseña generada al azar trae tarde o temprano un `@`, un `/` o un `:`,
+      # y ahí la URL se parte donde no debe. El síntoma es un error que acusa a
+      # otro: `invalid port ":…" after host`, con la contraseña ya tapada por el
+      # `xxxxxx` que pone pgx — o sea, un mensaje que señala el puerto cuando el
+      # problema es la contraseña. pgx entiende las dos formas; esta no tiene
+      # sintaxis que una contraseña pueda romper. (Lo único que sí la rompería es
+      # un espacio: por eso `.env.example` manda a generarla en hexa.)
+      DATABASE_URL: host=db port=5432 user=${POSTGRES_USER:-arena} password=${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD} dbname=${POSTGRES_DB:-arena} sslmode=disable
       # Postgres directo, no un pooler: las sentencias preparadas funcionan y son
       # más rápidas. `true` acá es lo que pedía Supabase, y ya no hay Supabase.
       DB_SIMPLE_PROTOCOL: "false"
@@ -156,12 +165,26 @@ services:
       GOMAXPROCS: "2"
 
     ports:
-      # 18099 y no 8080: en un VPS compartido el 8080 es el puerto que ya tiene
-      # ocupado otra cosa, y el error de Docker cuando eso pasa no dice quién.
-      # **Atado a 127.0.0.1**: el backend no es alcanzable desde afuera del VPS.
-      # El único que le habla es `cloudflared`, que corre en la misma máquina.
-      # Si cambiás este número, cambiá el `service:` de cloudflared/config.yml.
-      - "127.0.0.1:${API_PORT:-18099}:8080"
+      # `API_BIND` decide **quién puede llegar** y es la línea con más
+      # consecuencias de este archivo:
+      #
+      #   127.0.0.1  (default) el backend solo existe para el propio VPS. Es lo
+      #              que necesita el túnel, que sale desde adentro, y lo que hace
+      #              que no haya nada que escanear desde internet.
+      #   0.0.0.0    el backend queda publicado en la IP del VPS. Hace falta si
+      #              quien lo consume está afuera —una Pages Function, por
+      #              ejemplo— y no hay túnel ni proxy delante.
+      #
+      # Con `0.0.0.0` el tráfico entre internet y el backend va **en HTTP plano**:
+      # los JWT, la contraseña del instructor y los códigos viajan sin cifrar. Si
+      # vas por ahí, elegí un puerto que Cloudflare acepte como origen HTTP —80,
+      # 8080, 8880, 2052, 2082, 2086, 2095— porque un Worker no puede salir a
+      # cualquier puerto. `8880` suele estar libre en un VPS compartido.
+      #
+      # 18099 como default y no 8080: en un VPS compartido el 8080 es el primero
+      # que ya tiene ocupado otra cosa, y el error de Docker no dice quién.
+      # Si cambiás el puerto, cambiá el `service:` de cloudflared/config.yml.
+      - "${API_BIND:-127.0.0.1}:${API_PORT:-18099}:8080"
 
     depends_on:
       db:

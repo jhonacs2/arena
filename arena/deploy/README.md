@@ -148,7 +148,7 @@ credenciales que ir a buscar a ningún panel.
 
    | Variable | Valor |
    |---|---|
-   | `POSTGRES_PASSWORD` | `openssl rand -base64 24` — **generala** |
+   | `POSTGRES_PASSWORD` | `openssl rand -hex 32` — **generala, y en hexa**: ver abajo |
    | `JWT_SECRET` | `openssl rand -base64 48` — **generalo, no lo inventes** |
    | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | la cuenta de instructor que se crea al arrancar |
    | `ALLOWED_ORIGINS` | `https://arena.ejemplo.com` |
@@ -160,6 +160,22 @@ credenciales que ir a buscar a ningún panel.
    `DATABASE_URL` **no hace falta tocarla**: el compose de producción la arma
    contra el servicio `db` y pisa lo que haya en el archivo. Dejala completa igual,
    para tener de dónde copiar una cadena cuando quieras un `psql`.
+
+   > **La contraseña, en hexa.** `openssl rand -base64` emite `/` y `+`, y según
+   > los bytes también `@` o `:`. Cualquiera de esos adentro de una URL de
+   > conexión la parte donde no va, y el backend muere en el arranque con un error
+   > que acusa a otro:
+   >
+   > ```
+   > DATABASE_URL no se puede interpretar: cannot parse
+   > `postgres://arena:xxxxxx@db:5432/arena?sslmode=disable`:
+   > failed to parse as URL (invalid port ":jqrL5…" after host)
+   > ```
+   >
+   > Habla del puerto, la contraseña ya está tapada con `xxxxxx`, y el problema es
+   > la contraseña. El compose arma la conexión en forma `clave=valor` justamente
+   > para no depender de eso, pero una contraseña con un espacio igual lo rompería.
+   > `openssl rand -hex 32` no tiene ninguno de los dos problemas.
 
    El resto tiene un valor por defecto razonable, y cada variable está explicada
    en `.env.example` — incluidos los techos de memoria del paso anterior.
@@ -470,6 +486,8 @@ parar, `sudo systemctl stop arena-api`.
 | El frontend carga pero `/api` da 404 | la ruta del Worker (opción A) o el `_routes` de Pages |
 | `port is already allocated` al levantar | otra cosa del VPS —WorkAdventure— tiene ese puerto. `sudo ss -ltnp`, elegí otro `API_PORT` y cambiá también el `service:` del túnel |
 | El backend no arranca | `journalctl -u arena-api -n 50`. Casi siempre `JWT_SECRET` o `POSTGRES_PASSWORD` sin completar |
+| `DATABASE_URL no se puede interpretar: … invalid port` | no es el puerto: es la contraseña, que trae un carácter que rompe la cadena. Regenerala con `openssl rand -hex 32` — ver el paso 1 |
+| `password authentication failed for user "arena"` | cambiaste `POSTGRES_PASSWORD` **después** del primer arranque. La imagen solo la usa al crear el cluster: hay que cambiarla también en la base, con `docker exec arena-db psql -U arena -d arena -c "alter user arena password '…'"` |
 | El backend arranca y se muere solo, sin panic | lo mató el kernel por memoria: `docker inspect arena-api --format '{{.State.OOMKilled}}'`. Subí `API_MEM_LIMIT` **y** `GOMEMLIMIT` |
 | La base responde lenta y el VPS swapea | `free -m`. Con WorkAdventure arriba puede no haber lugar para los dos: bajá `PG_MAX_CONNECTIONS` o sumá RAM |
 | `connection refused` a la base desde el host | es lo esperado: en producción la base no publica puerto. Usá `docker exec arena-db psql …` |
