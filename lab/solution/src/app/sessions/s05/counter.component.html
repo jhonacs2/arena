@@ -1,0 +1,58 @@
+<section class="counter">
+  <header class="counter__head">
+    <h3>{{ label() }}</h3>
+    <p class="counter__shop">{{ shopName }}</p>
+  </header>
+
+  <div class="block">
+    <p class="block__title">Tomar un pedido</p>
+    <p class="block__note">Va a la comanda compartida.</p>
+
+    <label class="field">
+      <span>Cliente</span>
+      <input type="text" autocomplete="off" [(ngModel)]="customer" [name]="label() + '-customer'" />
+    </label>
+
+    <label class="field">
+      <span>Café</span>
+      <select [(ngModel)]="coffee" [name]="label() + '-coffee'">
+        @for (option of coffees; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </label>
+
+    <button type="button" class="button" [disabled]="customer().trim() === ''" (click)="take()">
+      Tomar pedido
+    </button>
+
+    <p class="block__count">
+      La comanda tiene <span class="num">{{ orders.count() }}</span> pedidos
+    </p>
+  </div>
+
+  <div class="block">
+    <p class="block__title">Cuaderno de este mostrador</p>
+    <p class="block__note">No lo ve el otro mostrador.</p>
+
+    <label class="field">
+      <span>Anotación</span>
+      <input type="text" autocomplete="off" [(ngModel)]="note" [name]="label() + '-note'" />
+    </label>
+
+    <button type="button" class="button button--ghost" [disabled]="note().trim() === ''" (click)="jot()">
+      Anotar
+    </button>
+
+    @if (notepad.notes().length === 0) {
+      <p class="empty">Cuaderno vacío.</p>
+    } @else {
+      <ul class="notes" role="list">
+        @for (note of notepad.notes(); track $index) {
+          <li>{{ note }}</li>
+        }
+      </ul>
+      <button type="button" class="button button--ghost" (click)="notepad.erase()">Borrar</button>
+    }
+  </div>
+</section>

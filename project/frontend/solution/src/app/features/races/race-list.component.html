@@ -2,24 +2,23 @@
   <p class="eyebrow">Programa de hoy</p>
   <h1>Carreras</h1>
   <p class="intro">
-    Tocá una carrera para ver su parrilla y simular una apuesta al favorito.
+    Toca una carrera para ver su parrilla y simular una apuesta al favorito.
   </p>
 </header>
 
-<!-- S3 · Filtro y búsqueda. Nada de lo que hay acá abajo está guardado:
-     `visible()` se recalcula solo cuando cambia el filtro o la búsqueda. -->
+<!-- S3 · Filtro y búsqueda · S5 · el estado vive en RaceStore -->
 <section class="filters">
   <div class="tabs" role="group" aria-label="Filtrar carreras">
     @for (option of filters; track option) {
       <button
         type="button"
         class="tab"
-        [class.tab--active]="filter() === option"
-        [attr.aria-pressed]="filter() === option"
+        [class.tab--active]="races.filter() === option"
+        [attr.aria-pressed]="races.filter() === option"
         (click)="selectFilter(option)"
       >
         {{ filterLabels[option] }}
-        <span class="tab__count num">{{ counts()[option] }}</span>
+        <span class="tab__count num">{{ races.counts()[option] }}</span>
       </button>
     }
   </div>
@@ -34,7 +33,7 @@
   <div>
     @if (visible().length === 0) {
       <p class="no-results">
-        @switch (filter()) {
+        @switch (races.filter()) {
           @case ('live') {
             No hay ninguna carrera corriéndose ahora.
           }
@@ -48,24 +47,22 @@
             Ninguna carrera coincide con la búsqueda.
           }
         }
-        <button type="button" class="link" (click)="clearFilters()">Ver todas</button>
+        <button type="button" class="link" (click)="races.clearFilters()">Ver todas</button>
       </p>
     } @else {
       <ul class="races" role="list">
-        <!-- track por id: si cambia el filtro, Angular mueve las tarjetas que
-             ya existían en vez de destruirlas y volver a crearlas. -->
-        @for (view of visible(); track view.race.id) {
+        @for (item of visible(); track item.view.race.id) {
           <li>
             <app-race-card
-              [race]="view.race"
-              [time]="view.time"
-              [favourite]="view.favourite"
-              [selected]="selected()?.race?.id === view.race.id"
+              [race]="item.view.race"
+              [time]="item.time"
+              [favourite]="item.view.favourite"
+              [selected]="isSelected(item.view)"
               (toggled)="select($event)"
             >
-              <app-badge card-status [tone]="view.tone">{{ view.statusLabel }}</app-badge>
+              <app-badge card-status [tone]="item.tone">{{ item.statusLabel }}</app-badge>
 
-              @if (view.race.status === 'live') {
+              @if (item.view.race.status === 'live') {
                 <span class="live-note">Se está corriendo ahora</span>
               }
             </app-race-card>
@@ -75,32 +72,28 @@
     }
   </div>
 
-  <!-- El panel se deriva del id: si el filtro deja afuera la carrera abierta,
-       se cierra solo. Nadie tuvo que acordarse de limpiarlo. -->
-  @if (selected(); as view) {
+  <!-- La carrera abierta se deriva del id, en el store. Si el filtro la deja
+       afuera, el panel se cierra solo. -->
+  @if (races.selected(); as view) {
     <aside class="detail">
       <h2>{{ view.race.name }}</h2>
-      <p class="detail__time num">{{ view.time }}</p>
+      <p class="detail__time num">{{ selectedTime() }}</p>
 
       <h3 class="label">Parrilla · por cuota</h3>
       <ul class="lineup" role="list">
-        @for (horse of lineup(); track horse.id) {
-          <!-- S4 · La directiva marca la fila del favorito, con color y con un
-               dato para el lector de pantalla. El template no nombra ninguna
-               clase CSS. -->
+        @for (horse of races.lineup(); track horse.id) {
           <li class="runner" [appFavourite]="horse.id === view.favourite?.id">
             <span class="saddlecloth num">{{ horse.number }}</span>
             <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
             <span class="runner__name">{{ horse.name }}</span>
-            <!-- S4 · Antes era horse.odds.toFixed(2), repetido en cada template. -->
             <span class="runner__odds num">{{ horse.odds | odds }}</span>
           </li>
         }
       </ul>
 
-      @if (view.favourite; as best) {
+      @if (bets.target(); as best) {
         <div class="simulator">
-          <h3 class="label">Si le apostás al favorito</h3>
+          <h3 class="label">Si le apuestas al favorito</h3>
 
           <label class="field">
             <span>Monto</span>
@@ -109,15 +102,20 @@
 
           <p class="simulator__payout">
             {{ best.name }} paga
-            <strong class="num">{{ payout() | money }}</strong>
+            <strong class="num">{{ bets.payout() | money }}</strong>
           </p>
+
+          @if (!bets.isValid()) {
+            <p class="simulator__warning">El monto tiene que estar entre 10 y 5000.</p>
+          }
+
           <p class="simulator__note">Saldo virtual. Todavía no se puede apostar de verdad.</p>
         </div>
       }
     </aside>
   } @else {
     <aside class="detail detail--empty">
-      <p>Elegí una carrera de la lista.</p>
+      <p>Elige una carrera de la lista.</p>
     </aside>
   }
 </div>

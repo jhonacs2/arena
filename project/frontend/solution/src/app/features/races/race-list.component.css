@@ -234,6 +234,13 @@
   font-size: var(--text-2xl);
 }
 
+.simulator__warning {
+  margin-block-start: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--danger);
+}
+
 .simulator__note {
   margin-block-start: var(--space-1);
   font-size: var(--text-2xs);

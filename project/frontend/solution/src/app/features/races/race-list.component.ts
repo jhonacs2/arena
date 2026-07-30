@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { RACES } from '../../core/mocks';
-import { favourite, potentialPayout, type Horse, type Race, type RaceStatus } from '../../core/models';
+import { BetStore } from '../../core/bets/bet.store';
+import { type Race, type RaceStatus } from '../../core/models';
+import { RaceStore, type RaceFilter, type RaceView } from '../../core/races/race.store';
 import { FavouriteDirective } from '../../shared/directives/favourite.directive';
 import { MoneyPipe } from '../../shared/pipes/money.pipe';
 import { OddsPipe } from '../../shared/pipes/odds.pipe';
@@ -11,33 +12,21 @@ import { SilkComponent } from '../../shared/ui/silk/silk.component';
 import { RaceCardComponent } from './race-card.component';
 
 /**
- * S1 + S2 + S3 · Listado de carreras.
+ * S1 + S2 + S3 + S4 + S5 · Listado de carreras.
  *
- * En S1 el marcado de cada carrera estaba aquí adentro. En S2 se fue a
- * `<app-race-card>`. En S3 el estado se fue a **signals**, y con eso el filtro
- * y la búsqueda dejaron de ser un problema. En S4 se fue el formateo: los
- * `toFixed(2)` que venían arrastrándose desde S1 son ahora un pipe.
+ * La historia del archivo es la historia del curso:
  *
- * Las tres reglas de la sesión, escritas en este archivo:
+ *   S1 · todo el marcado aquí adentro
+ *   S2 · la tarjeta se fue a <app-race-card>
+ *   S3 · el estado se fue a signals
+ *   S4 · el formateo se fue a pipes y directivas
+ *   S5 · el estado se fue a un servicio
  *
- *   1. Lo que **es** estado va en un `signal`. Acá son tres: el filtro, la
- *      búsqueda y cuál carrera está abierta. Nada más.
- *   2. Lo que se **deriva** va en un `computed`. No se guarda y no se
- *      sincroniza a mano; se recalcula solo cuando cambia su fuente.
- *   3. Nunca se modifica lo que había. Ni `push`, ni `sort` sobre el original.
+ * Lo que queda es lo único que de verdad es de esta pantalla: **cómo se ve**.
+ * Las etiquetas de los estados, los tonos de las pastillas y el formato de la
+ * hora son decisiones de presentación; el filtro, la búsqueda y cuál carrera
+ * está abierta ya no le pertenecen, porque otras pantallas los van a necesitar.
  */
-
-/** Lo que la view necesita, ya preparado. */
-interface RaceView {
-  readonly race: Race;
-  readonly time: string;
-  readonly favourite: Horse | undefined;
-  readonly statusLabel: string;
-  readonly tone: BadgeTone;
-}
-
-/** El filtro incluye un valor que no es un estado. */
-type RaceFilter = RaceStatus | 'all';
 
 const STATUS_LABELS: Record<RaceStatus, string> = {
   upcoming: 'Por largar',
@@ -58,6 +47,13 @@ const FILTER_LABELS: Record<RaceFilter, string> = {
   finished: 'Terminadas',
 };
 
+const TIME_FORMAT = new Intl.DateTimeFormat('es', {
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
 @Component({
   selector: 'app-race-list',
   standalone: true,
@@ -75,114 +71,59 @@ const FILTER_LABELS: Record<RaceFilter, string> = {
   styleUrl: './race-list.component.css',
 })
 export class RaceListComponent {
+  /** Los dos stores. La pantalla ya no guarda nada. */
+  protected readonly races = inject(RaceStore);
+  protected readonly bets = inject(BetStore);
+
   protected readonly filters: readonly RaceFilter[] = ['all', 'live', 'upcoming', 'finished'];
   protected readonly filterLabels = FILTER_LABELS;
 
   /**
-   * El programa entero, preparado una sola vez.
+   * Lo de presentación se deriva de lo que trae el store.
    *
-   * **No es un signal, y es a propósito:** los datos vienen de una constante y
-   * no cambian nunca. Un signal para algo que no cambia es ruido. En S7, cuando
-   * los traiga `HttpClient`, sí va a serlo.
+   * Esto **sí** es de la pantalla: otra vista de las mismas carreras podría
+   * querer otras etiquetas, otros tonos o la hora en otro formato.
    */
-  private readonly all: readonly RaceView[] = RACES.map((race) => ({
-    race,
-    time: this.formatTime(race.startsAt),
-    favourite: favourite(race),
-    statusLabel: STATUS_LABELS[race.status],
-    tone: STATUS_TONES[race.status],
-  }));
-
-  // ── El estado: tres signals ─────────────────────────────────────────────
-
-  protected readonly filter = signal<RaceFilter>('all');
-  protected readonly query = signal('');
-
-  /** Guarda el id, no la carrera: la carrera se deriva. */
-  private readonly selectedId = signal<string | null>(null);
-
-  protected readonly amount = signal(100);
-
-  // ── Lo derivado ─────────────────────────────────────────────────────────
-
-  /** Cuántas carreras hay de cada estado. Del programa entero, no de lo que se ve. */
-  protected readonly counts = computed(() => ({
-    all: this.all.length,
-    live: this.all.filter((view) => view.race.status === 'live').length,
-    upcoming: this.all.filter((view) => view.race.status === 'upcoming').length,
-    finished: this.all.filter((view) => view.race.status === 'finished').length,
-  }));
-
-  protected readonly visible = computed<readonly RaceView[]>(() => {
-    const status = this.filter();
-    const text = this.query().trim().toLowerCase();
-
-    return this.all
-      .filter((view) => status === 'all' || view.race.status === status)
-      .filter((view) => text === '' || this.matches(view, text));
-  });
-
-  /**
-   * La carrera abierta.
-   *
-   * Se deriva del id, así que si el filtro la deja afuera, el panel se cierra
-   * solo. Guardar el objeto entero obligaría a acordarse de limpiarlo a mano
-   * en cada cambio de filtro — y a olvidarse una vez.
-   */
-  protected readonly selected = computed<RaceView | undefined>(() => {
-    const id = this.selectedId();
-    return id === null ? undefined : this.visible().find((view) => view.race.id === id);
-  });
-
-  protected readonly payout = computed(() =>
-    potentialPayout(this.amount(), this.selected()?.favourite?.odds ?? 0),
+  protected readonly visible = computed(() =>
+    this.races.visible().map((view) => ({
+      view,
+      time: TIME_FORMAT.format(new Date(view.race.startsAt)),
+      statusLabel: STATUS_LABELS[view.race.status],
+      tone: STATUS_TONES[view.race.status],
+    })),
   );
 
-  /**
-   * Los caballos de la carrera abierta, de menor a mayor cuota.
-   *
-   * El `[...]` no es decorativo: `sort()` ordena **en el lugar** y sin la copia
-   * estaría reordenando el array que vino del dataset.
-   */
-  protected readonly lineup = computed<readonly Horse[]>(() => {
-    const horses = this.selected()?.race.horses ?? [];
-    return [...horses].sort((a, b) => a.odds - b.odds || a.number - b.number);
+  protected readonly selectedTime = computed(() => {
+    const race = this.races.selected()?.race;
+    return race === undefined ? '' : TIME_FORMAT.format(new Date(race.startsAt));
   });
 
-  // ── Los cambios ─────────────────────────────────────────────────────────
+  /** `[(ngModel)]` necesita algo con `set`; el store no lo expone. */
+  protected get query(): string {
+    return this.races.query();
+  }
+
+  protected set query(value: string) {
+    this.races.setQuery(value);
+  }
+
+  protected get amount(): number {
+    return this.bets.amount();
+  }
+
+  protected set amount(value: number) {
+    this.bets.setAmount(value);
+  }
+
+  protected isSelected(view: RaceView): boolean {
+    return this.races.selected()?.race.id === view.race.id;
+  }
 
   protected selectFilter(filter: RaceFilter): void {
-    this.filter.set(filter);
+    this.races.setFilter(filter);
   }
 
   protected select(race: Race): void {
-    // Tocar la misma carrera dos veces la deselecciona: es lo que espera
-    // cualquiera y ahorra un botón de cerrar.
-    this.selectedId.update((current) => (current === race.id ? null : race.id));
-  }
-
-  protected clearFilters(): void {
-    this.filter.set('all');
-    this.query.set('');
-  }
-
-  private matches(view: RaceView, text: string): boolean {
-    if (view.race.name.toLowerCase().includes(text)) return true;
-    return view.race.horses.some((horse) => horse.name.toLowerCase().includes(text));
-  }
-
-  /**
-   * Formatea la hora sin pipes: `| date` es de S4.
-   *
-   * `Intl.DateTimeFormat` es del navegador, no de Angular. Vale la pena que se
-   * vea una vez a mano antes de que un pipe lo esconda.
-   */
-  private formatTime(iso: string): string {
-    return new Intl.DateTimeFormat('es', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(iso));
+    this.races.toggle(race.id);
   }
 }

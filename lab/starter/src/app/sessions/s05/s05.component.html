@@ -1,0 +1,105 @@
+<header class="header">
+  <p class="eyebrow">Sesión 5 · Lab</p>
+  <h1>{{ shopName }}</h1>
+  <p class="intro">
+    Un mostrador, y la comanda encerrada adentro de este componente. Hoy hay que sacarla, y de
+    paso poner un segundo mostrador para comprobar que funciona.
+  </p>
+</header>
+
+<!--
+  TODO(S5) · 1 — Aquí van a ir DOS <app-counter>, uno al lado del otro. Todo lo
+  que hay debajo, hasta el tablero, es el contenido de un mostrador y tiene que
+  irse a su propio componente. El CSS ya está escrito, en counter.component.css.
+-->
+<div class="counters">
+  <section class="counter">
+    <header class="counter__head">
+      <h3>Mostrador A</h3>
+      <p class="counter__shop">{{ shopName }}</p>
+    </header>
+
+    <div class="block">
+      <p class="block__title">Tomar un pedido</p>
+      <p class="block__note">Va a la comanda compartida.</p>
+
+      <label class="field">
+        <span>Cliente</span>
+        <input type="text" name="customer" autocomplete="off" [(ngModel)]="customer" />
+      </label>
+
+      <label class="field">
+        <span>Café</span>
+        <select name="coffee" [(ngModel)]="coffee">
+          @for (option of coffees; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </label>
+
+      <button type="button" class="button" [disabled]="customer().trim() === ''" (click)="take()">
+        Tomar pedido
+      </button>
+
+      <p class="block__count">
+        La comanda tiene <span class="num">{{ count() }}</span> pedidos
+      </p>
+    </div>
+
+    <div class="block">
+      <p class="block__title">Cuaderno de este mostrador</p>
+      <p class="block__note">No lo tiene que ver el otro mostrador.</p>
+
+      <label class="field">
+        <span>Anotación</span>
+        <input type="text" name="note" autocomplete="off" [(ngModel)]="note" />
+      </label>
+
+      <button type="button" class="button button--ghost" [disabled]="note().trim() === ''" (click)="jot()">
+        Anotar
+      </button>
+
+      @if (notes().length === 0) {
+        <p class="empty">Cuaderno vacío.</p>
+      } @else {
+        <ul class="notes" role="list">
+          @for (item of notes(); track $index) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+        <button type="button" class="button button--ghost" (click)="erase()">Borrar</button>
+      }
+    </div>
+  </section>
+</div>
+
+<section class="board">
+  <h2>
+    La comanda
+    <span class="board__count num">{{ count() }}</span>
+  </h2>
+  <p class="board__note">
+    <!-- TODO(S5) · 2 — cuando la comanda esté en un servicio, esta pantalla la
+         va a pedir igual que los mostradores, sin recibir nada por input(). -->
+    Hoy esto lee del mismo componente. Mañana va a pedir el servicio.
+  </p>
+
+  @if (orders().length === 0) {
+    <p class="empty">Todavía no tomó nadie un pedido.</p>
+  } @else {
+    <ul class="orders" role="list">
+      @for (order of orders(); track order.id) {
+        <li class="order">
+          <span class="order__customer">{{ order.customer }}</span>
+          <span class="order__coffee">{{ order.coffee }}</span>
+          <button type="button" class="button button--ghost" (click)="remove(order.id)">
+            Quitar
+          </button>
+        </li>
+      }
+    </ul>
+
+    <p class="board__last">Último: {{ lastCustomer() }}</p>
+    <button type="button" class="button button--ghost" (click)="clear()">Vaciar comanda</button>
+  }
+</section>

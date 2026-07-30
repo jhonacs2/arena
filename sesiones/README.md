@@ -10,6 +10,7 @@ sesiones/
 ├── s02-anatomia-componente/
 ├── s03-signals/
 ├── s04-directivas-pipes/
+├── s05-inyeccion-dependencias/
 ├── …
 └── s10-websockets/        + los 30 min de NgModules legacy
 ```

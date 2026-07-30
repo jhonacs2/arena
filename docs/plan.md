@@ -13,7 +13,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **4** | S2 · Anatomía de un componente | ✅ **terminada** — falta darla |
 | **5** | S3 · Signals y control flow | ✅ **terminada** — falta darla |
 | **6** | S4 · Directivas y pipes | ✅ **terminada** — falta darla |
-| **7–12** | Una sesión por fase, S5 … S10 | ⬜ siguiente |
+| **7** | S5 · Inyección de dependencias | ✅ **terminada** — falta darla |
+| **8–12** | Una sesión por fase, S6 … S10 | ⬜ siguiente |
 | **13** | Publicación y deploy | ⬜ |
 
 ---
@@ -163,7 +164,19 @@ Y una corrección al currículo que salió de medirlo en el navegador. Decía «
 
 Y un matiz que también hubo que medir: **un pipe impuro con `OnPush` no corre «en cada clic de la aplicación»**, corre cada vez que se revisa *ese* componente. La diferencia entre las dos frases es la mitad del tercer ejercicio de predicción, y se demuestra en vivo cambiando `OnPush` por `Default`.
 
-## Fases 7–12 — Una sesión por fase
+## Fase 7 — S5 · Inyección de dependencias ✅
+
+- **Lab `/s05`**: dos mostradores uno al lado del otro. La comanda es `providedIn: 'root'` y se comparte; el cuaderno está en `providers` del mostrador y no. **Probar con un solo mostrador no prueba nada**, y eso quedó escrito en el enunciado
+- **Hipódromo**: `RaceStore` y `BetStore` en `core/`, más el token `API_URL`. `race-list` se queda solo con lo de presentación — las etiquetas, los tonos y el formato de la hora
+- **`sesiones/s05-inyeccion-dependencias/`**: los 12 archivos, con el diagrama de dónde vive un servicio
+
+La decisión que ordena la sesión entera es una pregunta: **¿cuántos de estos tiene que haber?** Una comanda: una. Un cuaderno de mostrador: uno por mostrador. No hay ningún error que avise si se contesta mal.
+
+Las tres respuestas del bloque «predice y ejecuta» quedaron como **tests permanentes** en el spec de `/s05`, no como afirmaciones en un `.md`: que `providers` en un componente crea otra instancia distinta de la de `root` —y sin ningún error—, que un servicio puede inyectar otro servicio, y que `inject()` fuera de contexto tira `NG0203`.
+
+Y una corrección que salió de medirlo: el mensaje de «no hay proveedor» no es el `NG0201` que había escrito de memoria, sino un `R3InjectorError` con `NullInjectorError: No provider for …` adentro. El guión cita el real.
+
+## Fases 8–12 — Una sesión por fase
 
 Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
 
