@@ -156,3 +156,28 @@ Verifica, además de lo obvio: que el esquema aplique limpio dos veces seguidas,
 la reconciliación del ledger contra `users.balance` dé cero diferencias, que ningún
 handler de `/admin/` esté sin chequeo de rol, que no haya `float` en montos, y el
 contraste AA de la paleta.
+
+Los tests de Go piden Postgres. Sin él se saltean, así que hay que dárselo:
+
+```bash
+docker run -d --rm --name arena-pg -e POSTGRES_PASSWORD=x -e POSTGRES_DB=arena \
+  -p 55440:5432 postgres:16-alpine
+export ARENA_TEST_DATABASE_URL="postgres://postgres:x@localhost:55440/arena?sslmode=disable"
+export DATABASE_URL="$ARENA_TEST_DATABASE_URL"
+node scripts/verify-arena.mjs
+```
+
+### Y el cableado, que ningún test de Go cubre
+
+```bash
+node arena/scripts/e2e.mjs      # con el backend corriendo
+```
+
+Los 12 paquetes en verde **no** prueban que `main.go` haya enchufado la regla de
+liquidación, el hub y el runner. Un backend con `Rule` nula compila, pasa todos los
+tests y no liquida una sola carrera: es el agujero que este script tapa. Recorre
+código → registro → apuesta → carrera → nota contra el binario real, y asierta el
+piso de 10 fundiendo a un alumno de verdad.
+
+**Después de tocar `main.go`, corrélo.** Es el único lugar donde un cable
+desconectado se nota.

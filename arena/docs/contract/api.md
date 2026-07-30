@@ -29,6 +29,8 @@ el frontend.
 | `INVALID_CREDENTIALS` | 401 | usuario o contraseña incorrectos |
 | `UNAUTHENTICATED` | 401 | falta el token o venció |
 | `FORBIDDEN` | 403 | el rol no alcanza |
+| `USER_NOT_FOUND` | 404 | el alumno al que se le quiso regalar no existe |
+| `RATE_LIMITED` | 429 | demasiados intentos seguidos |
 | `RACE_NOT_FOUND` | 404 | |
 | `RACE_NOT_OPEN` | 409 | apostar en una carrera que no está `open` |
 | `BET_ALREADY_PLACED` | 409 | ya apostó en esta carrera |

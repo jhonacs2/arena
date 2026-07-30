@@ -22,11 +22,16 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jackc/pgx/v5"
+
 	"github.com/talentodh/arena/internal/accounts"
 	"github.com/talentodh/arena/internal/api"
 	"github.com/talentodh/arena/internal/auth"
 	"github.com/talentodh/arena/internal/db"
 	"github.com/talentodh/arena/internal/ledger"
+	"github.com/talentodh/arena/internal/races"
+	"github.com/talentodh/arena/internal/racesdb"
+	"github.com/talentodh/arena/internal/ws"
 )
 
 func main() {
@@ -90,26 +95,52 @@ func run() error {
 		Clock:          time.Now,
 	}
 
-	// ── Acá se enganchan las carreras, las salas y el WebSocket ──────────────
+	// ── Carreras, salas y WebSocket ──────────────────────────────────────────
 	//
-	// El paquete de carreras expone un único registrador con sus 9 rutas más
-	// GET /api/ws. Se agrega así, y queda dentro de la misma cadena de middleware
-	// —incluido el portón de rol de /api/admin/:
-	//
-	//	raceHandlers := races.NewHandlers(races.Deps{
-	//		Store:       racesdb.New(pool, ledgerStore),
-	//		Broadcaster: hub,
-	//		// Identidad de la petición y del socket, desde este paquete:
-	//		Identity: func(r *http.Request) (races.Identity, error) {
-	//			id, err := server.Identity(r)
-	//			return races.Identity(id), err   // misma forma: alcanza la conversión
-	//		},
-	//		TokenIdentity: func(token string) (ws.Identity, error) {
-	//			id, err := server.IdentityFromToken(context.Background(), token)
-	//			return ws.Identity(id), err
-	//		},
-	//	})
-	//	server.ExtraRoutes = append(server.ExtraRoutes, raceHandlers.Register)
+	// El paquete de carreras expone un único registrador con sus rutas más
+	// GET /api/ws, y queda dentro de la misma cadena de middleware del server
+	// —incluido el portón de rol de /api/admin/.
+	hub := ws.NewHub(log)
+
+	raceStore := racesdb.New(pool, racesdb.LedgerFunc(
+		func(ctx context.Context, tx pgx.Tx, m racesdb.Movement) (int64, error) {
+			return ledgerStore.MoveTx(ctx, tx, ledger.Movement(m))
+		}))
+
+	raceService, raceHandlers := races.NewModule(races.Deps{
+		Store: raceStore,
+		Hub:   hub,
+		Log:   log,
+
+		// `races.Identity` y `auth.Identity` tienen la misma forma, así que alcanza
+		// la conversión: ninguno de los dos paquetes tiene que importar al otro.
+		Identity: func(r *http.Request) (races.Identity, error) {
+			id, err := server.Identity(r)
+			return races.Identity(id), err
+		},
+		IdentityFromToken: func(ctx context.Context, token string) (races.Identity, error) {
+			id, err := server.IdentityFromToken(ctx, token)
+			return races.Identity(id), err
+		},
+
+		// La economía. Es pari-mutuel por decisión del usuario, citada literal en
+		// `docs/contract/decisiones.md` §0 — el pool se reparte entre quienes
+		// aciertan y el piso de 10 puntos vive en la vista `user_scores`.
+		//
+		// Si esto quedara nulo, las carreras correrían y NO se liquidarían: es la
+		// red que dejó el diseño de SettlementRule para que nunca se pague con una
+		// regla que nadie eligió.
+		Rule: races.PariMutuel{},
+	})
+	server.ExtraRoutes = append(server.ExtraRoutes, raceHandlers.Register)
+
+	// Las carreras que quedaron en `running` porque el proceso se cayó en el medio.
+	// Se retoman ANTES de escuchar: si alguien reconecta a una sala, la simulación
+	// ya está corriendo y recibe ticks en vez de una carrera congelada.
+	if err := raceService.Resume(ctx); err != nil {
+		log.Error("no se pudieron retomar las carreras en curso", "error", err)
+	}
+	defer raceService.Runner().Close()
 
 	httpServer := &http.Server{
 		Addr:    ":" + cfg.Port,

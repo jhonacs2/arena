@@ -625,16 +625,16 @@ func TestRevokeYPurgeRefreshTokens(t *testing.T) {
 
 // La fórmula de decisiones.md §1, leída de la vista `user_scores`:
 //
-//	puntos = floor(monedas / 100) + puntos regalados
+//	puntos = max(10, floor(monedas / 100)) + puntos regalados
 //
-// **No hay piso de nota**, y es deliberado: «si funden las monedas me van a deber
-// nota y se tendrán que esforzar más». Apostar mal sí baja la nota, y eso es la
-// consecuencia que hace que la decisión de apostar signifique algo.
+// **El piso de 10 es la mitad de la economía.** Apostar mal saca monedas —y con
+// eso, capacidad de seguir jugando— pero nunca calificación. Va junto con el
+// pari-mutuel: como el pool es suma cero, sin piso la nota que gana un alumno
+// saldría de la de otro.
 //
-// Este test tenía un piso de 10 y lo perdió cuando el contrato lo sacó. **No hubo
-// una línea de Go que cambiar**: los puntos se leen de la vista, así que lo único
-// que se movió fueron los valores esperados de acá.
-func TestPointsSalenDelSaldoSinPiso(t *testing.T) {
+// Se lee de la vista y no se calcula en Go, así que lo único que hay acá son los
+// valores esperados. Si el piso se cayera del esquema, estos tres casos lo dicen.
+func TestPointsAplicaElPisoDeDiez(t *testing.T) {
 	pool := testdb.Pool(t)
 	store := accounts.New(pool)
 	ledgerStore := ledger.New(pool)
@@ -655,8 +655,8 @@ func TestPointsSalenDelSaldoSinPiso(t *testing.T) {
 		porque string
 	}{
 		{0, 1000, 1000, "1000 monedas → 10 puntos"},
-		{500, 500, 500, "500 monedas → 5 puntos: sin piso, perder monedas baja la nota"},
-		{500, 0, 0, "fundida → 0 puntos, y esos 10 los tiene que compensar aparte"},
+		{500, 500, 1000, "500 monedas → 10 puntos: sin el piso serían 5"},
+		{500, 0, 1000, "fundida → 10 puntos. Apostar mal no baja la nota"},
 	}
 
 	for _, caso := range casos {
@@ -729,15 +729,14 @@ func TestGrantPointsSeSumaYNoSePierdeApostando(t *testing.T) {
 		t.Errorf("puntos = %s, se esperaba 12.5 (10 del saldo + 2,5 regalados)", points)
 	}
 
-	// Funde el saldo. **Es acá donde se ve la diferencia entre los dos regalos**, y
-	// es el caso que reemplaza al piso de 10 que el contrato sacó:
+	// Funde el saldo. **Es acá donde se ve que los dos regalos no son lo mismo:**
 	//
-	//	los 10 puntos del saldo se van    → apostar mal sí baja la nota
-	//	los 2,5 regalados se quedan       → un reconocimiento ganado no se juega
+	//	los 10 puntos del saldo se sostienen en el piso → apostar mal no baja la nota
+	//	los 2,5 regalados se suman aparte               → y no pasan por el juego
 	//
-	// Eso es lo que garantiza que `point_grants` sea otra tabla y no otro motivo
-	// del ledger. Si el regalo hubiera entrado como monedas, se habría perdido con
-	// el resto.
+	// Lo segundo es lo que garantiza que `point_grants` sea otra tabla y no otro
+	// motivo del ledger. Si el regalo hubiera entrado como monedas, habría quedado
+	// sujeto al piso en lugar de sumarse por encima.
 	if _, err := ledgerStore.Move(ctx, ledger.Movement{
 		UserID: ana.ID, Delta: -1000, Reason: ledger.ReasonBetPlaced,
 	}); err != nil {
@@ -747,9 +746,9 @@ func TestGrantPointsSeSumaYNoSePierdeApostando(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if points != 250 {
-		t.Errorf("después de fundirse los puntos dan %s, se esperaba 2.5: "+
-			"el saldo se perdió, el regalo no", points)
+	if points != 1250 {
+		t.Errorf("después de fundirse los puntos dan %s, se esperaba 12.5: "+
+			"el piso sostiene los 10 y el regalo se suma encima", points)
 	}
 
 	// point_grants es append-only, igual que el ledger.

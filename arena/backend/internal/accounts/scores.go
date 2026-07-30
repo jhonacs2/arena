@@ -14,20 +14,22 @@ import (
 // Score es una fila del panel de nota del instructor. Sale de la vista
 // `user_scores`, que es la ÚNICA que sabe la fórmula:
 //
-//	puntos = floor(monedas / 100) + puntos regalados
+//	puntos = max(10, floor(monedas / 100)) + puntos regalados
 //
 // Se lee de la vista y no se recalcula en Go a propósito. Si la fórmula viviera
 // en los dos lados, un día se separarían y el número de la nota dependería de
 // por dónde se lo mire. `schema.test.sql` verifica la vista; no hay un segundo
 // lugar que verificar.
 //
-// Y ya pagó: la fórmula tuvo un piso de 10 puntos y lo perdió a mitad de la
-// construcción de este backend. Como se lee de la vista, no hubo una línea de Go
-// que cambiar.
+// Y ya se cobró el beneficio: la fórmula cambió tres veces durante la construcción
+// de este backend —el piso entró, salió y volvió— y como se lee de la vista, nunca
+// hubo una línea de Go que tocar.
 //
-// **No hay piso de nota** (decisiones.md §1): apostar mal sí la baja. Lo que no
-// se puede perder apostando son los puntos REGALADOS, y eso lo garantiza que
-// vivan en `point_grants` y no en el ledger de monedas.
+// **El piso de 10** (decisiones.md §0) es lo que el alumno recibe al canjear el
+// código, y apostar mal no lo puede tocar: pierde monedas, no calificación. Va
+// junto con el pari-mutuel, porque con un pool de suma cero y sin piso la nota que
+// gana uno saldría de la de otro. Y los puntos REGALADOS se suman por encima del
+// piso, no compiten con él: por eso viven en `point_grants` y no en el ledger.
 type Score struct {
 	ID        string `json:"id"`
 	Username  string `json:"username"`

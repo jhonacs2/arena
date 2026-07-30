@@ -687,6 +687,47 @@ func (q *queries) InsertResults(ctx context.Context, raceID string, results []si
 	return err
 }
 
+// InsertSettlement escribe la liquidación. Una fila por carrera: la clave primaria
+// es `race_id`, así que un segundo intento de liquidar la misma carrera choca acá.
+//
+// Esa colisión es una defensa, no un estorbo. El esquema además exige
+// `paid_out = pool` y que la devolución solo ocurra sin aciertos, así que una
+// liquidación que no conserve monedas no entra ni con el código equivocado.
+func (q *queries) InsertSettlement(ctx context.Context, s races.Settlement) error {
+	if err := checkIDs(s.RaceID, s.WinnerHorseID); err != nil {
+		return err
+	}
+
+	_, err := q.tx.Exec(ctx, `
+		insert into race_settlements
+			(race_id, winner_id, pool, winning_pool, paid_out, refunded, settled_at)
+		values ($1::uuid, $2::uuid, $3, $4, $5, $6, $7)`,
+		s.RaceID, s.WinnerHorseID, s.Pool, s.WinningPool, s.PaidOut, s.Refunded, s.SettledAt)
+	return err
+}
+
+// Settlement lee la liquidación de una carrera. La usa el panel del instructor para
+// mostrar de dónde salió cada pago: con pari-mutuel el pago de una apuesta no se
+// puede recalcular desde la apuesta sola.
+func (q *queries) Settlement(ctx context.Context, raceID string) (races.Settlement, bool, error) {
+	if err := checkIDs(raceID); err != nil {
+		return races.Settlement{}, false, err
+	}
+
+	var s races.Settlement
+	err := q.tx.QueryRow(ctx, `
+		select race_id::text, winner_id::text, pool, winning_pool, paid_out, refunded, settled_at
+		from race_settlements where race_id = $1::uuid`, raceID,
+	).Scan(&s.RaceID, &s.WinnerHorseID, &s.Pool, &s.WinningPool, &s.PaidOut, &s.Refunded, &s.SettledAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return races.Settlement{}, false, nil
+	}
+	if err != nil {
+		return races.Settlement{}, false, err
+	}
+	return s, true, nil
+}
+
 // Results son los puestos finales, con el nombre y la cuota del caballo para que
 // el cliente no tenga que cruzarlos.
 func (q *queries) Results(ctx context.Context, raceID string) ([]sim.Result, error) {

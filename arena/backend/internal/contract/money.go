@@ -20,31 +20,26 @@ const MinNominalOdds = 101
 
 // ── Lo que NO se calcula acá, y por qué ───────────────────────────────────
 //
-// Este paquete NO tiene una función de pago ni una de puntos. No es un olvido:
-// las dos reglas están sin confirmar, y una implementación provisoria de algo que
-// se traduce a nota es peor que no tenerla, porque compila, pasa los tests y nadie
-// vuelve a mirarla.
+// Este paquete NO tiene una función de pago ni una de puntos, y eso sigue siendo
+// deliberado aunque las dos reglas ya estén decididas: las dos dependen de datos
+// que este paquete no ve.
 //
-// **El pago de una apuesta ganadora.** Hay dos modelos en discusión y dan números
-// distintos para la misma carrera:
+// **El pago de una apuesta ganadora** es pari-mutuel (decisiones.md §0):
 //
-//	cuotas fijas   pago = amount * oddsAtBet / 100          (paga «la casa»)
-//	pari-mutuel    pago = amount * pool / winningPool       (se reparte el pool)
+//	pago = amount * pool / winningPool
 //
-// El segundo es suma cero y necesita repartir el resto de la división; el primero
-// necesita congelar la cuota al apostar, y por lo tanto una columna que el otro no
-// tiene. No es un detalle de implementación: cambia el esquema y cambia lo que
-// significa la nota. Mientras no esté decidido, el pago entra por
-// races.SettlementRule, que este repositorio declara y deliberadamente NO
-// implementa.
+// No cabe acá porque necesita TODAS las apuestas de la carrera, no una. Vive en
+// `races.PariMutuel`, detrás de `races.SettlementRule`, que es la única pieza del
+// backend que conoce la economía. Una `Payout(amount, odds)` en este paquete daría
+// un número plausible con la economía equivocada — la de cuotas fijas — y eso es
+// exactamente el error que costó cinco reescrituras del contrato.
 //
-// **Los puntos.** La fórmula tiene un piso en discusión:
+// **Los puntos.**
 //
-//	sin piso   puntos = floor(monedas / 100)
-//	con piso   puntos = max(10, floor(monedas / 100)) + puntos regalados
+//	puntos = max(10, floor(monedas / 100)) + puntos regalados
 //
-// La diferencia es si un alumno que funde queda debiendo nota o no, que es una
-// decisión pedagógica y no técnica. Además el segundo término vive en
+// El piso de 10 está decidido (decisiones.md §0) y vive en la vista `user_scores`,
+// no acá. El segundo término vive en
 // `point_grants`, que este paquete no conoce: los puntos los resuelve la capa que
 // administra las notas, y al cliente le llegan por `GET /api/me`. Una
 // `Points(balance)` acá daría un número parecido y distinto, y dos números que

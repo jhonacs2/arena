@@ -43,6 +43,7 @@ type memData struct {
 	participants map[string]map[string]time.Time
 	bets         map[string]*Bet
 	results      map[string][]sim.Result
+	settlements  map[string]Settlement
 	users        map[string]*memUser
 	ledger       []Movement
 	seq          int
@@ -55,6 +56,7 @@ func newMemStore() *memStore {
 		participants: map[string]map[string]time.Time{},
 		bets:         map[string]*Bet{},
 		results:      map[string][]sim.Result{},
+		settlements:  map[string]Settlement{},
 		users:        map[string]*memUser{},
 	}}
 }
@@ -66,6 +68,7 @@ func (d *memData) clone() *memData {
 		participants: make(map[string]map[string]time.Time, len(d.participants)),
 		bets:         make(map[string]*Bet, len(d.bets)),
 		results:      make(map[string][]sim.Result, len(d.results)),
+		settlements:  make(map[string]Settlement, len(d.settlements)),
 		users:        make(map[string]*memUser, len(d.users)),
 		ledger:       append([]Movement(nil), d.ledger...),
 		seq:          d.seq,
@@ -95,6 +98,9 @@ func (d *memData) clone() *memData {
 	}
 	for k, v := range d.results {
 		out.results[k] = append([]sim.Result(nil), v...)
+	}
+	for k, v := range d.settlements {
+		out.settlements[k] = v
 	}
 	return out
 }
@@ -443,6 +449,29 @@ func (t *memTx) InsertResults(_ context.Context, raceID string, results []sim.Re
 
 func (t *memTx) Results(_ context.Context, raceID string) ([]sim.Result, error) {
 	return append([]sim.Result(nil), t.data.results[raceID]...), nil
+}
+
+// InsertSettlement reproduce la clave primaria de race_settlements: liquidar dos
+// veces la misma carrera falla. Sin esto, el doble sería más permisivo que Postgres
+// y un test podría pasar acá y romper en producción.
+func (t *memTx) InsertSettlement(_ context.Context, s Settlement) error {
+	if _, exists := t.data.settlements[s.RaceID]; exists {
+		return fmt.Errorf("la carrera %s ya tiene liquidación", s.RaceID)
+	}
+	// Y los dos CHECK del esquema, por el mismo motivo.
+	if s.PaidOut != s.Pool {
+		return fmt.Errorf("liquidación que no conserva: %d pagado de un pool de %d", s.PaidOut, s.Pool)
+	}
+	if s.Refunded != (s.WinningPool == 0) {
+		return fmt.Errorf("refunded=%v con un pool ganador de %d", s.Refunded, s.WinningPool)
+	}
+	t.data.settlements[s.RaceID] = s
+	return nil
+}
+
+func (t *memTx) Settlement(_ context.Context, raceID string) (Settlement, bool, error) {
+	s, ok := t.data.settlements[raceID]
+	return s, ok, nil
 }
 
 func (t *memTx) Balance(_ context.Context, userID string) (int64, error) {

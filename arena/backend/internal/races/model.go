@@ -113,6 +113,29 @@ type Bet struct {
 	SettledAt *time.Time
 }
 
+// Settlement es la liquidación de una carrera: una fila por carrera, escrita una
+// sola vez.
+//
+// Guarda el pool y el pool ganador además de los pagos porque son lo que permite
+// **reconstruir** por qué cada uno cobró lo que cobró. Con pari-mutuel el pago de
+// una apuesta no se puede recalcular desde la apuesta sola: depende de cómo apostó
+// el resto, y si mañana alguien reclama la nota, `amount * pool / winningPool` es
+// la cuenta que hay que poder mostrar.
+//
+// `PaidOut` tiene que ser exactamente igual a `Pool`. Lo impone un CHECK en el
+// esquema, no solo el código: es la conservación de monedas del curso.
+type Settlement struct {
+	RaceID        string
+	WinnerHorseID string
+
+	Pool        int64 // todo lo apostado en la carrera
+	WinningPool int64 // lo apostado al ganador
+	PaidOut     int64 // suma de los pagos efectivos
+	Refunded    bool  // nadie acertó: se devolvió cada apuesta íntegra
+
+	SettledAt time.Time
+}
+
 // Participant es un alumno en la sala.
 type Participant struct {
 	UserID    string

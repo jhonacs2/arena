@@ -99,6 +99,15 @@ type Tx interface {
 	InsertResults(ctx context.Context, raceID string, results []sim.Result) error
 	Results(ctx context.Context, raceID string) ([]sim.Result, error)
 
+	// InsertSettlement escribe la liquidación de la carrera. La llama la regla de
+	// economía dentro de la transacción de `finish`, así que el pool y los pagos
+	// se confirman juntos o no se confirman.
+	//
+	// Falla si la carrera ya tiene liquidación (clave primaria): es la última
+	// defensa contra pagar dos veces.
+	InsertSettlement(ctx context.Context, s Settlement) error
+	Settlement(ctx context.Context, raceID string) (Settlement, bool, error)
+
 	// ── Saldo ─────────────────────────────────────────────────────────────
 
 	Balance(ctx context.Context, userID string) (int64, error)
