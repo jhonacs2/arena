@@ -14,7 +14,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **5** | S3 · Signals y control flow | ✅ **terminada** — falta darla |
 | **6** | S4 · Directivas y pipes | ✅ **terminada** — falta darla |
 | **7** | S5 · Inyección de dependencias | ✅ **terminada** — falta darla |
-| **8–12** | Una sesión por fase, S6 … S10 | ⬜ siguiente |
+| **8** | S6 · Reactividad | ✅ **terminada** — falta darla |
+| **9–12** | Una sesión por fase, S7 … S10 | ⬜ siguiente |
 | **13** | Publicación y deploy | ⬜ |
 
 ---
@@ -176,7 +177,23 @@ Las tres respuestas del bloque «predice y ejecuta» quedaron como **tests perma
 
 Y una corrección que salió de medirlo: el mensaje de «no hay proveedor» no es el `NG0201` que había escrito de memoria, sino un `R3InjectorError` con `NullInjectorError: No provider for …` adentro. El guión cita el real.
 
-## Fases 8–12 — Una sesión por fase
+## Fase 8 — S6 · Reactividad ✅
+
+Aparece **el tiempo**, que es lo único que las seis sesiones anteriores no tuvieron que manejar.
+
+- **Lab `/s06`**: el buscador del catálogo. El starter hace **una búsqueda por tecla** y deja que una respuesta vieja pise a la nueva; el ejercicio es convertirlo en un flujo. El servicio tarda **1200 ms con textos de una letra y 300 ms con textos largos**, a propósito: sin esa asimetría el bug de las respuestas desordenadas no se puede reproducir en clase
+- **Hipódromo**: el buscador de carreras con `debounceTime` y `takeUntilDestroyed`. Aparece la distinción entre **lo que se ve en el campo** y **lo que filtra la lista**, que dejan de ser el mismo texto
+- **`sesiones/s06-reactividad/`**: los 12 archivos, con el diagrama del flujo
+
+Las tres respuestas del bloque «predice y ejecuta» están **medidas con `fakeAsync`**, no razonadas:
+
+- con `mergeMap`, a los 300 ms se ve `[Huila]` y a los 1500 ms se ve `[Yirgacheffe, Cerrado, Antigua, Sidamo, Kiambu]` — **gana la búsqueda que el usuario ya había abandonado**
+- con el `catchError` **afuera** del `switchMap`, tras un error el flujo emitió una vez y **no volvió a emitir nunca**: el buscador muere hasta recargar
+- cinco llamadas a un observable sin suscribirse dejan el contador en **0**
+
+Y los ocho tests del lab dejan verificado lo que el material afirma: siete teclas producen una búsqueda, escribir lo mismo dos veces no produce otra, y la respuesta lenta no vuelve a pisar la pantalla.
+
+## Fases 9–12 — Una sesión por fase
 
 Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
 

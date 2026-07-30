@@ -1,0 +1,73 @@
+<header class="header">
+  <p class="eyebrow">Sesión 6 · Lab</p>
+  <h1>Buscador del catálogo</h1>
+  <p class="intro">
+    Por primera vez los datos no están: <strong>llegan</strong>. Escribe rápido y mira el contador
+    de búsquedas: son muchas menos que las teclas que tocaste.
+  </p>
+</header>
+
+<section class="search">
+  <label class="field">
+    <span>Buscar por nombre u origen</span>
+    <!-- (input) y no [(ngModel)]: lo que se necesita es el EVENTO, para
+         empujarlo al flujo. El valor lo guarda el flujo, no el binding. -->
+    <input
+      name="query"
+      type="search"
+      autocomplete="off"
+      placeholder="etiopía"
+      [value]="query"
+      (input)="onType($any($event.target).value)"
+    />
+  </label>
+
+  <div class="meta">
+    <p class="meta__item">
+      Búsquedas que salieron: <span class="num">{{ requests() }}</span>
+    </p>
+    <p class="meta__item">
+      Resultados: <span class="num">{{ count() }}</span>
+    </p>
+    <button type="button" class="button button--ghost" (click)="reset()">Reiniciar</button>
+  </div>
+
+  <p class="hint">
+    Escribe <code>error</code> para ver el estado de error. Escribe una sola letra para que la
+    respuesta tarde más y se vea por qué hace falta <code>switchMap</code>.
+  </p>
+</section>
+
+<section class="results">
+  <!-- Los tres estados. Desde S7 van a ser obligatorios en toda pantalla que
+       cargue algo; aquí aparecen por primera vez. -->
+  @switch (status()) {
+    @case ('loading') {
+      <ul class="skeletons" role="list" aria-live="polite" aria-label="Buscando">
+        @for (row of [1, 2, 3]; track row) {
+          <li class="skeleton"></li>
+        }
+      </ul>
+    }
+    @case ('error') {
+      <p class="error" role="alert">
+        El catálogo no responde. Prueba de nuevo en un momento.
+      </p>
+    }
+    @default {
+      @if (results().length === 0) {
+        <p class="empty">Ningún café coincide con la búsqueda.</p>
+      } @else {
+        <ul class="list" role="list">
+          @for (coffee of results(); track coffee.id) {
+            <li class="row">
+              <span class="row__name">{{ coffee.name }}</span>
+              <span class="row__origin">{{ coffee.origin }}</span>
+              <span class="row__price num">{{ coffee.price }}</span>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+</section>

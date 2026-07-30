@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { BetStore } from '../../core/bets/bet.store';
 import { type Race, type RaceStatus } from '../../core/models';
@@ -21,6 +23,7 @@ import { RaceCardComponent } from './race-card.component';
  *   S3 · el estado se fue a signals
  *   S4 · el formateo se fue a pipes y directivas
  *   S5 · el estado se fue a un servicio
+ *   S6 · la búsqueda dejó de dispararse en cada tecla
  *
  * Lo que queda es lo único que de verdad es de esta pantalla: **cómo se ve**.
  * Las etiquetas de los estados, los tonos de las pastillas y el formato de la
@@ -98,13 +101,31 @@ export class RaceListComponent {
     return race === undefined ? '' : TIME_FORMAT.format(new Date(race.startsAt));
   });
 
-  /** `[(ngModel)]` necesita algo con `set`; el store no lo expone. */
-  protected get query(): string {
-    return this.races.query();
+  /**
+   * S6 · La búsqueda ya no llega al store en cada tecla.
+   *
+   * Cada pulsación entra al `Subject`; la tubería espera a que la persona deje
+   * de escribir, descarta lo repetido, y recién entonces toca el store. Hoy
+   * eso solo evita recalcular un `computed`; en S7, cuando cada búsqueda sea
+   * una petición al servidor, es la diferencia entre una y quince.
+   *
+   * `takeUntilDestroyed()` corta la suscripción cuando el componente se va.
+   * Sin eso, el flujo queda vivo apuntando a un componente que ya no existe.
+   */
+  private readonly typed = new Subject<string>();
+
+  /** Lo que se ve en el campo. El store recibe el valor más tarde. */
+  protected readonly draft = signal('');
+
+  constructor() {
+    this.typed
+      .pipe(debounceTime(250), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe((value) => this.races.setQuery(value));
   }
 
-  protected set query(value: string) {
-    this.races.setQuery(value);
+  protected onSearch(value: string): void {
+    this.draft.set(value);
+    this.typed.next(value);
   }
 
   protected get amount(): number {
@@ -125,5 +146,11 @@ export class RaceListComponent {
 
   protected select(race: Race): void {
     this.races.toggle(race.id);
+  }
+
+  protected clearSearch(): void {
+    this.draft.set('');
+    this.typed.next('');
+    this.races.clearFilters();
   }
 }

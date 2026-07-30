@@ -25,7 +25,15 @@
 
   <label class="field field--search">
     <span>Buscar por carrera o caballo</span>
-    <input name="query" type="search" autocomplete="off" [(ngModel)]="query" />
+    <!-- S6 · (input) y no [(ngModel)]: lo que hace falta es el EVENTO, para
+         empujarlo al flujo que espera y descarta lo repetido. -->
+    <input
+      name="query"
+      type="search"
+      autocomplete="off"
+      [value]="draft()"
+      (input)="onSearch($any($event.target).value)"
+    />
   </label>
 </section>
 
@@ -47,7 +55,7 @@
             Ninguna carrera coincide con la búsqueda.
           }
         }
-        <button type="button" class="link" (click)="races.clearFilters()">Ver todas</button>
+        <button type="button" class="link" (click)="clearSearch()">Ver todas</button>
       </p>
     } @else {
       <ul class="races" role="list">
