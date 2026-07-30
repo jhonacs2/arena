@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 
 import { RACES } from '../../core/mocks';
 import { favourite, potentialPayout, type Horse, type Race, type RaceStatus } from '../../core/models';
+import { FavouriteDirective } from '../../shared/directives/favourite.directive';
+import { MoneyPipe } from '../../shared/pipes/money.pipe';
+import { OddsPipe } from '../../shared/pipes/odds.pipe';
 import { BadgeComponent, type BadgeTone } from '../../shared/ui/badge/badge.component';
 import { SilkComponent } from '../../shared/ui/silk/silk.component';
 import { RaceCardComponent } from './race-card.component';
@@ -10,10 +13,10 @@ import { RaceCardComponent } from './race-card.component';
 /**
  * S1 + S2 + S3 · Listado de carreras.
  *
- * En S1 el marcado de cada carrera estaba acá adentro. En S2 se fue a
+ * En S1 el marcado de cada carrera estaba aquí adentro. En S2 se fue a
  * `<app-race-card>`. En S3 el estado se fue a **signals**, y con eso el filtro
- * y la búsqueda dejaron de ser un problema: nada de lo que se ve está
- * guardado, se deriva.
+ * y la búsqueda dejaron de ser un problema. En S4 se fue el formateo: los
+ * `toFixed(2)` que venían arrastrándose desde S1 son ahora un pipe.
  *
  * Las tres reglas de la sesión, escritas en este archivo:
  *
@@ -59,7 +62,15 @@ const FILTER_LABELS: Record<RaceFilter, string> = {
   selector: 'app-race-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, SilkComponent, RaceCardComponent, BadgeComponent],
+  imports: [
+    FormsModule,
+    SilkComponent,
+    RaceCardComponent,
+    BadgeComponent,
+    FavouriteDirective,
+    MoneyPipe,
+    OddsPipe,
+  ],
   templateUrl: './race-list.component.html',
   styleUrl: './race-list.component.css',
 })

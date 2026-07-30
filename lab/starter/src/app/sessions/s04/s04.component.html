@@ -1,0 +1,82 @@
+<header class="header">
+  <p class="eyebrow">Sesión 4 · Lab</p>
+  <h1>Café Compilado</h1>
+  <p class="intro">
+    Todo el formateo vive adentro del componente. Funciona, y no se puede usar en ninguna otra
+    pantalla sin copiarlo.
+  </p>
+</header>
+
+<section class="menu">
+  <h2>La carta</h2>
+
+  <ul class="cards" role="list">
+    @for (coffee of menu; track coffee.id) {
+      <!--
+        TODO(S4) · 3 — La condición del café del día está escrita dos veces, y
+        el nombre de la clase CSS lo decide el template. Eso tiene que ser una
+        directiva de atributo.
+      -->
+      <li
+        class="card"
+        [class.is-highlighted]="coffee.id === featuredId"
+        [attr.data-highlight-label]="coffee.id === featuredId ? 'Café del día' : null"
+        [class.card--soldout]="coffee.stock === 0"
+      >
+        <!-- TODO(S4) · 1 — el origen en mayúsculas, sin tocar el dato. -->
+        <p class="card__origin">{{ coffee.origin }}</p>
+
+        <h3 class="card__name">{{ coffee.name }}</h3>
+
+        <!-- TODO(S4) · 2 — estos dos van a salir de un pipe. -->
+        <p class="card__price num">{{ formatMoney(coffee.price) }}</p>
+        <p class="card__alt num">{{ formatMoney(coffee.price, 'USD') }}</p>
+
+        <!-- TODO(S4) · 4 — el rodeo del array de longitud N. -->
+        <p class="card__rating" [attr.aria-label]="coffee.rating + ' de 5'">
+          @for (bean of beansFor(coffee.rating); track bean) {
+            <span class="bean" aria-hidden="true">●</span>
+          }
+        </p>
+
+        <!-- TODO(S4) · 1 — el número con separador de miles y el porcentaje,
+             los dos con pipes que ya vienen con Angular. -->
+        <p class="card__stock">{{ coffee.stock }} en depósito · {{ share(coffee) }} del total</p>
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="panel">
+  <h2>Puro contra impuro</h2>
+
+  <p class="panel__note">
+    Los dos pipes de abajo hacen exactamente lo mismo: devuelven el texto tal cual. Se
+    diferencian en una palabra, <code>pure</code>. Toca el botón varias veces y mira los
+    contadores.
+  </p>
+
+  <dl class="counters">
+    <div>
+      <dt><code>pure: true</code></dt>
+      <dd class="num">{{ counts().pure }}</dd>
+      <dd class="counters__hint">llamadas · solo cuando cambia la entrada</dd>
+    </div>
+    <div>
+      <dt><code>pure: false</code></dt>
+      <dd class="num">{{ counts().impure }}</dd>
+      <dd class="counters__hint">llamadas · en cada detección de cambios</dd>
+    </div>
+  </dl>
+
+  <p class="hidden-values">{{ 'café' | countPure }}{{ 'café' | countImpure }}</p>
+
+  <div class="actions">
+    <button type="button" class="button" (click)="tick()">
+      Provocar una detección de cambios ({{ clicks() }})
+    </button>
+    <button type="button" class="button button--ghost" (click)="resetCounters()">
+      Reiniciar contadores
+    </button>
+  </div>
+</section>

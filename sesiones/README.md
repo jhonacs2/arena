@@ -9,6 +9,7 @@ sesiones/
 ├── s01-primer-componente/
 ├── s02-anatomia-componente/
 ├── s03-signals/
+├── s04-directivas-pipes/
 ├── …
 └── s10-websockets/        + los 30 min de NgModules legacy
 ```

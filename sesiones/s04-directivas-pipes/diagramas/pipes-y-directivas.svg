@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 2 924 602" width="924" height="602" role="img">
+  <style>
+    svg { --dg-surface: #f5f6f0; --dg-surface-raised: #ffffff; --dg-surface-sunken: #ebece4; --dg-text: #08120c; --dg-text-muted: #5b675e; --dg-border: #08120c; --dg-shadow: #08120c; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #d8151e; --dg-live-ink: #f5f6f0; --dg-success: #137d41; --dg-success-ink: #f5f6f0; --dg-danger: #d8151e; --dg-danger-ink: #f5f6f0; }
+    @media (prefers-color-scheme: dark) {
+      svg { --dg-surface: #121c15; --dg-surface-raised: #1e2a22; --dg-surface-sunken: #030905; --dg-text: #e1e2da; --dg-text-muted: #a5a59c; --dg-border: #bebfb5; --dg-shadow: #030905; --dg-accent: #fb9d59; --dg-accent-ink: #08120c; --dg-live: #fd7468; --dg-live-ink: #08120c; --dg-success: #c6e8ce; --dg-success-ink: #08120c; --dg-danger: #fd7468; --dg-danger-ink: #08120c; }
+    }
+  </style>
+
+  <defs>
+    <marker id="mk-triangle-end-vardgborder08120c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-border, #08120c)" /></marker>
+  </defs>
+  <rect x="6" y="2" width="924" height="602" fill="var(--dg-surface, #f5f6f0)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="36">Tres piezas que se usan desde el template, y ninguna toca el componente</tspan></text>
+  <rect x="36" y="80" width="270" height="170" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="30" y="74" width="270" height="170" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="98.88">PIPE</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="17" font-weight="700" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="122.63">{{ x | money }}</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="153.5">Transforma lo que se VE.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="174.88">Entra un valor, sale otro.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="196.88">No sabe quién lo llamó.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-accent, #cf6f19)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="220.88">Una función con nombre.</tspan></text>
+  <rect x="336" y="80" width="270" height="170" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="330" y="74" width="270" height="170" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="352" y="98.88">DIRECTIVA DE ATRIBUTO</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="17" font-weight="700" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="352" y="122.63">[appHighlight]</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="352" y="153.5">Cambia cómo se COMPORTA</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="352" y="173.5">un elemento que ya existe.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="352" y="198.88">No tiene template propio.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-accent, #cf6f19)" text-anchor="start" dominant-baseline="central"><tspan x="352" y="220.88">Se cuelga de una etiqueta.</tspan></text>
+  <rect x="636" y="80" width="270" height="170" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="630" y="74" width="270" height="170" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="652" y="98.88">DIRECTIVA ESTRUCTURAL</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="17" font-weight="700" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="652" y="122.63">*appRepeat</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="652" y="153.5">Decide SI existe</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="652" y="173.5">y cuántas veces.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="652" y="198.88">El asterisco es la pista:</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-accent, #cf6f19)" text-anchor="start" dominant-baseline="central"><tspan x="652" y="220.88">hay un ng-template detrás.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="294.75">Y la diferencia con un componente, que es la que se pregunta siempre:</tspan></text>
+  <rect x="36" y="332" width="420" height="120" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="30" y="326" width="420" height="120" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="350.88">COMPONENTE</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="374.75">Trae su propio template.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="401.5">Dibuja algo nuevo en la pantalla.</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="424.13">&lt;app-race-card /&gt;</tspan></text>
+  <rect x="486" y="332" width="420" height="120" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="480" y="326" width="420" height="120" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="502" y="350.88">DIRECTIVA</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="502" y="374.75">No tiene template.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="502" y="401.5">Le agrega algo a un elemento ajeno.</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="502" y="424.13">&lt;li [appFavourite]=&quot;…&quot;&gt;</tspan></text>
+  <path d="M 200 470 L 200 510" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <path d="M 700 470 L 700 510" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <rect x="30" y="520" width="870" height="60" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" stroke-dasharray="8 6" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="546.75">Los tres se declaran en imports, igual que un componente.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="565.5">Es la misma regla desde S1: si el template lo usa, se declara.</tspan></text>
+</svg>

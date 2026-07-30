@@ -85,13 +85,15 @@
       <h3 class="label">Parrilla · por cuota</h3>
       <ul class="lineup" role="list">
         @for (horse of lineup(); track horse.id) {
-          <li class="runner">
+          <!-- S4 · La directiva marca la fila del favorito, con color y con un
+               dato para el lector de pantalla. El template no nombra ninguna
+               clase CSS. -->
+          <li class="runner" [appFavourite]="horse.id === view.favourite?.id">
             <span class="saddlecloth num">{{ horse.number }}</span>
             <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
             <span class="runner__name">{{ horse.name }}</span>
-            <!-- toFixed mantiene dos decimales: sin esto conviven «9» y «2.4» en la
-                 misma columna. En S4 esto se convierte en un pipe reutilizable. -->
-            <span class="runner__odds num">{{ horse.odds.toFixed(2) }}</span>
+            <!-- S4 · Antes era horse.odds.toFixed(2), repetido en cada template. -->
+            <span class="runner__odds num">{{ horse.odds | odds }}</span>
           </li>
         }
       </ul>
@@ -107,7 +109,7 @@
 
           <p class="simulator__payout">
             {{ best.name }} paga
-            <strong class="num">{{ payout() }}</strong>
+            <strong class="num">{{ payout() | money }}</strong>
           </p>
           <p class="simulator__note">Saldo virtual. Todavía no se puede apostar de verdad.</p>
         </div>

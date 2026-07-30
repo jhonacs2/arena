@@ -12,7 +12,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **3.75** | S0 · TypeScript, y S11 repartida | ✅ **terminada** — falta darla |
 | **4** | S2 · Anatomía de un componente | ✅ **terminada** — falta darla |
 | **5** | S3 · Signals y control flow | ✅ **terminada** — falta darla |
-| **6–12** | Una sesión por fase, S4 … S10 | ⬜ siguiente |
+| **6** | S4 · Directivas y pipes | ✅ **terminada** — falta darla |
+| **7–12** | Una sesión por fase, S5 … S10 | ⬜ siguiente |
 | **13** | Publicación y deploy | ⬜ |
 
 ---
@@ -149,7 +150,20 @@ La decisión que se cobra sola y quedó escrita en `correccion.md`: **se guarda 
 
 Y una corrección al currículo que salió de medirlo en el navegador. Decía «`array.push()` sobre un signal y la vista no repinta». **Es peor que eso:** la lista del `@for` **sí** se actualiza, porque el template se relee en cada revisión; el `computed` que lee el mismo signal **no se recalcula nunca**, ni siquiera al tocar otro signal distinto. Queda media pantalla nueva y media vieja, sin un solo error. La respuesta del bloque de predicciones y el guión dicen eso, no lo otro.
 
-## Fases 6–12 — Una sesión por fase
+## Fase 6 — S4 · Directivas y pipes ✅
+
+- **Lab `/s04`**: un pipe propio con parámetro, una directiva de atributo y una estructural. El starter trae todo el formateo adentro del componente —un método para los importes y un array de longitud N solo para dibujar N puntos— y el ejercicio es sacarlo
+- **Hipódromo**: `MoneyPipe` y `OddsPipe` en `shared/pipes/`, `FavouriteDirective` en `shared/directives/`. `toFixed(2)` desaparece de `features/`
+- **`sesiones/s04-directivas-pipes/`**: los 12 archivos, con el diagrama de las tres piezas
+
+**Dos defectos reales que salieron de mirar la pantalla en vez de suponer:**
+
+- **Los pipes incorporados formateaban en inglés.** `LOCALE_ID` por defecto es `en-US`, así que `{{ 0.545 | percent }}` mostraba `54.5%` en una aplicación escrita entera en español. Se registró el idioma en los cuatro proyectos, y el descubrimiento quedó convertido en un paso del live coding
+- **`toFixed(2)` venía mostrando un punto decimal desde S1.** `toFixed` no sabe de idiomas: siempre usa el punto. Nadie lo había notado en cuatro sesiones, y es exactamente el tipo de error que no falla — hay que saber que está mal para verlo. Es la diapositiva que cierra la sesión
+
+Y un matiz que también hubo que medir: **un pipe impuro con `OnPush` no corre «en cada clic de la aplicación»**, corre cada vez que se revisa *ese* componente. La diferencia entre las dos frases es la mitad del tercer ejercicio de predicción, y se demuestra en vivo cambiando `OnPush` por `Default`.
+
+## Fases 7–12 — Una sesión por fase
 
 Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
 
