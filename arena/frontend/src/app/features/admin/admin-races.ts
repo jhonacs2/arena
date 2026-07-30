@@ -26,7 +26,7 @@ import { FieldErrors } from '../../shared/ui/field/field-errors';
 interface HorseRow {
   number: number;
   name: string;
-  odds: number;
+  nominalOdds: number;
 }
 
 interface RaceDraft {
@@ -45,10 +45,10 @@ function localInputValue(date: Date): string {
 }
 
 const startingHorses = (): HorseRow[] => [
-  { number: 1, name: '', odds: 300 },
-  { number: 2, name: '', odds: 450 },
-  { number: 3, name: '', odds: 600 },
-  { number: 4, name: '', odds: 900 },
+  { number: 1, name: '', nominalOdds: 300 },
+  { number: 2, name: '', nominalOdds: 450 },
+  { number: 3, name: '', nominalOdds: 600 },
+  { number: 4, name: '', nominalOdds: 900 },
 ];
 
 /**
@@ -104,7 +104,7 @@ export class AdminRaces {
       required(horse.name, { message: 'Falta el nombre.' });
       // Cuotas ×100 en entero. 101 es 1,01: por debajo de eso la casa perdería
       // plata en cada apuesta, lo que no es una carrera sino un regalo.
-      min(horse.odds, 101, { message: 'Mínimo 101, que es 1,01.' });
+      min(horse.nominalOdds, 101, { message: 'Mínimo 101, que es 1,01.' });
     });
   });
 
@@ -134,7 +134,7 @@ export class AdminRaces {
       ...draft,
       horses: [
         ...draft.horses,
-        { number: draft.horses.length + 1, name: '', odds: 500 },
+        { number: draft.horses.length + 1, name: '', nominalOdds: 500 },
       ],
     }));
   }
@@ -162,7 +162,7 @@ export class AdminRaces {
             horses: horses.map((horse) => ({
               number: horse.number,
               name: horse.name.trim(),
-              odds: horse.odds,
+              nominalOdds: horse.nominalOdds,
             })),
           });
           this.model.set({

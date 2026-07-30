@@ -133,7 +133,7 @@ function resolve(
         return {
           number: int(horse['number']) || index + 1,
           name: text(horse['name']),
-          odds: int(horse['odds']),
+          nominalOdds: int(horse['nominalOdds']),
         };
       }),
     });

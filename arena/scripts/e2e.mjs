@@ -104,9 +104,9 @@ try {
   const created = await call('POST', '/admin/races', {
     name: 'Clásico de prueba',
     horses: [
-      { number: 1, name: 'Tormenta', odds: 250 },
-      { number: 2, name: 'Relámpago', odds: 410 },
-      { number: 3, name: 'Viento Norte', odds: 180 },
+      { number: 1, name: 'Tormenta', nominalOdds: 250 },
+      { number: 2, name: 'Relámpago', nominalOdds: 410 },
+      { number: 3, name: 'Viento Norte', nominalOdds: 180 },
     ],
   }, tok);
   // Ojo: POST /admin/races envuelve en `race`; GET /races/{id} devuelve la carrera

@@ -70,8 +70,10 @@ interface MockBet {
   readonly userId: string;
   readonly horseId: string;
   readonly amount: number;
-  readonly oddsAtBet: number;
-  settled: boolean;
+  readonly createdAt: string;
+  status: 'placed' | 'won' | 'lost' | 'refunded';
+  payout: number | null;
+  settledAt: string | null;
 }
 
 interface MockRace {
@@ -115,15 +117,67 @@ const CODE_DIGITS = '23456789';
 const TICK_MS = 100;
 const COINS_PER_POINT = 100;
 
-/** Puntos = floor(saldo / 100). Es una función del saldo, nunca una columna. */
-const pointsOf = (balance: number): number => Math.floor(balance / COINS_PER_POINT);
+/**
+ * Puntos = `max(10, floor(saldo / 100))`. Una función del saldo, nunca una columna.
+ *
+ * **El piso de 10 no es cosmético** (`decisiones.md` §1): perder monedas saca
+ * capacidad de seguir jugando, nunca calificación. Sin él, un alumno que apuesta
+ * mal termina con menos nota que uno que no jugó, y el juego pasa a castigar el
+ * haber participado.
+ *
+ * Los puntos regalados por el instructor se suman **por encima** de este piso; no
+ * pasan por el juego y por eso viven aparte, en `point_grants`.
+ */
+const MIN_POINTS = 10;
+const pointsOf = (balance: number): number =>
+  Math.max(MIN_POINTS, Math.floor(balance / COINS_PER_POINT));
 
 /**
- * `payout = amount * oddsAtBet / 100`, división **entera**, redondeo hacia abajo.
- * Con float, `2.10 × 700` da 1469.9999999999998 y la nota de alguien queda mal.
+ * Reparte el pozo entre los que acertaron — **pari-mutuel** (`decisiones.md` §1).
+ *
+ *     payout = amount * pool / winningPool        división entera, trunca
+ *
+ * El resto de esa división **se reparte**, no se descarta: si se descartara, el
+ * curso perdería monedas que nadie perdió apostando y la suma dejaría de cerrar.
+ * Va de a una moneda a los que más apostaron, y a igualdad de monto al más viejo.
+ *
+ * Es la misma regla, con el mismo desempate, que `races.PariMutuel` del backend.
+ * Que estén escritas dos veces es el precio de tener un mock que sirva para
+ * enseñar; que den distinto sería el bug que nadie encuentra hasta la clase.
  */
-const payoutOf = (amount: number, oddsAtBet: number): number =>
-  Math.floor((amount * oddsAtBet) / 100);
+function settlePariMutuel(bets: readonly MockBet[], winnerId: string | null): Map<string, number> {
+  const payouts = new Map<string, number>();
+  const pool = bets.reduce((sum, bet) => sum + bet.amount, 0);
+  const winners = bets.filter((bet) => bet.horseId === winnerId);
+  const winningPool = winners.reduce((sum, bet) => sum + bet.amount, 0);
+
+  // Nadie le pegó al ganador: se devuelve cada apuesta íntegra. Quedarse con el
+  // pozo sería cobrarle al curso por una carrera que nadie ganó.
+  if (winningPool === 0) {
+    for (const bet of bets) payouts.set(bet.id, bet.amount);
+    return payouts;
+  }
+
+  const ordered = [...winners].sort(
+    (a, b) =>
+      b.amount - a.amount || a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+  );
+
+  let truncated = 0;
+  for (const bet of ordered) {
+    const payout = Math.floor((bet.amount * pool) / winningPool);
+    payouts.set(bet.id, payout);
+    truncated += payout;
+  }
+
+  let remainder = pool - truncated;
+  for (const bet of ordered) {
+    if (remainder <= 0) break;
+    payouts.set(bet.id, (payouts.get(bet.id) ?? 0) + 1);
+    remainder--;
+  }
+  return payouts;
+}
 
 /** mulberry32 — PRNG determinístico. Misma semilla, misma carrera. */
 function prng(seed: number): () => number {
@@ -279,6 +333,7 @@ export class MockWorld {
     if (!wasIn) {
       this.publish(race.id, null, {
         type: 'room.joined',
+        raceId: race.id,
         userId: user.id,
         username: user.username,
         participantCount: race.participants.size,
@@ -319,9 +374,12 @@ export class MockWorld {
       userId: user.id,
       horseId: horse.id,
       amount: body.amount,
-      // La cuota se congela acá. Nunca se recalcula desde la cuota actual.
-      oddsAtBet: horse.odds,
-      settled: false,
+      // No se congela ninguna cuota: con pari-mutuel no hay una cuota que
+      // congelar. Lo que se cobra sale del pozo, y el pozo todavía está creciendo.
+      createdAt: new Date().toISOString(),
+      status: 'placed',
+      payout: null,
+      settledAt: null,
     };
     this.bets.push(bet);
     race.participants.add(user.id);
@@ -329,31 +387,25 @@ export class MockWorld {
 
     this.publish(race.id, null, {
       type: 'bet.placed',
+      raceId: race.id,
       userId: user.id,
       username: user.username,
       amount: bet.amount,
-      // Tapado mientras esté `open`: si se revelara, los últimos copiarían a los
-      // primeros y la apuesta dejaría de medir criterio.
-      horseId: null,
+      // El caballo NO viaja: si se revelara, los últimos copiarían a los primeros
+      // y la apuesta dejaría de medir criterio. Se revelan todas al largar.
+      betCount: this.bets.filter((candidate) => candidate.raceId === race.id).length,
     });
 
-    return {
-      bet: this.toBet(bet, race),
-      balance: user.balance,
-      points: pointsOf(user.balance),
-    };
+    return { bet: this.toBet(bet), balance: user.balance };
   }
 
   /** Lo primero que recibe alguien que se conecta al socket: la sala completa. */
   roomState(userId: string, raceId: string): RoomStateEvent {
     this.requireUser(userId);
     const race = this.requireRace(raceId);
-    return {
-      type: 'room.state',
-      status: race.status,
-      participants: this.participantsOf(race),
-      bets: this.publicBets(race),
-    };
+    // La sala va ANIDADA en `race`, y es el mismo RaceDetail del GET. Mandarla
+    // plana es lo que rompió la pantalla de la carrera contra el backend real.
+    return { type: 'room.state', raceId: race.id, race: this.detailFor(race, userId) };
   }
 
   /** El socket llega con el token en el query: acá se traduce a un usuario. */
@@ -449,7 +501,7 @@ export class MockWorld {
     if (body.horses.length < 2) {
       throw new MockApiError(400, 'VALIDATION_FAILED', 'Una carrera necesita al menos dos caballos.');
     }
-    if (body.horses.some((horse) => !Number.isInteger(horse.odds) || horse.odds < 101)) {
+    if (body.horses.some((h) => !Number.isInteger(h.nominalOdds) || h.nominalOdds < 101)) {
       throw new MockApiError(400, 'VALIDATION_FAILED', 'Las cuotas van ×100 y tienen que ser mayores a 1,00.');
     }
 
@@ -462,7 +514,7 @@ export class MockWorld {
         id: `${this.nextId('horse')}`,
         number: horse.number || index + 1,
         name: horse.name.trim(),
-        odds: horse.odds,
+        nominalOdds: horse.nominalOdds,
       })),
       participants: new Set<string>(),
       seed: 0,
@@ -499,6 +551,7 @@ export class MockWorld {
 
     this.publish(race.id, null, {
       type: 'race.started',
+      raceId: race.id,
       startedAt: race.startedAt,
       // Al pasar a `running` se revelan todas las apuestas juntas.
       bets: this.publicBets(race),
@@ -519,15 +572,32 @@ export class MockWorld {
     race.status = 'cancelled';
 
     // Se devuelve cada apuesta ÍNTEGRA, y queda en el ledger como bet_refunded.
+    const refunds = new Map<string, number>();
     for (const bet of this.bets) {
-      if (bet.raceId !== race.id || bet.settled) continue;
-      bet.settled = true;
+      if (bet.raceId !== race.id || bet.status !== 'placed') continue;
+      bet.status = 'refunded';
+      bet.payout = bet.amount;
+      bet.settledAt = new Date().toISOString();
       const user = this.users.get(bet.userId);
       if (user === undefined) continue;
       this.credit(user, bet.amount, 'bet_refunded', { raceName: race.name });
+      refunds.set(user.id, bet.amount);
     }
 
-    this.publish(race.id, null, { type: 'race.cancelled', reason });
+    // POR DESTINATARIO, igual que `race.finished`: el sobre lleva la devolución
+    // de quien lo recibe, y difundir el mismo objeto la filtraría al resto.
+    for (const userId of race.participants) {
+      const user = this.users.get(userId);
+      if (user === undefined) continue;
+      const refund = refunds.get(userId) ?? null;
+      this.publish(race.id, userId, {
+        type: 'race.cancelled',
+        raceId: race.id,
+        reason,
+        myRefund: refund,
+        balance: refund === null ? null : user.balance,
+      });
+    }
     return { race: this.detailFor(race, admin.id) };
   }
 
@@ -546,7 +616,7 @@ export class MockWorld {
     // velocidad de base. La dispersión es lo que hace que igual pueda perder.
     const speed = new Map<string, number>();
     for (const horse of race.horses) {
-      speed.set(horse.id, (100 / horse.odds) * 0.02 + 0.004 + random() * 0.004);
+      speed.set(horse.id, (100 / horse.nominalOdds) * 0.02 + 0.004 + random() * 0.004);
     }
 
     let tick = 0;
@@ -559,12 +629,17 @@ export class MockWorld {
         race.progress.set(horse.id, next);
       }
 
+      const ranked = [...race.horses].sort(
+        (a, b) => (race.progress.get(b.id) ?? 0) - (race.progress.get(a.id) ?? 0),
+      );
       this.publish(race.id, null, {
         type: 'race.tick',
-        t: tick,
+        raceId: race.id,
+        t: tick / 10,
         positions: race.horses.map((horse) => ({
           horseId: horse.id,
           progress: race.progress.get(horse.id) ?? 0,
+          place: ranked.findIndex((candidate) => candidate.id === horse.id) + 1,
         })),
       });
 
@@ -589,28 +664,41 @@ export class MockWorld {
 
     // El sobre de `race.finished` se arma POR DESTINATARIO: difundir el mismo
     // objeto filtraría cuánto cobró cada uno.
+    // El pozo se reparte UNA vez, sobre las apuestas que siguen en pie, y recién
+    // después se le paga a cada uno. Calcularlo adentro del bucle de destinatarios
+    // sería recalcularlo con datos ya movidos: así es como se paga dos veces.
+    const pending = this.bets.filter(
+      (candidate) => candidate.raceId === race.id && candidate.status === 'placed',
+    );
+    const payouts = settlePariMutuel(pending, winnerId);
+    const settledAt = new Date().toISOString();
+    const refunded = pending.every((bet) => bet.horseId !== winnerId);
+
+    for (const bet of pending) {
+      bet.payout = payouts.get(bet.id) ?? 0;
+      bet.settledAt = settledAt;
+      bet.status = refunded ? 'refunded' : bet.horseId === winnerId ? 'won' : 'lost';
+    }
+
     for (const userId of race.participants) {
       const user = this.users.get(userId);
       if (user === undefined) continue;
 
-      const bet = this.bets.find(
-        (candidate) => candidate.raceId === race.id && candidate.userId === userId,
-      );
-      let payout = 0;
-      if (bet !== undefined && !bet.settled) {
-        bet.settled = true;
-        if (bet.horseId === winnerId) {
-          payout = payoutOf(bet.amount, bet.oddsAtBet);
-          this.credit(user, payout, 'bet_won', { raceName: race.name });
-        }
+      const bet = pending.find((candidate) => candidate.userId === userId);
+      const payout = bet?.payout ?? 0;
+      if (bet !== undefined && payout > 0) {
+        this.credit(user, payout, refunded ? 'bet_refunded' : 'bet_won', { raceName: race.name });
       }
 
+      // POR DESTINATARIO: difundir el mismo objeto filtraría cuánto cobró cada
+      // uno. `balance` va en null cuando no cambió, para no tocar el widget.
       this.publish(race.id, userId, {
         type: 'race.finished',
+        raceId: race.id,
         results: race.results,
-        payout,
-        balance: user.balance,
-        points: pointsOf(user.balance),
+        bets: this.publicBets(race),
+        myBet: bet === undefined ? null : this.toBet(bet),
+        balance: payout > 0 ? user.balance : null,
       });
     }
   }
@@ -743,18 +831,18 @@ export class MockWorld {
     const bet = this.bets.find(
       (candidate) => candidate.raceId === race.id && candidate.userId === userId,
     );
-    return bet === undefined ? null : this.toBet(bet, race);
+    return bet === undefined ? null : this.toBet(bet);
   }
 
-  private toBet(bet: MockBet, race: MockRace): Bet {
-    const horse = race.horses.find((candidate) => candidate.id === bet.horseId);
+  private toBet(bet: MockBet): Bet {
     return {
       id: bet.id,
       horseId: bet.horseId,
-      horseName: horse?.name ?? '—',
       amount: bet.amount,
-      oddsAtBet: bet.oddsAtBet,
-      potentialPayout: payoutOf(bet.amount, bet.oddsAtBet),
+      status: bet.status,
+      payout: bet.payout,
+      createdAt: bet.createdAt,
+      settledAt: bet.settledAt,
     };
   }
 
@@ -784,15 +872,6 @@ export class MockWorld {
   }
 
   private detailFor(race: MockRace, userId: string): RaceDetail {
-    const myBet = this.betOf(race, userId);
-    const winnerId = race.results?.[0]?.horseId ?? null;
-    const myPayout =
-      race.status === 'finished' && myBet !== null
-        ? myBet.horseId === winnerId
-          ? myBet.potentialPayout
-          : 0
-        : null;
-
     return {
       id: race.id,
       name: race.name,
@@ -801,9 +880,10 @@ export class MockWorld {
       horses: race.horses,
       participants: this.participantsOf(race),
       bets: this.publicBets(race),
-      myBet,
+      // El pago propio sale de `myBet.payout`, ya liquidado. No es un campo
+      // aparte: dos números para lo mismo se desincronizan siempre.
+      myBet: this.betOf(race, userId),
       results: race.results,
-      myPayout,
     };
   }
 
@@ -886,12 +966,12 @@ export class MockWorld {
       status: 'open',
       scheduledAt: '2026-07-29T22:30:00.000Z',
       horses: [
-        { id: 'horse-1', number: 1, name: 'Viento Norte', odds: 340 },
-        { id: 'horse-2', number: 2, name: 'Tinta China', odds: 210 },
-        { id: 'horse-3', number: 3, name: 'Farol de Niebla', odds: 750 },
-        { id: 'horse-4', number: 4, name: 'Última Curva', odds: 480 },
-        { id: 'horse-5', number: 5, name: 'Pampa Seca', odds: 1250 },
-        { id: 'horse-6', number: 6, name: 'Rayo de Tiza', odds: 620 },
+        { id: 'horse-1', number: 1, name: 'Viento Norte', nominalOdds: 340 },
+        { id: 'horse-2', number: 2, name: 'Tinta China', nominalOdds: 210 },
+        { id: 'horse-3', number: 3, name: 'Farol de Niebla', nominalOdds: 750 },
+        { id: 'horse-4', number: 4, name: 'Última Curva', nominalOdds: 480 },
+        { id: 'horse-5', number: 5, name: 'Pampa Seca', nominalOdds: 1250 },
+        { id: 'horse-6', number: 6, name: 'Rayo de Tiza', nominalOdds: 620 },
       ],
       participants: new Set([ana.id]),
       seed: 0,
@@ -906,8 +986,10 @@ export class MockWorld {
       userId: ana.id,
       horseId: 'horse-2',
       amount: 200,
-      oddsAtBet: 210,
-      settled: false,
+      createdAt: '2026-07-29T22:05:00.000Z',
+      status: 'placed',
+      payout: null,
+      settledAt: null,
     });
     this.credit(ana, -200, 'bet_placed', {
       raceName: open.name,
@@ -920,10 +1002,10 @@ export class MockWorld {
       status: 'finished',
       scheduledAt: '2026-07-24T21:00:00.000Z',
       horses: [
-        { id: 'horse-11', number: 1, name: 'Doña Estampa', odds: 260 },
-        { id: 'horse-12', number: 2, name: 'Bandera Roja', odds: 430 },
-        { id: 'horse-13', number: 3, name: 'Sombra Larga', odds: 910 },
-        { id: 'horse-14', number: 4, name: 'Cabo Suelto', odds: 380 },
+        { id: 'horse-11', number: 1, name: 'Doña Estampa', nominalOdds: 260 },
+        { id: 'horse-12', number: 2, name: 'Bandera Roja', nominalOdds: 430 },
+        { id: 'horse-13', number: 3, name: 'Sombra Larga', nominalOdds: 910 },
+        { id: 'horse-14', number: 4, name: 'Cabo Suelto', nominalOdds: 380 },
       ],
       participants: new Set([ana.id]),
       seed: 42,
@@ -948,14 +1030,18 @@ export class MockWorld {
       userId: ana.id,
       horseId: 'horse-11',
       amount: 150,
-      oddsAtBet: 260,
-      settled: true,
+      createdAt: '2026-07-24T20:58:00.000Z',
+      // Ana fue la única que le pegó al ganador, así que se llevó el pozo entero:
+      // su apuesta de 150 más las de los demás. Con cuota fija habría cobrado 390.
+      status: 'won',
+      payout: 150,
+      settledAt: '2026-07-24T21:03:30.000Z',
     });
     this.credit(ana, -150, 'bet_placed', {
       raceName: finished.name,
       at: '2026-07-24T20:58:00.000Z',
     });
-    this.credit(ana, payoutOf(150, 260), 'bet_won', {
+    this.credit(ana, 150, 'bet_won', {
       raceName: finished.name,
       at: '2026-07-24T21:06:00.000Z',
     });
@@ -966,9 +1052,9 @@ export class MockWorld {
       status: 'draft',
       scheduledAt: '2026-07-31T22:00:00.000Z',
       horses: [
-        { id: 'horse-21', number: 1, name: 'Cuarta Raya', odds: 300 },
-        { id: 'horse-22', number: 2, name: 'Malón', odds: 520 },
-        { id: 'horse-23', number: 3, name: 'Punto y Banca', odds: 700 },
+        { id: 'horse-21', number: 1, name: 'Cuarta Raya', nominalOdds: 300 },
+        { id: 'horse-22', number: 2, name: 'Malón', nominalOdds: 520 },
+        { id: 'horse-23', number: 3, name: 'Punto y Banca', nominalOdds: 700 },
       ],
       participants: new Set<string>(),
       seed: 0,

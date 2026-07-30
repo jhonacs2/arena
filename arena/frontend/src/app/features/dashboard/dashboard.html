@@ -48,11 +48,16 @@
               </span>
 
               @if (race.myBet) {
+                <!--
+                  El resumen no trae la grilla de caballos —solo `horseCount`—, así
+                  que acá no se puede poner el nombre del caballo sin una llamada
+                  por carrera. Está en el detalle, a un clic.
+                -->
                 <span class="race__bet">
-                  Apostaste <strong class="num">{{ race.myBet.amount | coins }}</strong> a
-                  <strong>{{ race.myBet.horseName }}</strong> a
-                  <strong class="num">{{ race.myBet.oddsAtBet | odds }}</strong> — pagaría
-                  <strong class="num">{{ race.myBet.potentialPayout | coins }}</strong>
+                  Apostaste <strong class="num">{{ race.myBet.amount | coins }}</strong>
+                  @if (race.myBet.payout !== null) {
+                    — cobraste <strong class="num">{{ race.myBet.payout | coins }}</strong>
+                  }
                 </span>
               } @else if (race.status === 'open') {
                 <span class="race__bet race__bet--none">Todavía no apostaste</span>

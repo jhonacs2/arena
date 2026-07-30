@@ -1,7 +1,7 @@
 // Arena — backend de la app en vivo del módulo.
 //
-// Un solo binario. La base es Postgres (Supabase) y el esquema sale de
-// arena/docs/contract/schema.sql, que se aplica en cada arranque.
+// Un solo binario. La base es Postgres —en el mismo VPS que el backend— y el
+// esquema sale de arena/docs/contract/schema.sql, que se aplica en cada arranque.
 //
 //	DATABASE_URL=… go run .        arranca en :8080 y aplica el esquema
 //	go test ./...                  tests; los de base necesitan ARENA_TEST_DATABASE_URL

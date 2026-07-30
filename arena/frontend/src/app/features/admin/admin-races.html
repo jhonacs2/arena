@@ -125,12 +125,12 @@
             <input
               class="field__input"
               [id]="'horse-odds-' + $index"
-              [formField]="horse.odds"
+              [formField]="horse.nominalOdds"
               type="number"
               step="1"
             />
-            <p class="field__help num">= {{ horse.odds().value() | odds }}</p>
-            <app-field-errors [errors]="horse.odds().errors()" [touched]="horse.odds().touched()" />
+            <p class="field__help num">= {{ horse.nominalOdds().value() | odds }}</p>
+            <app-field-errors [errors]="horse.nominalOdds().errors()" [touched]="horse.nominalOdds().touched()" />
           </div>
 
           <app-button

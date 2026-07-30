@@ -12,5 +12,5 @@
  */
 export const environment = {
   apiBaseUrl: '/api',
-  useMockBackend: true,
+  useMockBackend: false,
 } as const;

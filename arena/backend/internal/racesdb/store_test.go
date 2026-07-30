@@ -78,9 +78,9 @@ func setup(t *testing.T) *scenario {
 			Name:      "Clásico del Recuerdo",
 			CreatedBy: admin,
 			Horses: []races.NewHorse{
-				{Number: 1, Name: "Viento Norte", Odds: 340},
-				{Number: 2, Name: "Doña Rosa", Odds: 210},
-				{Number: 3, Name: "Malambo", Odds: 755},
+				{Number: 1, Name: "Viento Norte", NominalOdds: 340},
+				{Number: 2, Name: "Doña Rosa", NominalOdds: 210},
+				{Number: 3, Name: "Malambo", NominalOdds: 755},
 			},
 		})
 		if err != nil {
@@ -379,7 +379,7 @@ func TestVisibleRacesNoDevuelveDraft(t *testing.T) {
 	err := s.store.InTx(ctx, func(tx races.Tx) error {
 		_, err := tx.CreateRace(ctx, races.NewRace{
 			Name: "En borrador", CreatedBy: s.admin,
-			Horses: []races.NewHorse{{Number: 1, Name: "Secreto", Odds: 200}},
+			Horses: []races.NewHorse{{Number: 1, Name: "Secreto", NominalOdds: 200}},
 		})
 		return err
 	})

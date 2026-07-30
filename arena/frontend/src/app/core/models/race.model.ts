@@ -11,8 +11,15 @@ export interface Horse {
   readonly id: string;
   readonly number: number;
   readonly name: string;
-  /** Cuota ×100 en entero: `340` es 3,40. Nunca se hace aritmética con float. */
-  readonly odds: number;
+  /**
+   * Cuota **nominal** ×100 en entero: `340` es 3,40.
+   *
+   * Es informativa y **no determina el pago**: la liquidación es pari-mutuel
+   * (`decisiones.md` §1), así que lo que cobra el que acierta sale de repartir el
+   * pozo, no de multiplicar por esta cuota. Sirve para dos cosas y ninguna más:
+   * marcar cuál es el favorito, y alimentar la velocidad del simulador.
+   */
+  readonly nominalOdds: number;
 }
 
 export interface Participant {
@@ -20,15 +27,24 @@ export interface Participant {
   readonly username: string;
 }
 
-/** La apuesta propia, tal como la resuelve el servidor. */
+/**
+ * La apuesta propia, tal como la resuelve el servidor.
+ *
+ * **No hay pago potencial.** Con pari-mutuel, lo que se cobra depende del pozo
+ * completo y de cuántos acertaron, y las dos cosas siguen cambiando hasta que se
+ * cierran las apuestas. Cualquier número que mostráramos al apostar sería una
+ * promesa que el servidor no puede cumplir.
+ *
+ * `payout` llega en `null` hasta que la carrera se liquida. Ahí es el pago real.
+ */
 export interface Bet {
   readonly id: string;
   readonly horseId: string;
-  readonly horseName: string;
   readonly amount: number;
-  /** La cuota **congelada** en el momento de apostar. No se recalcula nunca. */
-  readonly oddsAtBet: number;
-  readonly potentialPayout: number;
+  readonly status: 'placed' | 'won' | 'lost' | 'refunded';
+  readonly payout: number | null;
+  readonly createdAt: string;
+  readonly settledAt: string | null;
 }
 
 /**
@@ -65,14 +81,13 @@ export interface RaceDetail {
   readonly id: string;
   readonly name: string;
   readonly status: RaceStatus;
-  readonly scheduledAt: string;
+  readonly scheduledAt: string | null;
   readonly horses: readonly Horse[];
   readonly participants: readonly Participant[];
   readonly bets: readonly PublicBet[];
+  /** El pago propio, ya liquidado, sale de `myBet.payout`. No es un campo aparte. */
   readonly myBet: Bet | null;
   readonly results: readonly ResultEntry[] | null;
-  /** El pago propio, si la carrera terminó. Se arma por destinatario. */
-  readonly myPayout: number | null;
 }
 
 export interface PlaceBetRequest {
@@ -83,5 +98,4 @@ export interface PlaceBetRequest {
 export interface PlaceBetResponse {
   readonly bet: Bet;
   readonly balance: number;
-  readonly points: number;
 }

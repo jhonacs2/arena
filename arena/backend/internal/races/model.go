@@ -170,7 +170,12 @@ type NewRace struct {
 type NewHorse struct {
 	Number int
 	Name   string
-	Odds   int
+	// NominalOdds se llama igual que en `horses` y que en el JSON a propósito.
+	// Se llamó `Odds` mientras la economía era de cuota fija, y esa diferencia de
+	// una palabra hizo que el endpoint recibiera `odds` y devolviera `nominalOdds`
+	// durante semanas, sin que ningún test lo notara: los de handler mandaban lo
+	// que el handler leía.
+	NominalOdds int
 }
 
 // RacePatch son los campos editables de una carrera en `draft`. Nil es «no lo

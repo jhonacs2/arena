@@ -18,7 +18,7 @@
         <app-status-badge [status]="status()" />
       </div>
       <p class="head__meta num">
-        {{ detail.value().scheduledAt | when }} · {{ horses().length }} caballos ·
+        <!--{{ detail.value().scheduledAt | when }} · {{ horses().length }} caballos ·-->
         {{ participants().length }} en la sala
       </p>
     </header>
@@ -52,16 +52,26 @@
           >
             @if (myBet() === null) {
               <p>No apostaste en esta carrera.</p>
+            } @else if (wasRefunded()) {
+              <!--
+                Sin este caso, la pantalla decía «esas monedas ya no vuelven»
+                justo cuando habían vuelto: la rama de abajo solo mira si ganaste.
+              -->
+              <p>
+                <strong>Nadie le pegó al ganador</strong>, así que no hay pozo que repartir y se
+                devolvieron todas las apuestas. Recuperaste tus
+                <strong class="num">{{ (myBet()?.amount ?? 0) | coins }}</strong> monedas enteras.
+              </p>
             } @else if (iWon()) {
               <p>
                 Cobrás <strong class="num">{{ (myPayout() ?? 0) | coins }}</strong> monedas por tu
-                apuesta de <strong class="num">{{ (myBet()?.amount ?? 0) | coins }}</strong> a
-                <strong class="num">{{ (myBet()?.oddsAtBet ?? 0) | odds }}</strong>.
+                apuesta de <strong class="num">{{ (myBet()?.amount ?? 0) | coins }}</strong>. Es la
+                parte del pozo que te tocó por acertar.
               </p>
             } @else {
               <p>
                 Apostaste <strong class="num">{{ (myBet()?.amount ?? 0) | coins }}</strong> a
-                <strong>{{ myBet()?.horseName }}</strong> y salió
+                <strong>{{ myHorse()?.name }}</strong> y salió
                 <strong>{{ winner()?.horseName }}</strong>. Esas monedas ya no vuelven.
               </p>
             }
@@ -76,17 +86,17 @@
         @if (myBet(); as bet) {
           <dl class="ticket">
             <dt>Caballo</dt>
-            <dd>{{ bet.horseName }}</dd>
+            <dd>{{ myHorse()?.name }}</dd>
             <dt>Monto</dt>
             <dd class="num">{{ bet.amount | coins }} monedas</dd>
-            <dt>Cuota congelada</dt>
-            <dd class="num">{{ bet.oddsAtBet | odds }}</dd>
-            <dt>Pagaría</dt>
-            <dd class="num">{{ bet.potentialPayout | coins }} monedas</dd>
+            @if (bet.payout !== null) {
+              <dt>Cobraste</dt>
+              <dd class="num">{{ bet.payout | coins }} monedas</dd>
+            }
           </dl>
           <p class="ticket__note">
-            La cuota quedó congelada en el momento de apostar. Si cambia después, tu apuesta no
-            cambia.
+            Lo que se cobra sale de repartir el pozo entre los que aciertan. Cuanta más gente le
+            erre, más te toca — y no se sabe hasta que la carrera termina.
           </p>
         } @else if (session.isAdmin()) {
           <p class="bet__closed">El instructor no apuesta: opera las carreras.</p>
@@ -112,7 +122,7 @@
                   <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
                   <span class="horse__number num">{{ horse.number }}</span>
                   <span class="horse__name">{{ horse.name }}</span>
-                  <span class="horse__odds num">{{ horse.odds | odds }}</span>
+                  <span class="horse__odds num">{{ horse.nominalOdds | odds }}</span>
                 </label>
               }
             </fieldset>
@@ -138,8 +148,8 @@
 
             @if (preview(); as shot) {
               <p class="preview">
-                <span class="preview__label">Si gana {{ shot.horse.name }} cobrás</span>
-                <strong class="preview__value num">{{ shot.payout | coins }}</strong>
+                <span class="preview__label">Con tu apuesta a {{ shot.horse.name }} el pozo va en</span>
+                <strong class="preview__value num">{{ shot.pool | coins }}</strong>
               </p>
             }
 

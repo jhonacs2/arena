@@ -828,7 +828,7 @@ func validateHorses(horses []NewHorse, used map[int]bool) error {
 
 		// Cuotas ×100: 101 es 1.01. Una cuota de 1.00 sería devolver lo
 		// apostado, y eso no es una apuesta.
-		if h.Odds < contract.MinNominalOdds {
+		if h.NominalOdds < contract.MinNominalOdds {
 			fields["horses.nominalOdds"] = "La cuota mínima es 1.01, y va en entero ×100 (340 es 3.40)."
 		}
 	}

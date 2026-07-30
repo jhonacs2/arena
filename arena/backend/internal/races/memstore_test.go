@@ -333,7 +333,7 @@ func (t *memTx) AddHorses(_ context.Context, raceID string, in []NewHorse) ([]Ho
 			RaceID:      raceID,
 			Number:      h.Number,
 			Name:        h.Name,
-			NominalOdds: h.Odds,
+			NominalOdds: h.NominalOdds,
 		}
 		t.data.horses[horse.ID] = horse
 		out = append(out, *horse)

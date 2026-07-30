@@ -19,7 +19,7 @@
 
       <div class="lane__info">
         <span class="lane__name">{{ horse.name }}</span>
-        <span class="lane__odds num">{{ horse.odds | odds }}</span>
+        <span class="lane__odds num">{{ horse.nominalOdds | odds }}</span>
         @if (placeOf(horse.id) !== null) {
           <span class="lane__place num" [class.lane__place--first]="placeOf(horse.id) === 1">
             {{ placeOf(horse.id) }}°

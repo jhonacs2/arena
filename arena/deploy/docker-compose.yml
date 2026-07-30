@@ -59,12 +59,21 @@ services:
       MIGRATE: ${MIGRATE:-true}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-instructor}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-instructor}
-      # En local el frontend está en otro puerto, que para el navegador ya es otro
-      # sitio: la cookie de refresh necesita SameSite=None. Y sin TLS, Secure=false.
-      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-none}
+      # `lax` y no `none`: en local se sirve el frontend con el proxy de `ng serve`
+      # (`frontend/proxy.conf.json`), así que `/api` sale por el mismo origen que
+      # la app y la petición nunca es cruzada.
+      #
+      # Y `none` acá sería peor que inútil: el navegador **descarta** una cookie
+      # `SameSite=None` que no venga con `Secure`, y en local no hay TLS. La
+      # sesión no sobreviviría a recargar la página, sin un solo error en consola.
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-lax}
       COOKIE_SECURE: "false"
     ports:
-      - "127.0.0.1:8080:8080"
+      # Adentro del contenedor siempre es 8080; afuera manda `API_PORT` porque el
+      # 8080 del host lo ocupa cualquier cosa —en la máquina del instructor, NVIDIA
+      # Broadcast— y el error de Docker cuando eso pasa no dice quién lo tiene.
+      # 8099 es además el default de `scripts/e2e.mjs`.
+      - "127.0.0.1:${API_PORT:-8099}:8080"
     depends_on:
       db:
         condition: service_healthy

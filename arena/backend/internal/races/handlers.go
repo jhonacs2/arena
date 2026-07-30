@@ -109,13 +109,16 @@ type createRaceRequest struct {
 type newHorseFields struct {
 	Number int    `json:"number"`
 	Name   string `json:"name"`
-	Odds   int    `json:"odds"` // ×100: 340 es 3.40
+	// El MISMO nombre que sale en la respuesta. Recibir `odds` y devolver
+	// `nominalOdds` obliga a cada cliente a recordar la asimetría, y el que se
+	// olvide manda un cero que la validación rechaza con un mensaje sobre cuotas.
+	NominalOdds int `json:"nominalOdds"` // ×100: 340 es 3.40
 }
 
 func toNewHorses(in []newHorseFields) []NewHorse {
 	out := make([]NewHorse, len(in))
 	for i, h := range in {
-		out[i] = NewHorse{Number: h.Number, Name: h.Name, Odds: h.Odds}
+		out[i] = NewHorse{Number: h.Number, Name: h.Name, NominalOdds: h.NominalOdds}
 	}
 	return out
 }

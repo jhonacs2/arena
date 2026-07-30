@@ -8,11 +8,15 @@
 //
 // Cómo correrlos:
 //
-//	docker run -d --rm --name arena-pg -e POSTGRES_PASSWORD=arena \
-//	  -e POSTGRES_DB=arena -p 55433:5432 postgres:16-alpine
+//	docker run -d --rm --name arena-pg-test -e POSTGRES_PASSWORD=test \
+//	  -e POSTGRES_DB=arena_test -p 55433:5432 postgres:16-alpine
 //
-//	ARENA_TEST_DATABASE_URL="postgres://postgres:arena@localhost:55433/arena?sslmode=disable" \
+//	ARENA_TEST_DATABASE_URL="postgres://postgres:test@localhost:55433/arena_test?sslmode=disable" \
 //	  go test ./...
+//
+// **La base tiene que llamarse con «test» en el nombre**, y no es una convención:
+// `Pool` corta si no. Los tests truncan todas las tablas, y apuntar esta variable
+// a la base de desarrollo ya se llevó puestos los datos de alguien una vez.
 //
 // Sin la variable, los tests de base **se saltean** en vez de fallar: `go test
 // ./...` tiene que poder correr en una máquina sin Docker. Los tests de lógica
@@ -21,7 +25,9 @@ package testdb
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -50,6 +56,38 @@ const EnvVar = "ARENA_TEST_DATABASE_URL"
 // que falla una vez cada cinco.
 const exclusiveLock = 0x4152454e41544553 // "ARENATES" en hexa
 
+// refuseNonTestDatabase corta si la base no se llama como una base de prueba.
+//
+// **Esto ya pasó, y por eso existe.** Alguien apuntó ARENA_TEST_DATABASE_URL a la
+// base del `docker-compose` de desarrollo para correr los tests rápido. Los tests
+// truncan todas las tablas: se llevaron puesta la carrera y el alumno que había
+// cargados a mano para probar la app. Nada falló, nada avisó; los tests dieron
+// verde, que es lo peor que podía pasar.
+//
+// Una variable distinta no alcanzaba como protección: distingue el descuido de
+// exportar DATABASE_URL, pero no el de escribir a mano la misma cadena. El nombre
+// de la base sí, porque es una decisión explícita al crear el contenedor.
+func refuseNonTestDatabase(url string) error {
+	name := url
+	if i := strings.LastIndex(name, "/"); i >= 0 {
+		name = name[i+1:]
+	}
+	if i := strings.IndexAny(name, "?"); i >= 0 {
+		name = name[:i]
+	}
+	if strings.Contains(strings.ToLower(name), "test") {
+		return nil
+	}
+	return fmt.Errorf(
+		"%s apunta a la base %q, que no se llama como una base de prueba.\n"+
+			"Los tests TRUNCAN todas las tablas. Si esa es tu base de desarrollo, ibas a perderla.\n"+
+			"Levantá una aparte y volvé a intentar:\n\n"+
+			"  docker run -d --rm --name arena-pg-test -e POSTGRES_PASSWORD=test \\\n"+
+			"    -e POSTGRES_DB=arena_test -p 55433:5432 postgres:16-alpine\n\n"+
+			"  %s=\"postgres://postgres:test@localhost:55433/arena_test?sslmode=disable\"",
+		EnvVar, name, EnvVar)
+}
+
 // Pool devuelve un pool con el esquema aplicado y las tablas vacías.
 //
 // Cada test arranca de cero. Se limpia al principio y no al final: si un test
@@ -61,6 +99,9 @@ func Pool(t *testing.T) *pgxpool.Pool {
 	url := os.Getenv(EnvVar)
 	if url == "" {
 		t.Skipf("sin %s: se saltea el test de base (ver internal/testdb)", EnvVar)
+	}
+	if err := refuseNonTestDatabase(url); err != nil {
+		t.Fatal(err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

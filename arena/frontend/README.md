@@ -15,6 +15,9 @@ npm run build      # producción
 npm run typecheck  # tsc --noEmit
 ```
 
+Para levantarlo **contra el backend real**, la guía completa está en
+[`../README.md`](../README.md).
+
 ## El backend de mentira
 
 `src/environments/environment.ts` tiene `useMockBackend: true`. Con eso, un

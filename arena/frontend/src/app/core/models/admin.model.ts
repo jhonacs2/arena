@@ -39,7 +39,8 @@ export interface GiftResponse {
 export interface HorseDraft {
   readonly number: number;
   readonly name: string;
-  readonly odds: number;
+  /** Cuota **nominal** ×100. Informativa: el pago es pari-mutuel, no sale de acá. */
+  readonly nominalOdds: number;
 }
 
 export interface CreateRaceRequest {

@@ -29,7 +29,7 @@ import type {
 } from '../../core/models';
 import { RaceChannel, provideRaceChannel } from '../../core/race/race-channel';
 import { CoinsPipe } from '../../shared/format/coins.pipe';
-import { OddsPipe, payoutOf } from '../../shared/format/odds.pipe';
+import { OddsPipe } from '../../shared/format/odds.pipe';
 import { WhenPipe } from '../../shared/format/when.pipe';
 import { StatusBadge } from '../../shared/ui/badge/status-badge';
 import { Button } from '../../shared/ui/button/button';
@@ -108,9 +108,18 @@ export class Race {
     computation: (detail) => detail?.results ?? null,
   });
 
-  protected readonly myPayout = linkedSignal<RaceDetail | undefined, number | null>({
-    source: () => this.detail.value(),
-    computation: (detail) => detail?.myPayout ?? null,
+  /**
+   * El pago propio, ya liquidado. Sale de la apuesta —`myBet.payout`— y no de un
+   * campo aparte del detalle: dos números que representan lo mismo se
+   * desincronizan siempre.
+   *
+   * Es `linkedSignal` y no `computed` porque tiene dos fuentes legítimas: la
+   * apuesta que vino en el detalle, y el `race.finished` del socket, que llega
+   * antes de que nadie vuelva a pedir el detalle.
+   */
+  protected readonly myPayout = linkedSignal<Bet | null, number | null>({
+    source: () => this.myBet(),
+    computation: (bet) => bet?.payout ?? null,
   });
 
   private readonly _positions = signal<Readonly<Record<string, number>>>({});
@@ -128,6 +137,27 @@ export class Race {
   protected readonly canBet = computed(
     () => this.isOpen() && this.myBet() === null && !this.session.isAdmin(),
   );
+
+  /**
+   * El caballo propio, resuelto contra la grilla.
+   *
+   * La apuesta trae `horseId` y nada más: el servidor no repite el nombre en cada
+   * apuesta, y está bien que no lo haga —el nombre ya viaja una vez, en `horses`—.
+   */
+  protected readonly myHorse = computed(() => {
+    const bet = this.myBet();
+    if (bet === null) return null;
+    return this.horses().find((horse) => horse.id === bet.horseId) ?? null;
+  });
+
+  /**
+   * La carrera se liquidó devolviendo todo: nadie le pegó al ganador.
+   *
+   * Es un desenlace propio y no «perdiste»: con pari-mutuel, si el pozo ganador
+   * es cero no hay entre quiénes repartir, y el pozo vuelve a sus dueños. Pasa
+   * seguido cuando apuesta poca gente.
+   */
+  protected readonly wasRefunded = computed(() => this.myBet()?.status === 'refunded');
 
   protected readonly winner = computed(() => this.results()?.[0] ?? null);
   protected readonly iWon = computed(() => {
@@ -157,11 +187,13 @@ export class Race {
       // de la sala, no para el dueño de la apuesta, que obviamente ya lo sabe.
       const isMine = meId !== null && participant.userId === meId;
       const own = isMine ? mine : null;
+      const ownHorse =
+        own === null ? undefined : horses.find((candidate) => candidate.id === own.horseId);
       return {
         userId: participant.userId,
         username: participant.username,
         amount: bet?.amount ?? own?.amount ?? null,
-        horseName: horse?.name ?? own?.horseName ?? null,
+        horseName: horse?.name ?? ownHorse?.name ?? null,
         isMine,
       };
     });
@@ -200,18 +232,25 @@ export class Race {
   });
 
   /**
-   * Lo que pagaría la apuesta que está escrita ahora mismo.
+   * El pozo, contando la apuesta que está escrita ahora mismo.
    *
-   * `null` si el monto no es apostable. Mostrar «cobrás 339.996» debajo de un
-   * monto que supera el saldo es prometer algo que el servidor va a rechazar.
+   * **No es un pago potencial, y no puede serlo.** Con pari-mutuel lo que se
+   * cobra depende del pozo final y de cuántos acertaron; las dos cosas siguen
+   * cambiando hasta que se cierran las apuestas, y además el servidor tapa a qué
+   * caballo apostó cada uno mientras la carrera está `open` —así que ni siquiera
+   * podríamos estimarlo—. Un número acá sería una promesa que nadie puede cumplir.
+   *
+   * `null` si el monto no es apostable: no tiene sentido mostrar un pozo que
+   * incluye una apuesta que el servidor va a rechazar.
    */
   protected readonly preview = computed(() => {
     const { horseId, amount } = this.draft();
     const horse = this.horses().find((candidate) => candidate.id === horseId);
-    const usable =
-      Number.isInteger(amount) && amount >= 1 && amount <= this.session.balance();
+    const usable = Number.isInteger(amount) && amount >= 1 && amount <= this.session.balance();
     if (horse === undefined || !usable) return null;
-    return { horse, payout: payoutOf(amount, horse.odds) };
+
+    const pool = this.bets().reduce((sum, bet) => sum + bet.amount, amount);
+    return { horse, pool };
   });
 
   constructor() {
@@ -263,10 +302,15 @@ export class Race {
   /** Un evento del socket. Es el único lugar donde el vivo escribe estado. */
   private apply(event: RaceEvent): void {
     switch (event.type) {
+      // La sala viene ANIDADA en `race`, y es el mismo RaceDetail del GET. Leerla
+      // como si viniera plana metía `undefined` en los signals y el template se
+      // caía entero al pedirle `.length`.
       case 'room.state':
-        this.status.set(event.status);
-        this.participants.set(event.participants);
-        this.bets.set(event.bets);
+        this.status.set(event.race.status);
+        this.participants.set(event.race.participants);
+        this.bets.set(event.race.bets);
+        this.myBet.set(event.race.myBet);
+        if (event.race.results !== null) this.results.set(event.race.results);
         break;
 
       case 'room.joined':
@@ -287,7 +331,10 @@ export class Race {
                   userId: event.userId,
                   username: event.username,
                   amount: event.amount,
-                  horseId: event.horseId,
+                  // El evento NO trae el caballo mientras la carrera está abierta,
+                  // y el `race.started` revela todas juntas. Hasta entonces se
+                  // muestra que apostó, no a qué.
+                  horseId: null,
                 },
               ],
         );
@@ -310,14 +357,19 @@ export class Race {
       case 'race.finished':
         this.status.set('finished');
         this.results.set(event.results);
-        this.myPayout.set(event.payout);
-        this.session.setBalance(event.balance);
+        this.bets.set(event.bets);
+        if (event.myBet !== null) {
+          this.myBet.set(event.myBet);
+          this.myPayout.set(event.myBet.payout);
+        }
+        // `null` significa «tu saldo no cambió», no «tu saldo es cero».
+        if (event.balance !== null) this.session.setBalance(event.balance);
         break;
 
       case 'race.cancelled':
         this.status.set('cancelled');
         this._failure.set(event.reason);
-        // La devolución la hizo el servidor; el saldo se vuelve a leer al salir.
+        if (event.balance !== null) this.session.setBalance(event.balance);
         break;
     }
   }

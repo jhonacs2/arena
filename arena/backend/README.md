@@ -1,6 +1,6 @@
 # Arena — backend
 
-Go 1.26, Postgres (Supabase). Una sola dependencia externa: `github.com/jackc/pgx/v5`
+Go 1.26, Postgres. Una sola dependencia externa: `github.com/jackc/pgx/v5`
 (más `github.com/coder/websocket` para las salas).
 
 Las reglas están en [`../docs/contract/decisiones.md`](../docs/contract/decisiones.md);
@@ -9,8 +9,11 @@ la API en [`../docs/contract/api.md`](../docs/contract/api.md); el esquema en
 
 ## Levantarlo
 
+Si lo que querés es la app andando —backend, base y frontend juntos—, la guía es
+[`../README.md`](../README.md). Acá está el backend solo:
+
 ```bash
-export DATABASE_URL="postgres://usuario:clave@host:5432/arena?sslmode=require"
+export DATABASE_URL="postgres://usuario:clave@host:5432/arena?sslmode=disable"
 export JWT_SECRET="$(openssl rand -hex 32)"
 export ADMIN_USERNAME=profe ADMIN_PASSWORD="…"
 go run .
@@ -57,10 +60,10 @@ Las reglas que importan de Arena las hace cumplir la **base**: un lock de fila, 
 los tests del canje, del ledger y de los handlers corren contra un Postgres real.
 
 ```bash
-docker run -d --rm --name arena-pg -e POSTGRES_PASSWORD=arena \
-  -e POSTGRES_DB=arena -p 55433:5432 postgres:16-alpine
+docker run -d --rm --name arena-pg-test -e POSTGRES_PASSWORD=test \
+  -e POSTGRES_DB=arena_test -p 55433:5432 postgres:16-alpine
 
-ARENA_TEST_DATABASE_URL="postgres://postgres:arena@localhost:55433/arena?sslmode=disable" \
+ARENA_TEST_DATABASE_URL="postgres://postgres:test@localhost:55433/arena_test?sslmode=disable" \
   go test ./...
 ```
 
@@ -71,6 +74,12 @@ de los códigos, formato de los puntos) corren siempre.
 La variable es distinta de `DATABASE_URL` a propósito: los tests borran todas las
 tablas, y un `go test` con la URL de producción en el entorno sería la peor forma
 posible de aprender esta lección.
+
+**Y la base tiene que llamarse con «test» en el nombre.** No es una convención:
+`testdb.Pool` corta si no, con un mensaje que explica cómo levantar una aparte.
+La variable distinta protegía del descuido de exportar `DATABASE_URL`, pero no
+del de escribir a mano la misma cadena — que es como se perdieron los datos de
+desarrollo de alguien una vez, con los tests en verde.
 
 Los tres que hay que mirar si algo se rompe:
 
@@ -116,8 +125,8 @@ igual chequean, y la redundancia es a propósito — el riesgo real no es que es
 chequeo esté mal escrito, es que alguien agregue mañana un endpoint y se olvide.
 
 **Los puntos salen de la vista `user_scores`, no de Go.** La fórmula
-`floor(monedas/100) + regalados` vive en un solo lugar. Si viviera en dos, un día
-se separarían y la nota dependería de por dónde se la mire.
+`max(10, floor(monedas/100)) + regalados` vive en un solo lugar. Si viviera en
+dos, un día se separarían y la nota dependería de por dónde se la mire.
 
 Ya pagó: la fórmula tuvo un piso de 10 puntos y lo perdió mientras este backend se
 escribía. No hubo una línea de Go que cambiar — sólo tests que asertaban el valor

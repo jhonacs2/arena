@@ -88,9 +88,9 @@ func (h *harness) openRace() (raceID string, horses []HorseView) {
 	created, err := h.svc.CreateRace(context.Background(), admin, NewRace{
 		Name: "Clásico del Recuerdo",
 		Horses: []NewHorse{
-			{Number: 1, Name: "Viento Norte", Odds: 340},
-			{Number: 2, Name: "Doña Rosa", Odds: 210},
-			{Number: 3, Name: "Malambo", Odds: 755},
+			{Number: 1, Name: "Viento Norte", NominalOdds: 340},
+			{Number: 2, Name: "Doña Rosa", NominalOdds: 210},
+			{Number: 3, Name: "Malambo", NominalOdds: 755},
 		},
 	})
 	if err != nil {
@@ -212,7 +212,7 @@ func TestUnAlumnoNoPuedeOperarCarreras(t *testing.T) {
 
 	operations := map[string]func() error{
 		"crear": func() error {
-			_, err := h.svc.CreateRace(ctx, ana, NewRace{Name: "Mía", Horses: []NewHorse{{Number: 1, Name: "X", Odds: 200}}})
+			_, err := h.svc.CreateRace(ctx, ana, NewRace{Name: "Mía", Horses: []NewHorse{{Number: 1, Name: "X", NominalOdds: 200}}})
 			return err
 		},
 		"editar": func() error {
@@ -221,7 +221,7 @@ func TestUnAlumnoNoPuedeOperarCarreras(t *testing.T) {
 			return err
 		},
 		"agregar caballos": func() error {
-			_, err := h.svc.AddHorses(ctx, ana, raceID, []NewHorse{{Number: 9, Name: "Y", Odds: 200}})
+			_, err := h.svc.AddHorses(ctx, ana, raceID, []NewHorse{{Number: 9, Name: "Y", NominalOdds: 200}})
 			return err
 		},
 		"abrir": func() error { _, err := h.svc.Open(ctx, ana, raceID); return err },
@@ -250,7 +250,7 @@ func TestElAlumnoNoVeLasCarrerasEnDraft(t *testing.T) {
 
 	created, err := h.svc.CreateRace(ctx, admin, NewRace{
 		Name:   "En borrador",
-		Horses: []NewHorse{{Number: 1, Name: "Secreto", Odds: 200}},
+		Horses: []NewHorse{{Number: 1, Name: "Secreto", NominalOdds: 200}},
 	})
 	if err != nil {
 		t.Fatalf("creando la carrera: %v", err)

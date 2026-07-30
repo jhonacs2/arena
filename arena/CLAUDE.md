@@ -15,6 +15,7 @@ documento que manda: la economía, los estados de una carrera y quién puede qu�
 
 | | |
 |---|---|
+| [`README.md`](README.md) | **cómo levantarlo en local**, frontend y backend |
 | [`docs/contract/decisiones.md`](docs/contract/decisiones.md) | las reglas. **Fuente de verdad** |
 | [`docs/contract/schema.sql`](docs/contract/schema.sql) | Postgres. Las reglas que la base puede hacer cumplir, están ahí |
 | [`docs/contract/api.md`](docs/contract/api.md) | endpoints, errores y eventos de socket |
@@ -137,7 +138,7 @@ y el resto de esa división **se reparte**, no se descarta — ver
 |---|---|
 | Frontend | Cloudflare Pages |
 | Backend | VPS de Hostinger |
-| Base | Supabase |
+| Base | Postgres en el mismo VPS — ver §2 |
 
 El backend **no expone puerto**: `cloudflared` corre como servicio en el VPS y abre
 la conexión hacia afuera (Cloudflare Tunnel). El frontend llama a `/api` en su
@@ -160,12 +161,17 @@ contraste AA de la paleta.
 Los tests de Go piden Postgres. Sin él se saltean, así que hay que dárselo:
 
 ```bash
-docker run -d --rm --name arena-pg -e POSTGRES_PASSWORD=x -e POSTGRES_DB=arena \
+docker run -d --rm --name arena-pg-test -e POSTGRES_PASSWORD=x -e POSTGRES_DB=arena_test \
   -p 55440:5432 postgres:16-alpine
-export ARENA_TEST_DATABASE_URL="postgres://postgres:x@localhost:55440/arena?sslmode=disable"
+export ARENA_TEST_DATABASE_URL="postgres://postgres:x@localhost:55440/arena_test?sslmode=disable"
 export DATABASE_URL="$ARENA_TEST_DATABASE_URL"
 node scripts/verify-arena.mjs
 ```
+
+**El «test» en el nombre de la base no es decorativo:** los tests truncan todas
+las tablas y `testdb.Pool` se niega a correr contra una base que no lo tenga.
+Apuntar esa variable a la base de desarrollo ya borró los datos de alguien, con
+los tests en verde y sin un aviso.
 
 ### Y el cableado, que ningún test de Go cubre
 

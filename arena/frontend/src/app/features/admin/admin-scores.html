@@ -34,6 +34,7 @@
           </tr>
         </thead>
         <tbody>
+          {{scores.value().items}}
           @for (row of scores.value().items; track row.userId) {
             <tr>
               <td>

@@ -430,7 +430,7 @@ func (q *queries) AddHorses(ctx context.Context, raceID string, in []races.NewHo
 	for i, h := range in {
 		numbers[i] = int32(h.Number)
 		names[i] = h.Name
-		odds[i] = int32(h.Odds)
+		odds[i] = int32(h.NominalOdds)
 	}
 
 	rows, err := q.tx.Query(ctx, `
