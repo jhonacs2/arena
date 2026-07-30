@@ -1,0 +1,123 @@
+<div class="container board">
+  <!-- ── El saldo ──────────────────────────────────────────────────────── -->
+  <section class="panel wallet" aria-labelledby="wallet-title">
+    <h2 class="panel__title" id="wallet-title">Tu saldo</h2>
+
+    <p class="wallet__coins num">{{ session.balance() | coins }}</p>
+    <p class="wallet__unit">monedas</p>
+
+    <p class="wallet__points">
+      <span class="num">{{ session.points() }}</span> puntos de nota
+    </p>
+    <p class="wallet__rule">100 monedas = 1 punto</p>
+  </section>
+
+  <!-- ── Las carreras ──────────────────────────────────────────────────── -->
+  <section class="panel races" aria-labelledby="races-title">
+    <h2 class="panel__title" id="races-title">Carreras</h2>
+
+    @if (racesError()) {
+      <app-callout tone="danger" title="No se pudieron cargar las carreras">
+        <p>{{ racesError() }}</p>
+      </app-callout>
+    } @else if (races.isLoading() && ordered().length === 0) {
+      <ul class="skeletons" role="list">
+        @for (row of [1, 2, 3]; track row) {
+          <li class="skeleton" aria-hidden="true"></li>
+        }
+      </ul>
+      <p class="sr-only">Cargando carreras…</p>
+    } @else if (ordered().length === 0) {
+      <app-empty-state
+        title="Todavía no hay carreras"
+        detail="El instructor las abre desde su panel. Cuando abra una, aparece acá."
+      />
+    } @else {
+      <ul class="race-list" role="list">
+        @for (race of ordered(); track race.id) {
+          <li class="race">
+            <a class="race__link" [routerLink]="['/carreras', race.id]">
+              <span class="race__head">
+                <span class="race__name">{{ race.name }}</span>
+                <app-status-badge [status]="race.status" />
+              </span>
+
+              <span class="race__meta num">
+                {{ race.horseCount }} caballos · {{ race.participantCount }} en la sala ·
+                {{ race.scheduledAt | when }}
+              </span>
+
+              @if (race.myBet) {
+                <span class="race__bet">
+                  Apostaste <strong class="num">{{ race.myBet.amount | coins }}</strong> a
+                  <strong>{{ race.myBet.horseName }}</strong> a
+                  <strong class="num">{{ race.myBet.oddsAtBet | odds }}</strong> — pagaría
+                  <strong class="num">{{ race.myBet.potentialPayout | coins }}</strong>
+                </span>
+              } @else if (race.status === 'open') {
+                <span class="race__bet race__bet--none">Todavía no apostaste</span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <!-- ── El ledger ─────────────────────────────────────────────────────── -->
+  <section class="panel ledger" aria-labelledby="ledger-title">
+    <h2 class="panel__title" id="ledger-title">Tus movimientos</h2>
+    <p class="panel__note">
+      Cada moneda que entró o salió, en orden. No se edita ni se borra nada: un error se
+      compensa con otro movimiento.
+    </p>
+
+    @if (ledgerError()) {
+      <app-callout tone="danger" title="No se pudo cargar el historial">
+        <p>{{ ledgerError() }}</p>
+      </app-callout>
+    } @else if (ledger.isLoading() && ledger.value().items.length === 0) {
+      <ul class="skeletons" role="list">
+        @for (row of [1, 2, 3, 4]; track row) {
+          <li class="skeleton" aria-hidden="true"></li>
+        }
+      </ul>
+      <p class="sr-only">Cargando movimientos…</p>
+    } @else if (ledger.value().items.length === 0) {
+      <app-empty-state title="Sin movimientos todavía" mark="∅" />
+    } @else {
+      <div class="scroll-x">
+        <table class="table">
+          <caption class="sr-only">Historial de monedas, del más nuevo al más viejo</caption>
+          <thead>
+            <tr>
+              <th scope="col">Cuándo</th>
+              <th scope="col">Motivo</th>
+              <th scope="col" class="table__right">Monedas</th>
+              <th scope="col" class="table__right">Saldo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of ledger.value().items; track entry.id) {
+              <tr>
+                <td class="num">{{ entry.createdAt | when }}</td>
+                <td>
+                  {{ reasonLabel[entry.reason] }}
+                  @if (entry.raceName) {
+                    <span class="table__detail">{{ entry.raceName }}</span>
+                  } @else if (entry.note) {
+                    <span class="table__detail">{{ entry.note }}</span>
+                  }
+                </td>
+                <td class="table__right num" [class.table__gain]="entry.delta > 0">
+                  {{ entry.delta | signedCoins }}
+                </td>
+                <td class="table__right num">{{ entry.balanceAfter | coins }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

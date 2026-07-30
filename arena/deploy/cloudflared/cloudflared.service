@@ -1,0 +1,47 @@
+# cloudflared como servicio del VPS.
+#
+#   sudo cp cloudflared.service /etc/systemd/system/cloudflared.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now cloudflared
+#   systemctl status cloudflared
+#
+# `cloudflared service install` genera una unit parecida. Esta está escrita a mano
+# a propósito: es la que hay que leer el día que el túnel no levanta.
+
+[Unit]
+Description=Cloudflare Tunnel — Arena
+Documentation=https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/cloudflared --config /etc/cloudflared/config.yml --no-autoupdate tunnel run
+
+# El túnel se reconecta solo, pero si el proceso muere se levanta de nuevo.
+# `always` y no `on-failure`: que se cierre limpio tampoco es aceptable acá.
+Restart=always
+RestartSec=5s
+
+# No corre como root: solo necesita leer su config y abrir conexiones de salida.
+User=cloudflared
+Group=cloudflared
+
+# Endurecimiento. El túnel es el único proceso expuesto a internet de todo el
+# VPS: si algún día tiene un agujero, que no tenga desde dónde moverse.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/etc/cloudflared
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+LockPersonality=true
+# Solo hace red: no necesita ninguna otra familia de sockets.
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

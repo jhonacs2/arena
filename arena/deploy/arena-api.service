@@ -1,0 +1,47 @@
+# El backend de Arena como servicio del VPS.
+#
+#   sudo mkdir -p /etc/arena
+#   sudo cp .env.example /etc/arena/arena.env   # y completarlo
+#   sudo chmod 600 /etc/arena/arena.env
+#   sudo cp arena-api.service /etc/systemd/system/arena-api.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now arena-api
+#   journalctl -u arena-api -f
+#
+# Corre el contenedor bajo systemd en vez de dejárselo a la política de reinicio
+# de Docker: así el backend y el túnel se administran con los mismos comandos y
+# `systemctl status` cuenta toda la historia.
+#
+# El puerto se publica **atado a 127.0.0.1**. Es la línea más importante de este
+# archivo: el backend no es alcanzable desde fuera del VPS, y el único que le
+# habla es cloudflared, que corre en la misma máquina.
+
+[Unit]
+Description=Arena API
+Documentation=file:///opt/arena/deploy/README.md
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=exec
+EnvironmentFile=/etc/arena/arena.env
+
+# `docker run` en primer plano: systemd sigue el proceso y `journalctl -u
+# arena-api` muestra los logs del backend sin pasar por `docker logs`.
+ExecStartPre=-/usr/bin/docker rm -f arena-api
+ExecStart=/usr/bin/docker run --rm --name arena-api \
+  --env-file /etc/arena/arena.env \
+  --publish 127.0.0.1:8080:8080 \
+  --read-only \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
+  --log-driver journald \
+  ${ARENA_IMAGE}
+ExecStop=/usr/bin/docker stop --time 20 arena-api
+
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

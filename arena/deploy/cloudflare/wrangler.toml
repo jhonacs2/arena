@@ -1,0 +1,23 @@
+# Worker que reenvía `/api/**` del dominio del frontend al hostname del túnel.
+# Ver api-proxy.js para el por qué. Reemplazar los dos hostnames.
+#
+#   npx wrangler deploy
+#
+# `npx wrangler tail arena-api-proxy` muestra en vivo lo que pasa por acá el día
+# que algo no llega al backend.
+
+name = "arena-api-proxy"
+main = "api-proxy.js"
+compatibility_date = "2026-01-01"
+
+# La ruta gana sobre el dominio de Pages, así que Pages sigue sirviendo todo lo
+# que no sea /api/*.
+[[routes]]
+pattern = "REEMPLAZAR-arena.ejemplo.com/api/*"
+zone_name = "REEMPLAZAR-ejemplo.com"
+
+[vars]
+# El hostname público del túnel, el mismo que figura en cloudflared/config.yml.
+# No es un secreto: es una URL pública. Lo que la protege es que el backend pide
+# JWT, no que la URL sea difícil de adivinar.
+API_ORIGIN = "https://REEMPLAZAR-api.arena.ejemplo.com"

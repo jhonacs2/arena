@@ -1,0 +1,70 @@
+/*
+  Los controles de formulario del sistema.
+
+  Vive acá y no en `styles.css` porque no es reset ni tokens: es un componente
+  visual, y `docs/design/CLAUDE.md` dice que eso va encapsulado. Las pantallas que
+  tienen formularios lo suman a su `styleUrls`, así que cada una lo recibe
+  scopeado y sin filtrarse a las demás.
+*/
+
+.field {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.field__label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: -0.01em;
+  margin-block-end: var(--space-1);
+}
+
+.field__input,
+.field__select {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard-sm) inset;
+}
+
+/* El campo enfocado se levanta: pierde la sombra interior y gana la de afuera.
+   Es el mismo gesto que el botón al presionarse, al revés. */
+.field__input:focus-visible,
+.field__select:focus-visible {
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.field__input:disabled,
+.field__select:disabled {
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Cifras tabulares para todo lo que sea monto o cuota: sin esto, tipear cambia
+   el ancho del número y el campo tiembla. */
+.field__input[type='number'] {
+  font-family: var(--font-mono);
+}
+
+.field__help {
+  margin-block-start: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Dos columnas cuando hay lugar, una cuando no. `auto-fit` con `minmax` evita la
+   media query: a 320px cae a una sola columna solo. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4);
+}

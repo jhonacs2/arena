@@ -1,0 +1,16 @@
+<div class="container">
+  <header class="head">
+    <p class="head__eyebrow">Panel del instructor</p>
+    <h1>Hola, {{ session.fullName() }}</h1>
+    <p class="head__lead">
+      Vos operás las carreras. Los alumnos apuestan y sus monedas valen nota — el mapeo final a la
+      calificación lo decidís vos.
+    </p>
+  </header>
+
+  <div class="sections">
+    <app-admin-races />
+    <app-admin-scores />
+    <app-admin-codes />
+  </div>
+</div>

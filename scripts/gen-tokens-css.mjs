@@ -42,6 +42,9 @@ const TARGETS = [
   { file: 'project/frontend/starter/src/styles.css' },
   { file: 'lab/solution/src/styles.css' },
   { file: 'lab/starter/src/styles.css' },
+  // Arena es Angular 22 y no comparte código con el hipódromo, pero sí la
+  // paleta: es el mismo curso y se ven una al lado de la otra.
+  { file: 'arena/frontend/src/styles.css' },
 ];
 
 const START = '/* @tokens:start */';

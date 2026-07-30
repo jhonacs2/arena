@@ -1,0 +1,108 @@
+.sheet {
+  max-inline-size: 44rem;
+  margin-inline: auto;
+}
+
+/* ── Encabezado ────────────────────────────────────────────────────────── */
+.intro {
+  margin-block-end: var(--space-8);
+}
+
+.intro__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-block-end: var(--space-2);
+}
+
+.intro__lead {
+  margin-block-start: var(--space-4);
+  max-inline-size: 52ch;
+  color: var(--text);
+}
+
+/* ── Formulario ────────────────────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step {
+  border: var(--border-width) solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-hard);
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+/* El paso 2 se ve apagado hasta que el código sirve. Está deshabilitado de
+   verdad, no escondido: así se sabe desde el principio qué falta completar. */
+.step--locked {
+  background: var(--surface-sunken);
+}
+
+.step--locked .field__label {
+  color: var(--text-muted);
+}
+
+.step__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+  padding-inline: var(--space-2);
+  margin-inline-start: calc(var(--space-2) * -1);
+}
+
+.step__number {
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: var(--border-width) solid var(--border);
+}
+
+/* ── El código ─────────────────────────────────────────────────────────── */
+.field__input--code {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  max-inline-size: 12em;
+}
+
+.verdict {
+  /* La caja existe siempre para que el veredicto no empuje el formulario al
+     aparecer, y para que `aria-live` tenga algo a lo que anunciarle cambios. */
+  min-block-size: 3rem;
+}
+
+.verdict__checking {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.verdict__hint {
+  margin-block-start: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.alternate {
+  font-size: var(--text-sm);
+  text-align: center;
+}

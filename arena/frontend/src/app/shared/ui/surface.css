@@ -1,0 +1,98 @@
+/*
+  Las superficies compartidas: el panel, la tabla y el hueso de carga.
+
+  Igual que `form-controls.css`, se suma al `styleUrls` de cada pantalla que lo
+  necesita en vez de vivir en `styles.css`: son componentes visuales, y los
+  componentes visuales van encapsulados.
+*/
+
+.panel {
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  padding: var(--space-4);
+  min-inline-size: 0;
+}
+
+.panel__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-xl);
+  letter-spacing: -0.02em;
+  padding-block-end: var(--space-2);
+  margin-block-end: var(--space-4);
+  border-block-end: var(--border-width) solid var(--border);
+}
+
+.panel__note {
+  margin-block-end: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  max-inline-size: 60ch;
+}
+
+/* ── Tabla ─────────────────────────────────────────────────────────────── */
+.table {
+  inline-size: 100%;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  border-block-end: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.table thead th {
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-block-end: var(--border-width) solid var(--border);
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+.table__right {
+  text-align: end;
+}
+
+/* Lo que entró se marca con peso, no con color: el verde de la paleta no llega a
+   4,5:1 sobre tiza, y el signo + ya dice de qué lado está el movimiento. */
+.table__gain {
+  font-weight: 700;
+}
+
+.table__detail {
+  display: block;
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+/* ── Huesos de carga ───────────────────────────────────────────────────── */
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Un rectángulo de borde punteado que respira. No imita el contenido: imitarlo
+   con animación de barrido es un gradiente, y acá no hay gradientes. */
+.skeleton {
+  block-size: 3rem;
+  border: var(--border-width) dashed var(--border);
+  background: var(--surface-sunken);
+  animation: breathe 1.2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    opacity: 0.5;
+  }
+}

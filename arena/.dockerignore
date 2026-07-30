@@ -1,0 +1,17 @@
+# El contexto de build es `arena/` (ver deploy/Dockerfile). Lo único que la imagen
+# necesita es `backend/` y `docs/contract/schema.sql`; todo lo demás solo haría más
+# lento el build e invalidaría la caché de capas sin motivo.
+#
+# Nada de re-incluir con `!` algo que está dentro de una carpeta excluida: se
+# excluye a mano lo que sobra y se deja `docs/contract/` en pie.
+
+frontend/
+deploy/
+scripts/
+docs/design/
+CLAUDE.md
+
+**/node_modules/
+**/dist/
+**/.angular/
+**/.git/

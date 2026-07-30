@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="sheet">
+    <h1>Volvé a entrar</h1>
+    <p class="lead">Ya canjeaste tu código. Tus monedas te están esperando.</p>
+
+    <form class="form" [formRoot]="credentials" (submit)="send()">
+      <div class="field">
+        <label class="field__label" for="username">Usuario</label>
+        <input
+          id="username"
+          class="field__input"
+          [formField]="credentials.username"
+          type="text"
+          autocomplete="username"
+          spellcheck="false"
+        />
+        <app-field-errors
+          [errors]="credentials.username().errors()"
+          [touched]="credentials.username().touched()"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="password">Contraseña</label>
+        <input
+          id="password"
+          class="field__input"
+          [formField]="credentials.password"
+          type="password"
+          autocomplete="current-password"
+        />
+        <app-field-errors
+          [errors]="credentials.password().errors()"
+          [touched]="credentials.password().touched()"
+        />
+      </div>
+
+      @if (failure()) {
+        <app-callout tone="danger" title="No se pudo entrar">
+          <p>{{ failure() }}</p>
+        </app-callout>
+      }
+
+      <app-button type="submit" size="lg" [loading]="credentials().submitting()">
+        Iniciar sesión
+      </app-button>
+
+      <p class="alternate">
+        ¿Tenés un código sin usar? <a routerLink="/registro">Canjealo acá</a>.
+      </p>
+    </form>
+  </div>
+</div>

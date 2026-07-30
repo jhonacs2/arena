@@ -17,30 +17,52 @@ producto que consumen.
 |---|---|
 | Conversión | **100 monedas = 1 punto** |
 | Saldo inicial al canjear el código | **1000 monedas = 10 puntos** |
-| **Piso de la nota** | **10 puntos.** Apostar mal no la baja nunca |
+| Piso de la nota | **no hay.** Apostar mal sí baja la nota |
 | Piso del saldo | **0.** Nunca negativo |
 | Monto de una apuesta | `1 ≤ monto ≤ saldo` |
 | Apuestas por carrera y por alumno | **exactamente una** |
-| Cuotas | **pari-mutuel**: sale del pool, no hay casa |
+| Cuotas | ⚠️ **SIN DECIDIR** — ver abajo |
 | Recarga automática | **no hay**. El instructor regala a pedido |
 
 ```
-puntos = max(10, floor(monedas / 100)) + puntos regalados
+puntos = floor(monedas / 100) + puntos regalados
 ```
 
 Es una función del saldo, no una columna: no hay dos números que puedan
 desincronizarse. Lo verifica `schema.test.sql`.
 
-### El piso de 10 es la decisión más importante del proyecto
+### No hay piso, y eso es deliberado
 
-Los 10 puntos que el alumno recibe al canjear el código **no se pueden perder
-apostando**. Una racha perdedora le saca monedas —y con eso, capacidad de seguir
-jugando— pero no le toca la calificación.
+Una versión anterior de este documento puso un piso de 10 puntos y lo llamó «la
+decisión más importante del proyecto», con este argumento: sin piso, el juego es un
+riesgo académico y lo racional pasa a ser no apostar nunca.
 
-Sin el piso, el juego se convierte en un riesgo académico: la respuesta racional
-pasa a ser no apostar nunca, que es lo contrario de lo que se busca. Con el piso,
-la única variable es cuánto **suben**, y entonces jugar es gratis y no jugar es lo
-que cuesta.
+El argumento es bueno, pero **contradice la instrucción**: *«si funden las monedas
+me van a deber nota y se tendrán que esforzar más»*. Con piso no deben nada y no
+hay nada que compensar — la frase sólo tiene sentido sin piso.
+
+El caso legítimo que el piso intentaba resolver —que un reconocimiento ganado no se
+pueda perder en una apuesta— ya está cubierto por `point_grants`: **los puntos
+regalados no pasan por el juego.** Eso protege lo que se ganó sin anular la
+consecuencia de apostar mal.
+
+### ⚠️ Cuotas fijas o pari-mutuel: SIN DECIDIR
+
+**Nada que dependa del pago debe implementarse hasta que esto se cierre.**
+
+| | Cómo paga | Efecto |
+|---|---|---|
+| **Cuotas fijas** | `monto × cuota`, la paga «la casa» | cada alumno juega contra la cuota. La masa de monedas crece |
+| **Pari-mutuel** | se reparte el pool entre los que aciertan | **suma cero: para que uno gane, otro pierde** |
+
+Con nota adentro, pari-mutuel es una curva: los alumnos se sacan calificación entre
+ellos. Cuotas fijas los hace jugar contra el sistema y no entre sí, que es más
+consistente con que las monedas midan participación.
+
+El esquema hoy está escrito para **pari-mutuel** (`nominal_odds`,
+`race_settlements`, sin `odds_at_bet`) porque así lo dejó una reescritura que
+afirmó una decisión que no se había tomado. Queda así hasta la confirmación, pero
+**no es una decisión tomada** y este aviso no se saca hasta que lo sea.
 
 ### Dos regalos distintos, que no son lo mismo
 

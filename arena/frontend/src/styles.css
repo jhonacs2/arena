@@ -1,0 +1,351 @@
+/*
+  Estilos globales — Arena.
+
+  Acá va SOLO: capas, tokens, reset y base. Todo lo demás vive en el .css del
+  componente, encapsulado, y FUERA de capas a propósito: así siempre le gana a
+  lo que se declara acá, sin necesidad de !important.
+
+  La línea visual es la del hipódromo (docs/design/CLAUDE.md de la raíz):
+  neobrutalismo, bordes de 3px, sombras duras 4px 4px 0, radio 0, cero
+  gradientes, color en oklch(). Las dos apps se ven una al lado de la otra.
+*/
+
+@layer reset, tokens, base, utilities;
+
+@import './fonts.css';
+
+/* ═══ TOKENS ═════════════════════════════════════════════════════════════
+   El bloque de abajo se genera desde docs/design/tokens.json de la raíz. Para
+   cambiar un color se edita el JSON y se corre `node scripts/gen-tokens-css.mjs`.
+   Editarlo a mano acá hace que la verificación falle. */
+@layer tokens {
+/* @tokens:start */
+  /* Generado desde docs/design/tokens.json — no editar a mano.
+     Cambiar un color: se edita el JSON y se corre node scripts/gen-tokens-css.mjs */
+
+  :root {
+    /* primitivas */
+    --ink-950:      oklch(0.13 0.018 155);
+    --ink-900:      oklch(0.17 0.02 155);
+    --ink-850:      oklch(0.215 0.02 155);
+    --ink-800:      oklch(0.27 0.021 155);
+    --ink-700:      oklch(0.36 0.02 155);
+    --ink-500:      oklch(0.5 0.02 155);
+    --chalk-000:    oklch(1 0 110);
+    --chalk-050:    oklch(0.97 0.008 110);
+    --chalk-100:    oklch(0.94 0.01 110);
+    --chalk-150:    oklch(0.91 0.01 110);
+    --chalk-200:    oklch(0.89 0.012 110);
+    --chalk-300:    oklch(0.8 0.013 110);
+    --chalk-400:    oklch(0.72 0.014 110);
+    --turf-500:     oklch(0.52 0.13 152);
+    --turf-700:     oklch(0.38 0.1 152);
+    --turf-200:     oklch(0.9 0.05 152);
+    --rail-500:     oklch(0.64 0.15 55);
+    --rail-300:     oklch(0.78 0.14 55);
+    --rail-200:     oklch(0.92 0.045 55);
+    --flag-500:     oklch(0.56 0.22 27);
+    --flag-300:     oklch(0.72 0.17 27);
+    --flag-200:     oklch(0.91 0.045 27);
+
+    /* sedas de jockey — los 10 colores registrados del deporte.
+       Solo dentro del SVG de la seda. Ningún texto se pinta encima. */
+    --silk-black:   oklch(0.2 0.01 260);
+    --silk-white:   oklch(0.98 0 110);
+    --silk-red:     oklch(0.55 0.22 27);
+    --silk-blue:    oklch(0.48 0.19 260);
+    --silk-yellow:  oklch(0.85 0.165 95);
+    --silk-green:   oklch(0.52 0.15 148);
+    --silk-orange:  oklch(0.7 0.17 55);
+    --silk-purple:  oklch(0.45 0.2 305);
+    --silk-pink:    oklch(0.75 0.15 5);
+    --silk-cyan:    oklch(0.78 0.12 220);
+
+    color-scheme: light dark;
+  }
+
+  :root, [data-theme="light"] {
+    /* semánticos — claro */
+    --surface:        var(--chalk-050);
+    --surface-raised: var(--chalk-000);
+    --surface-sunken: var(--chalk-100);
+    --text:           var(--ink-900);
+    --text-muted:     var(--ink-500);
+    --border:         var(--ink-900);
+    --shadow:         var(--ink-900);
+    --accent:         var(--rail-500);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-500);
+    --live-ink:       var(--chalk-050);
+    --success:        var(--turf-500);
+    --success-ink:    var(--chalk-050);
+    --danger:         var(--flag-500);
+    --danger-ink:     var(--chalk-050);
+  }
+
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    /* semánticos — oscuro. El borde se invierte a tiza: es un modo diseñado, no un filtro */
+    --surface:        var(--ink-850);
+    --surface-raised: var(--ink-800);
+    --surface-sunken: var(--ink-950);
+    --text:           var(--chalk-150);
+    --text-muted:     var(--chalk-400);
+    --border:         var(--chalk-300);
+    --shadow:         var(--ink-950);
+    --accent:         var(--rail-300);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-300);
+    --live-ink:       var(--ink-900);
+    --success:        var(--turf-200);
+    --success-ink:    var(--ink-900);
+    --danger:         var(--flag-300);
+    --danger-ink:     var(--ink-900);
+  } }
+
+  [data-theme="dark"] {
+    /* semánticos — oscuro forzado */
+    --surface:        var(--ink-850);
+    --surface-raised: var(--ink-800);
+    --surface-sunken: var(--ink-950);
+    --text:           var(--chalk-150);
+    --text-muted:     var(--chalk-400);
+    --border:         var(--chalk-300);
+    --shadow:         var(--ink-950);
+    --accent:         var(--rail-300);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-300);
+    --live-ink:       var(--ink-900);
+    --success:        var(--turf-200);
+    --success-ink:    var(--ink-900);
+    --danger:         var(--flag-300);
+    --danger-ink:     var(--ink-900);
+  }
+/* @tokens:end */
+
+  :root {
+    /* Tipografía — las tres familias auto-hospedadas de docs/design/tokens.md §3 */
+    --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Public Sans', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+    /* Escala modular, razón 1.2, base 1rem */
+    --text-2xs: 0.694rem;
+    --text-xs: 0.833rem;
+    --text-sm: 0.9rem;
+    --text-base: 1rem;
+    --text-lg: 1.2rem;
+    --text-xl: 1.44rem;
+    --text-2xl: 1.728rem;
+    --text-3xl: 2.074rem;
+    --text-4xl: 2.488rem;
+
+    /* Los títulos son fluidos entre 320px y 1440px, sin media queries */
+    --text-display: clamp(1.728rem, 1.2rem + 3vw, 2.986rem);
+
+    /* Espaciado, base 4px */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+    /* Forma. Radio cero sin excepciones: un sistema con dos radios necesita un
+       criterio para elegir, y ese criterio es gusto. */
+    --border-width: 3px;
+    --radius: 0;
+    --shadow-hard: 4px 4px 0 var(--shadow);
+    --shadow-hard-sm: 2px 2px 0 var(--shadow);
+    --shadow-hard-lg: 6px 6px 0 var(--shadow);
+
+    /* Movimiento — tres duraciones, ni una más */
+    --ease-snap: cubic-bezier(0.2, 0, 0, 1);
+    --dur-instant: 90ms;
+    --dur-quick: 160ms;
+    --dur-flip: 260ms;
+
+    /* La carrera llega a 10 Hz: un tick dura 100ms y la interpolación tiene que
+       durar exactamente eso, o el caballo se atrasa o se frena. */
+    --dur-tick: 100ms;
+
+    --layout-max: 76rem;
+  }
+}
+
+/* ═══ RESET ══════════════════════════════════════════════════════════════ */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+  }
+
+  body {
+    min-height: 100dvh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    /* A 320px cualquier tabla ancha empujaría el body. Nada desborda: lo que
+       sea ancho scrollea dentro de su propio contenedor. */
+    overflow-x: hidden;
+  }
+
+  img,
+  picture,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Sin esto, un nombre de caballo largo desborda la card en móvil */
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    overflow-wrap: break-word;
+  }
+
+  ul[role='list'],
+  ol[role='list'] {
+    list-style: none;
+    padding: 0;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+}
+
+/* ═══ BASE ═══════════════════════════════════════════════════════════════ */
+@layer base {
+  body {
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    /* Sin esto, cada dígito que cambia mueve el layout. En la carrera en vivo
+       el marcador se actualiza 10 veces por segundo. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    /* El eje de ancho de Bricolage: condensa los títulos largos sin cambiar de
+       familia ni bajar el tamaño. */
+    font-variation-settings: 'wdth' 92;
+  }
+
+  h1 {
+    font-size: var(--text-display);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  /* El foco es visible siempre y en todos lados. Es lo primero que se pierde
+     cuando alguien «limpia» los outlines. */
+  :focus-visible {
+    outline: var(--border-width) solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  /* La animación comunica estado: la carrera avanzando, el saldo cambiando.
+     Cuando se pide menos movimiento se saca la TRANSICIÓN, no la información:
+     los caballos siguen mostrando su posición, solo que sin interpolar. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ═══ UTILIDADES ═════════════════════════════════════════════════════════
+   Cinco. No es un framework de utilidades: si hiciera falta una sexta, el
+   estilo va en el componente. */
+@layer utilities {
+  .container {
+    width: 100%;
+    max-width: var(--layout-max);
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+  }
+
+  /* Monedas, puntos, cuotas, posiciones: todo lo que sea tablero totalizador
+     usa mono con cifras tabulares. */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  /* Una tabla ancha scrollea dentro de su caja, nunca empuja la página. */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}

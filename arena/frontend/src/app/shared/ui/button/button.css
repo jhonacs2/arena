@@ -1,0 +1,117 @@
+/*
+  Estilos encapsulados. Fuera de @layer a propósito: así le ganan a lo global
+  sin !important.
+*/
+
+:host {
+  display: inline-block;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 96;
+  letter-spacing: -0.01em;
+  text-align: center;
+
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
+  cursor: pointer;
+
+  /* Solo transform y box-shadow: las dos son baratas y no disparan layout. */
+  transition:
+    transform var(--dur-instant) var(--ease-snap),
+    box-shadow var(--dur-instant) var(--ease-snap);
+}
+
+/* El único efecto de profundidad del sistema: al presionar, el objeto se hunde
+   de verdad — se desplaza lo mismo que pierde de sombra. */
+.button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.button--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button--secondary {
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+.button--danger {
+  background: var(--danger);
+  color: var(--danger-ink);
+}
+
+/* Fantasma: sin sombra ni borde hasta que se lo apunta. Es para acciones
+   terciarias —cancelar, volver— que no tienen que competir con la principal. */
+.button--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.button--ghost:hover:not(:disabled),
+.button--ghost:focus-visible {
+  border-color: var(--border);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.button--sm {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+  min-block-size: 2rem;
+}
+
+.button--md {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  min-block-size: 2.75rem;
+}
+
+.button--lg {
+  font-size: var(--text-lg);
+  padding: var(--space-3) var(--space-6);
+  min-block-size: 3.25rem;
+  inline-size: 100%;
+}
+
+/* El indicador de trabajo es un cuadrado que gira: en un sistema de radio cero,
+   un círculo girando sería la única curva de la pantalla. */
+.button__spinner {
+  inline-size: 0.85em;
+  block-size: 0.85em;
+  border: 2px solid currentColor;
+  border-block-end-color: transparent;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A 26rem un botón principal ocupa todo el ancho: es más fácil de tocar y deja
+   de competir con lo que tenga al lado. */
+@media (width < 26rem) {
+  :host {
+    display: block;
+  }
+}

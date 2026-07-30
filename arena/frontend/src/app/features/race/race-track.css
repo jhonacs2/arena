@@ -1,0 +1,158 @@
+:host {
+  display: block;
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.lane {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'tag strip'
+    'tag info';
+  align-items: center;
+  gap: 0 var(--space-3);
+  padding: var(--space-2);
+  background: var(--surface-sunken);
+  border: var(--border-width) solid var(--border);
+}
+
+/* El andarivel propio se marca con el acento: en una carrera de seis, encontrar
+   el tuyo tiene que ser instantáneo. */
+.lane--mine {
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-hard-sm);
+  border-inline-start-width: 0.75rem;
+  border-inline-start-color: var(--accent);
+}
+
+.lane__tag {
+  grid-area: tag;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.lane__number {
+  display: grid;
+  place-items: center;
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  /* El número va en su cuadrado aparte, tinta sobre tiza: ningún texto se pinta
+     sobre una seda. Es lo que permite que las sedas usen los colores saturados
+     de verdad sin romper el contraste. */
+  background: var(--surface-raised);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+/* ── La franja donde corre ─────────────────────────────────────────────── */
+.lane__strip {
+  grid-area: strip;
+  position: relative;
+  block-size: 2.5rem;
+  /* Container query: el recorrido se mide contra ESTA caja, no contra el
+     viewport. Así el andarivel funciona igual en la pantalla del alumno y en el
+     panel del instructor, que es más angosto. */
+  container-type: inline-size;
+  border-block-end: 2px dashed var(--border);
+}
+
+.lane__runner {
+  position: absolute;
+  inset-block-start: 0.1rem;
+  inset-inline-start: 0;
+  /* El recorrido útil es el ancho del contenedor menos el ancho del caballo, así
+     el disco coincide con el borde derecho y no lo pasa. */
+  transform: translateX(calc(var(--progress, 0) * (100cqi - 2.25rem)));
+  transition: transform var(--dur-tick) linear;
+  /* Le avisa al compositor que esta capa se va a mover: sin esto, a 10 Hz el
+     navegador la promueve y la baja todo el tiempo. */
+  will-change: transform;
+}
+
+/* El disco. */
+.lane__post {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: var(--border-width);
+  background: var(--live);
+}
+
+.lane__info {
+  grid-area: info;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.lane__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.lane__odds {
+  color: var(--text-muted);
+}
+
+.lane__place {
+  margin-inline-start: auto;
+  font-weight: 700;
+}
+
+.lane__place--first {
+  padding-inline: var(--space-2);
+  background: var(--success);
+  color: var(--success-ink);
+  border: 2px solid var(--border);
+}
+
+/* ── Marcador ──────────────────────────────────────────────────────────── */
+.standings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-block-start: var(--space-3);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-width) solid var(--border);
+  font-size: var(--text-xs);
+}
+
+.standings__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+
+.standings__place {
+  display: grid;
+  place-items: center;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  background: var(--live);
+  color: var(--live-ink);
+}
+
+/*
+  Con menos movimiento pedido, el caballo NO se anima: salta a su posición.
+  La información —quién va dónde— se conserva entera; lo que se saca es la
+  interpolación. `styles.css` ya neutraliza las transiciones globalmente, esto lo
+  deja explícito acá porque es el lugar donde importa.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .lane__runner {
+    transition: none;
+  }
+}

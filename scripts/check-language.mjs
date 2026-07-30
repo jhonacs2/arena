@@ -118,6 +118,9 @@ const SCOPES = [
   'lab/solution/src',
   'lab/starter/src',
   'project/backend/internal',
+  // Arena es Angular 22 y no comparte código con el hipódromo, pero la regla
+  // del idioma vale en todo el repo: texto en castellano, código en inglés.
+  'arena/frontend/src',
   'scripts',
 ];
 

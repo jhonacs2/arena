@@ -1,0 +1,40 @@
+/*
+  Los cuatro tonos usan la MISMA tinta para el texto y se diferencian por la
+  franja lateral gruesa. Es la única forma de que el aviso pase AA en los dos
+  temas: con esta paleta, texto de color sobre fondo de color no llega a 4,5:1.
+*/
+
+:host {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: var(--border-width) solid var(--border);
+  border-inline-start-width: 0.75rem;
+  box-shadow: var(--shadow-hard);
+  font-size: var(--text-sm);
+}
+
+:host(.callout--danger) {
+  border-inline-start-color: var(--danger);
+}
+
+:host(.callout--warning) {
+  border-inline-start-color: var(--accent);
+}
+
+:host(.callout--success) {
+  border-inline-start-color: var(--success);
+}
+
+:host(.callout--info) {
+  border-inline-start-color: var(--text-muted);
+}
+
+.callout__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-base);
+  letter-spacing: -0.01em;
+  margin-block-end: var(--space-1);
+}

@@ -1,0 +1,100 @@
+<section class="panel" aria-labelledby="codes-title">
+  <h2 class="panel__title" id="codes-title">Códigos de invitación</h2>
+  <p class="panel__note">
+    Cada código sirve una sola vez y acredita sus monedas al canjearse. El alfabeto no tiene
+    <span class="num">I</span>, <span class="num">L</span>, <span class="num">O</span> ni
+    <span class="num">U</span>, y no tiene <span class="num">0</span> ni <span class="num">1</span>:
+    están hechos para dictarse en voz alta.
+  </p>
+
+  <form class="form" [formRoot]="batch" (submit)="generate()">
+    <div class="grid">
+      <div class="field">
+        <label class="field__label" for="count">Cuántos</label>
+        <input id="count" class="field__input" [formField]="batch.count" type="number" step="1" />
+        <app-field-errors [errors]="batch.count().errors()" [touched]="batch.count().touched()" />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="coins">Monedas que otorga</label>
+        <input id="coins" class="field__input" [formField]="batch.coinsGranted" type="number" step="1" />
+        <p class="field__help">1000 monedas = 10 puntos.</p>
+        <app-field-errors
+          [errors]="batch.coinsGranted().errors()"
+          [touched]="batch.coinsGranted().touched()"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="note">Nota</label>
+        <input id="note" class="field__input" [formField]="batch.note" type="text" placeholder="grupo del martes" />
+      </div>
+    </div>
+
+    @if (failure()) {
+      <app-callout tone="danger" title="No se pudieron generar">
+        <p>{{ failure() }}</p>
+      </app-callout>
+    }
+
+    <app-button type="submit" [loading]="batch().submitting()">Generar códigos</app-button>
+  </form>
+
+  @if (created().length > 0) {
+    <app-callout class="fresh" tone="success" title="Códigos nuevos">
+      <ul class="fresh__list" role="list">
+        @for (code of created(); track code) {
+          <li class="fresh__code num">{{ code }}</li>
+        }
+      </ul>
+    </app-callout>
+  }
+
+  <h3 class="subtitle">
+    Todos los códigos
+    <span class="subtitle__count num">{{ pending() }} sin usar</span>
+  </h3>
+
+  @if (listError()) {
+    <app-callout tone="danger" title="No se pudo cargar la lista">
+      <p>{{ listError() }}</p>
+    </app-callout>
+  } @else if (codes.isLoading() && codes.value().items.length === 0) {
+    <ul class="skeletons" role="list">
+      @for (row of [1, 2, 3]; track row) {
+        <li class="skeleton" aria-hidden="true"></li>
+      }
+    </ul>
+  } @else {
+    <div class="scroll-x">
+      <table class="table">
+        <caption class="sr-only">Códigos de invitación con su estado de canje</caption>
+        <thead>
+          <tr>
+            <th scope="col">Código</th>
+            <th scope="col" class="table__right">Monedas</th>
+            <th scope="col">Nota</th>
+            <th scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (code of codes.value().items; track code.code) {
+            <tr>
+              <td class="num code">{{ code.code }}</td>
+              <td class="table__right num">{{ code.coinsGranted | coins }}</td>
+              <td>{{ code.note ?? '—' }}</td>
+              <td>
+                @if (code.redeemedBy) {
+                  {{ code.redeemedBy }}
+                  <span class="table__detail num">{{ code.redeemedAt | when }}</span>
+                } @else {
+                  <span class="free">Libre</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

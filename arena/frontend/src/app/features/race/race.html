@@ -1,0 +1,205 @@
+<div class="container">
+  <p class="back"><a routerLink="/tablero">← Volver al tablero</a></p>
+
+  @if (loadError()) {
+    <app-callout tone="danger" title="No se pudo cargar la carrera">
+      <p>{{ loadError() }}</p>
+    </app-callout>
+  } @else if (detail.isLoading() && detail.value() === undefined) {
+    <div class="skeletons" aria-hidden="true">
+      <div class="skeleton skeleton--tall"></div>
+      <div class="skeleton"></div>
+    </div>
+    <p class="sr-only">Cargando la carrera…</p>
+  } @else if (detail.hasValue()) {
+    <header class="head">
+      <div class="head__line">
+        <h1>{{ detail.value().name }}</h1>
+        <app-status-badge [status]="status()" />
+      </div>
+      <p class="head__meta num">
+        {{ detail.value().scheduledAt | when }} · {{ horses().length }} caballos ·
+        {{ participants().length }} en la sala
+      </p>
+    </header>
+
+    <div class="layout">
+      <!-- ── La pista ──────────────────────────────────────────────────── -->
+      <section class="panel" aria-labelledby="track-title">
+        <h2 class="panel__title" id="track-title">
+          @if (isRunning()) {
+            Corriendo
+          } @else if (isFinished()) {
+            Resultado
+          } @else {
+            La pista
+          }
+        </h2>
+
+        <app-race-track
+          [horses]="horses()"
+          [positions]="positions()"
+          [status]="status()"
+          [results]="results()"
+          [myHorseId]="myBet()?.horseId ?? null"
+        />
+
+        @if (isFinished() && winner()) {
+          <app-callout
+            class="outcome"
+            [tone]="iWon() ? 'success' : 'info'"
+            [title]="iWon() ? '¡Ganaste!' : 'Ganó ' + (winner()?.horseName ?? '')"
+          >
+            @if (myBet() === null) {
+              <p>No apostaste en esta carrera.</p>
+            } @else if (iWon()) {
+              <p>
+                Cobrás <strong class="num">{{ (myPayout() ?? 0) | coins }}</strong> monedas por tu
+                apuesta de <strong class="num">{{ (myBet()?.amount ?? 0) | coins }}</strong> a
+                <strong class="num">{{ (myBet()?.oddsAtBet ?? 0) | odds }}</strong>.
+              </p>
+            } @else {
+              <p>
+                Apostaste <strong class="num">{{ (myBet()?.amount ?? 0) | coins }}</strong> a
+                <strong>{{ myBet()?.horseName }}</strong> y salió
+                <strong>{{ winner()?.horseName }}</strong>. Esas monedas ya no vuelven.
+              </p>
+            }
+          </app-callout>
+        }
+      </section>
+
+      <!-- ── La apuesta ────────────────────────────────────────────────── -->
+      <section class="panel bet" aria-labelledby="bet-title">
+        <h2 class="panel__title" id="bet-title">Tu apuesta</h2>
+
+        @if (myBet(); as bet) {
+          <dl class="ticket">
+            <dt>Caballo</dt>
+            <dd>{{ bet.horseName }}</dd>
+            <dt>Monto</dt>
+            <dd class="num">{{ bet.amount | coins }} monedas</dd>
+            <dt>Cuota congelada</dt>
+            <dd class="num">{{ bet.oddsAtBet | odds }}</dd>
+            <dt>Pagaría</dt>
+            <dd class="num">{{ bet.potentialPayout | coins }} monedas</dd>
+          </dl>
+          <p class="ticket__note">
+            La cuota quedó congelada en el momento de apostar. Si cambia después, tu apuesta no
+            cambia.
+          </p>
+        } @else if (session.isAdmin()) {
+          <p class="bet__closed">El instructor no apuesta: opera las carreras.</p>
+        } @else if (!isOpen()) {
+          <p class="bet__closed">
+            Las apuestas se cerraron cuando la carrera arrancó. No llegaste a esta.
+          </p>
+        } @else {
+          <form class="form" [formRoot]="betForm" (submit)="send()">
+            <fieldset class="horses">
+              <legend class="field__label">Elegí un caballo</legend>
+
+              @for (horse of horses(); track horse.id) {
+                <label class="horse" [class.horse--chosen]="betForm.horseId().value() === horse.id">
+                  <input
+                    class="horse__radio"
+                    type="radio"
+                    name="horse"
+                    [value]="horse.id"
+                    [checked]="betForm.horseId().value() === horse.id"
+                    (change)="chooseHorse(horse.id)"
+                  />
+                  <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
+                  <span class="horse__number num">{{ horse.number }}</span>
+                  <span class="horse__name">{{ horse.name }}</span>
+                  <span class="horse__odds num">{{ horse.odds | odds }}</span>
+                </label>
+              }
+            </fieldset>
+
+            <div class="field">
+              <label class="field__label" for="amount">Monedas</label>
+              <input
+                id="amount"
+                class="field__input"
+                [formField]="betForm.amount"
+                type="number"
+                step="1"
+                aria-describedby="amount-help"
+              />
+              <p class="field__help" id="amount-help">
+                Tenés <span class="num">{{ session.balance() | coins }}</span> monedas. Enteras, sin
+                decimales.
+              </p>
+              @for (error of betForm.amount().errors(); track error.kind) {
+                <p class="bet__error">{{ error.message }}</p>
+              }
+            </div>
+
+            @if (preview(); as shot) {
+              <p class="preview">
+                <span class="preview__label">Si gana {{ shot.horse.name }} cobrás</span>
+                <strong class="preview__value num">{{ shot.payout | coins }}</strong>
+              </p>
+            }
+
+            @if (failure()) {
+              <app-callout tone="danger" title="No se pudo apostar">
+                <p>{{ failure() }}</p>
+              </app-callout>
+            }
+
+            <app-button
+              type="submit"
+              size="lg"
+              [disabled]="!canBet() || betForm().invalid()"
+              [loading]="betForm().submitting()"
+            >
+              Apostar
+            </app-button>
+
+            <p class="bet__rule">
+              Una sola apuesta por carrera. No se puede cambiar ni retirar.
+            </p>
+          </form>
+        }
+      </section>
+
+      <!-- ── La sala ───────────────────────────────────────────────────── -->
+      <section class="panel room" aria-labelledby="room-title">
+        <h2 class="panel__title" id="room-title">La sala</h2>
+
+        @if (isOpen()) {
+          <p class="panel__note">
+            Mientras la carrera está abierta se ve quién apostó y cuánto, pero no a qué caballo:
+            si se viera, los últimos copiarían a los primeros.
+          </p>
+        }
+
+        @if (room().length === 0) {
+          <p class="room__empty">Todavía no entró nadie.</p>
+        } @else {
+          <ul class="room__list" role="list">
+            @for (seat of room(); track seat.userId) {
+              <li class="room__row" [class.room__row--mine]="seat.isMine">
+                <span class="room__name">{{ seat.username }}@if (seat.isMine) {<span class="room__you"> (vos)</span>}</span>
+                @if (seat.amount === null) {
+                  <span class="room__bet room__bet--none">sin apostar</span>
+                } @else {
+                  <span class="room__bet num">
+                    {{ seat.amount | coins }}
+                    @if (seat.horseName) {
+                      · {{ seat.horseName }}
+                    } @else {
+                      · caballo oculto
+                    }
+                  </span>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>

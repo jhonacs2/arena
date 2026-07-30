@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Arena</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Arena — apostá monedas virtuales en las carreras del módulo de Angular. Saldo simbólico, cero dinero real."
+    />
+
+    <!-- Le dice al navegador que la página funciona en los dos temas: los
+         controles nativos (scrollbars, autocompletado, el selector de fecha) se
+         pintan acorde. -->
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Las tres familias están auto-hospedadas: un aula tiene wifi de aula y un
+         CDN caído deja la clase sin tipografía. Se precarga solo la de cuerpo,
+         que es la que aparece primero; precargarlas todas competiría con el JS de
+         arranque por el mismo ancho de banda. -->
+    <link rel="preload" href="/fonts/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" href="favicon.ico" sizes="any" />
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

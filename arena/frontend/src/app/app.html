@@ -1,0 +1,57 @@
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="brand" [routerLink]="session.isAdmin() ? '/instructor' : '/tablero'">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__name">Arena</span>
+    </a>
+
+    @if (session.isAuthenticated()) {
+      <nav class="nav" aria-label="Secciones">
+        @if (session.isAdmin()) {
+          <a routerLink="/instructor" routerLinkActive="active">Instructor</a>
+        } @else {
+          <a routerLink="/tablero" routerLinkActive="active">Mi tablero</a>
+        }
+      </nav>
+
+      <!-- El saldo es lo único que el alumno mira sin que se lo pidan: monedas y
+           puntos juntos, porque 100 monedas = 1 punto y esa cuenta no se hace de
+           memoria a mitad de una carrera.
+
+           El instructor no lo ve: no apuesta, así que su saldo es 0 para siempre
+           y un «0 monedas» fijo en la cabecera solo confunde. -->
+      @if (!session.isAdmin()) {
+        <p class="balance">
+          <span class="balance__coins num">{{ session.balance() | coins }}</span>
+          <span class="balance__unit">monedas</span>
+          <span class="balance__points num">{{ session.points() }} pts</span>
+        </p>
+      }
+    }
+
+    <div class="actions">
+      <button class="icon-button" type="button" [attr.aria-label]="themeLabel()" (click)="theme.cycle()">
+        <span aria-hidden="true">{{ themeMark() }}</span>
+      </button>
+
+      @if (session.isAuthenticated()) {
+        <button class="icon-button icon-button--wide" type="button" (click)="signOut()">Salir</button>
+      }
+    </div>
+  </div>
+</header>
+
+<main id="contenido" class="main-area" tabindex="-1">
+  <router-outlet />
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>
+      <span>Arena · saldo virtual, cero dinero real</span>
+      <span class="footer__course">Módulo Angular · Talento DH 8va</span>
+    </p>
+  </div>
+</footer>

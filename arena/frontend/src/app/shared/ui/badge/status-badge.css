@@ -1,0 +1,53 @@
+:host {
+  display: inline-block;
+  line-height: 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard-sm);
+  white-space: nowrap;
+}
+
+.badge--draft {
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+.badge--open {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* El único que late. La animación comunica estado, no decora. */
+.badge--running {
+  background: var(--live);
+  color: var(--live-ink);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.badge--finished {
+  background: var(--success);
+  color: var(--success-ink);
+}
+
+.badge--cancelled {
+  background: var(--surface-sunken);
+  color: var(--text);
+  text-decoration: line-through;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: none;
+    transform: translate(2px, 2px);
+  }
+}

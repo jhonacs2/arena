@@ -1,0 +1,44 @@
+<!-- Lo que se anuncia por voz: solo los cambios de puntero. Ver `announcement`. -->
+<p class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement() }}</p>
+
+<ol class="track" role="list">
+  @for (horse of horses(); track horse.id) {
+    <li class="lane" [class.lane--mine]="horse.id === myHorseId()">
+      <div class="lane__tag">
+        <span class="lane__number num">{{ horse.number }}</span>
+        <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
+      </div>
+
+      <div class="lane__strip">
+        <!-- El único elemento que se mueve, y se mueve solo con transform. -->
+        <div class="lane__runner" [style.--progress]="progressOf(horse.id)">
+          <app-silk [horseId]="horse.id" [horseName]="horse.name" size="md" />
+        </div>
+        <span class="lane__post" aria-hidden="true"></span>
+      </div>
+
+      <div class="lane__info">
+        <span class="lane__name">{{ horse.name }}</span>
+        <span class="lane__odds num">{{ horse.odds | odds }}</span>
+        @if (placeOf(horse.id) !== null) {
+          <span class="lane__place num" [class.lane__place--first]="placeOf(horse.id) === 1">
+            {{ placeOf(horse.id) }}°
+          </span>
+        }
+      </div>
+    </li>
+  }
+</ol>
+
+@if (running()) {
+  <!-- El marcador visible cambia diez veces por segundo, así que NO es aria-live:
+       eso es lo que se anuncia arriba, resumido. -->
+  <ol class="standings" aria-hidden="true">
+    @for (entry of standings(); track entry.horse.id) {
+      <li class="standings__row">
+        <span class="standings__place num">{{ $index + 1 }}</span>
+        <span class="standings__name">{{ entry.horse.name }}</span>
+      </li>
+    }
+  </ol>
+}

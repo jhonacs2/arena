@@ -1,0 +1,50 @@
+# cloudflared — configuración del túnel de Arena
+#
+# Va en `/etc/cloudflared/config.yml` en el VPS. Reemplazar los tres valores
+# marcados con «REEMPLAZAR».
+#
+# Este archivo es la mitad del despliegue que hace que el backend **no tenga
+# ningún puerto de entrada**: cloudflared abre la conexión hacia Cloudflare desde
+# adentro del VPS y el tráfico vuelve por ahí. El firewall del VPS no necesita
+# permitir nada entrante.
+#
+# Ocultar el origen no es autenticar. Cualquiera que llegue a la URL pública llega
+# al backend: lo que decide si puede hacer algo son los JWT y la validación de rol
+# en cada handler. Ver arena/CLAUDE.md §4.
+
+# El UUID del túnel, tal como lo imprime `cloudflared tunnel create arena`.
+tunnel: REEMPLAZAR-uuid-del-tunel
+
+# El JSON de credenciales que deja ese mismo comando. Es un secreto: root, 0600.
+credentials-file: /etc/cloudflared/REEMPLAZAR-uuid-del-tunel.json
+
+# Métricas locales de cloudflared. En loopback, para poder mirarlas con curl
+# desde el propio VPS sin publicarlas.
+metrics: 127.0.0.1:2000
+
+# El VPS no se autoactualiza solo en medio de una clase. Se actualiza a mano,
+# cuando no hay nadie apostando.
+no-autoupdate: true
+
+# Reintentos y timeouts pensados para el WebSocket de la sala: `race.tick` va a
+# 10 Hz y una reconexión de 30 segundos se ve como una carrera congelada.
+retries: 5
+grace-period: 30s
+
+ingress:
+  # La API. Solo `/api/**` llega al backend; el resto del dominio lo sirve
+  # Cloudflare Pages. Ver la opción A del README para el shim que hace que el
+  # frontend pueda llamar a `/api` en su propio dominio.
+  - hostname: REEMPLAZAR-api.arena.ejemplo.com
+    service: http://127.0.0.1:8080
+    originRequest:
+      # El backend habla HTTP plano en loopback: el TLS lo termina Cloudflare.
+      noTLSVerify: false
+      connectTimeout: 10s
+      # Sin esto, el WebSocket de la sala se corta cada 90 segundos.
+      keepAliveTimeout: 5m
+      httpHostHeader: REEMPLAZAR-api.arena.ejemplo.com
+
+  # Regla final obligatoria: todo lo que no matcheó, 404. Sin este catch-all
+  # cloudflared no arranca.
+  - service: http_status:404

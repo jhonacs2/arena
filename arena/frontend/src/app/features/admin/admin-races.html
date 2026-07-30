@@ -1,0 +1,154 @@
+<section class="panel" aria-labelledby="operate-title">
+  <h2 class="panel__title" id="operate-title">Operar carreras</h2>
+  <p class="panel__note">
+    Nada arranca solo. Al largar, el servidor cierra las apuestas y fija la semilla, así que la
+    carrera se puede volver a correr igual. Al cancelar, cada apuesta vuelve íntegra al saldo.
+  </p>
+
+  @if (failure()) {
+    <app-callout tone="danger" title="No se pudo hacer">
+      <p>{{ failure() }}</p>
+    </app-callout>
+  }
+
+  @if (listError()) {
+    <app-callout tone="danger" title="No se pudieron cargar las carreras">
+      <p>{{ listError() }}</p>
+    </app-callout>
+  } @else if (races.isLoading() && ordered().length === 0) {
+    <ul class="skeletons" role="list">
+      @for (row of [1, 2]; track row) {
+        <li class="skeleton" aria-hidden="true"></li>
+      }
+    </ul>
+  } @else {
+    <ul class="ops" role="list">
+      @for (race of ordered(); track race.id) {
+        <li class="op">
+          <div class="op__head">
+            <a class="op__name" [routerLink]="['/carreras', race.id]">{{ race.name }}</a>
+            <app-status-badge [status]="race.status" />
+          </div>
+
+          <p class="op__meta num">
+            {{ race.scheduledAt | when }} · {{ race.horseCount }} caballos ·
+            {{ race.participantCount }} en la sala
+          </p>
+
+          <div class="op__actions">
+            @switch (race.status) {
+              @case ('draft') {
+                <app-button size="sm" [loading]="busy() === race.id" (click)="operate(race.id, 'open')">
+                  Abrir
+                </app-button>
+              }
+              @case ('open') {
+                <app-button size="sm" [loading]="busy() === race.id" (click)="operate(race.id, 'start')">
+                  Largar
+                </app-button>
+              }
+            }
+
+            @if (race.status === 'draft' || race.status === 'open' || race.status === 'running') {
+              <app-button
+                variant="danger"
+                size="sm"
+                [loading]="busy() === race.id"
+                (click)="operate(race.id, 'cancel')"
+              >
+                Cancelar
+              </app-button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+<section class="panel" aria-labelledby="new-race-title">
+  <h2 class="panel__title" id="new-race-title">Nueva carrera</h2>
+  <p class="panel__note">
+    Nace en borrador: los alumnos no la ven hasta que la abrís. Las cuotas van ×100 en entero —
+    <span class="num">340</span> es <span class="num">3,40</span>.
+  </p>
+
+  <form class="form" [formRoot]="draft" (submit)="create()">
+    <div class="grid">
+      <div class="field">
+        <label class="field__label" for="race-name">Nombre</label>
+        <input
+          id="race-name"
+          class="field__input"
+          [formField]="draft.name"
+          type="text"
+          placeholder="Clásico del Recuerdo"
+        />
+        <app-field-errors [errors]="draft.name().errors()" [touched]="draft.name().touched()" />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="race-when">Cuándo</label>
+        <input id="race-when" class="field__input" [formField]="draft.scheduledAt" type="datetime-local" />
+        <app-field-errors
+          [errors]="draft.scheduledAt().errors()"
+          [touched]="draft.scheduledAt().touched()"
+        />
+      </div>
+    </div>
+
+    <fieldset class="lineup">
+      <legend class="field__label">Los caballos</legend>
+
+      @for (horse of draft.horses; track $index) {
+        <div class="lineup__row">
+          <span class="lineup__number num">{{ $index + 1 }}</span>
+
+          <div class="field">
+            <label class="sr-only" [attr.for]="'horse-name-' + $index">
+              Nombre del caballo {{ $index + 1 }}
+            </label>
+            <input
+              class="field__input"
+              [id]="'horse-name-' + $index"
+              [formField]="horse.name"
+              type="text"
+              placeholder="Viento Norte"
+            />
+            <app-field-errors [errors]="horse.name().errors()" [touched]="horse.name().touched()" />
+          </div>
+
+          <div class="field lineup__odds">
+            <label class="sr-only" [attr.for]="'horse-odds-' + $index">
+              Cuota del caballo {{ $index + 1 }}
+            </label>
+            <input
+              class="field__input"
+              [id]="'horse-odds-' + $index"
+              [formField]="horse.odds"
+              type="number"
+              step="1"
+            />
+            <p class="field__help num">= {{ horse.odds().value() | odds }}</p>
+            <app-field-errors [errors]="horse.odds().errors()" [touched]="horse.odds().touched()" />
+          </div>
+
+          <app-button
+            variant="ghost"
+            size="sm"
+            [disabled]="draft.horses.length <= 2"
+            (click)="removeHorse($index)"
+          >
+            Quitar
+          </app-button>
+        </div>
+      }
+
+      <app-field-errors [errors]="draft.horses().errors()" [touched]="true" />
+
+      <app-button variant="secondary" size="sm" (click)="addHorse()">Agregar caballo</app-button>
+    </fieldset>
+
+    <app-button type="submit" [loading]="draft().submitting()">Crear en borrador</app-button>
+  </form>
+</section>

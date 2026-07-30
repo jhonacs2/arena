@@ -1,0 +1,113 @@
+<section class="panel" aria-labelledby="scores-title">
+  <h2 class="panel__title" id="scores-title">Puntajes</h2>
+  <p class="panel__note">
+    100 monedas = 1 punto. La masa de monedas sube con el tiempo y está bien: participar da
+    monedas. Cómo se traducen a la calificación final lo decidís vos, no la app.
+  </p>
+
+  @if (listError()) {
+    <app-callout tone="danger" title="No se pudo cargar el panel">
+      <p>{{ listError() }}</p>
+    </app-callout>
+  } @else if (scores.isLoading() && scores.value().items.length === 0) {
+    <ul class="skeletons" role="list">
+      @for (row of [1, 2, 3]; track row) {
+        <li class="skeleton" aria-hidden="true"></li>
+      }
+    </ul>
+  } @else if (scores.value().items.length === 0) {
+    <app-empty-state
+      title="Todavía no se registró nadie"
+      detail="En cuanto alguien canjee un código, aparece acá con sus 10 puntos."
+    />
+  } @else {
+    <div class="scroll-x">
+      <table class="table">
+        <caption class="sr-only">Alumnos con sus monedas y puntos</caption>
+        <thead>
+          <tr>
+            <th scope="col">Alumno</th>
+            <th scope="col" class="table__right">Monedas</th>
+            <th scope="col" class="table__right">Puntos</th>
+            <th scope="col" class="table__right">Apuestas</th>
+            <th scope="col"><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of scores.value().items; track row.userId) {
+            <tr>
+              <td>
+                {{ row.firstName }} {{ row.lastName }}
+                <span class="table__detail num">{{ row.username }}</span>
+              </td>
+              <td class="table__right num">{{ row.balance | coins }}</td>
+              <td class="table__right num points">{{ row.points }}</td>
+              <td class="table__right num">{{ row.betsWon }} / {{ row.betsPlaced }}</td>
+              <td class="table__right">
+                <app-button variant="secondary" size="sm" (click)="open(row)">
+                  Monedas
+                </app-button>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">En circulación</th>
+            <td class="table__right num">{{ totalCoins() | coins }}</td>
+            <td colspan="3"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  }
+
+  <!-- El regalo. Aparece bajo la tabla y no en un modal: en clase el instructor
+       comparte pantalla, y un diálogo tapando la tabla obliga a cerrarlo para
+       ver a quién le estaba dando monedas. -->
+  @if (target(); as row) {
+    <div class="gift">
+      <h3 class="gift__title">Monedas para {{ row.firstName }} {{ row.lastName }}</h3>
+      <p class="gift__note">
+        Va al ledger con tu nombre. Un número negativo es un ajuste: no borra nada, compensa.
+      </p>
+
+      <div class="grid">
+        <div class="field">
+          <label class="field__label" for="gift-coins">Monedas</label>
+          <input
+            id="gift-coins"
+            class="field__input"
+            type="number"
+            step="1"
+            [value]="coins()"
+            (input)="onCoins($event)"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="gift-note">Motivo</label>
+          <input
+            id="gift-note"
+            class="field__input"
+            type="text"
+            placeholder="participación en clase"
+            [value]="note()"
+            (input)="onNote($event)"
+          />
+        </div>
+      </div>
+
+      @if (failure()) {
+        <app-callout tone="danger" title="No se pudo acreditar">
+          <p>{{ failure() }}</p>
+        </app-callout>
+      }
+
+      <div class="gift__actions">
+        <app-button [loading]="working()" (click)="give()">Acreditar</app-button>
+        <app-button variant="ghost" (click)="close()">Cancelar</app-button>
+      </div>
+    </div>
+  }
+</section>

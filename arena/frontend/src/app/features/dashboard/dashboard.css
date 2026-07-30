@@ -1,0 +1,131 @@
+/* Grid bento: el saldo arriba, las carreras al lado, el ledger abajo. A 320px
+   cae a una columna sin media query, porque `auto-fit` ya lo resuelve. */
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.wallet {
+  /* El saldo es la tarjeta que se mira sin buscar: acento sólido. */
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-align: center;
+}
+
+.wallet .panel__title {
+  border-block-end-color: var(--accent-ink);
+}
+
+.wallet__coins {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wallet__unit {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-block-end: var(--space-4);
+}
+
+.wallet__points {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-width) solid var(--accent-ink);
+}
+
+.wallet__rule {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  opacity: 0.8;
+}
+
+/* Las carreras y el ledger ocupan todo el ancho disponible cuando hay dos
+   columnas: el saldo es angosto por naturaleza y no necesita más. */
+.races,
+.ledger {
+  grid-column: 1 / -1;
+}
+
+@media (width >= 60rem) {
+  .board {
+    grid-template-columns: 20rem 1fr;
+  }
+
+  .wallet {
+    grid-column: 1;
+    position: sticky;
+    inset-block-start: 5.5rem;
+  }
+
+  .races {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .ledger {
+    grid-column: 2;
+  }
+}
+
+/* ── Lista de carreras ─────────────────────────────────────────────────── */
+.race-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.race__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  text-decoration: none;
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard-sm);
+  transition:
+    transform var(--dur-instant) var(--ease-snap),
+    box-shadow var(--dur-instant) var(--ease-snap);
+}
+
+.race__link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-hard);
+}
+
+.race__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.race__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+}
+
+.race__meta {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+.race__bet {
+  margin-block-start: var(--space-2);
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--border);
+  font-size: var(--text-xs);
+}
+
+.race__bet--none {
+  color: var(--text-muted);
+}

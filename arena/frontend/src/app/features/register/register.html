@@ -1,0 +1,173 @@
+<div class="container">
+  <div class="sheet">
+    <header class="intro">
+      <p class="intro__eyebrow">Módulo Angular · Talento DH</p>
+      <h1>Entrá a la Arena</h1>
+      <p class="intro__lead">
+        Tu instructor te dio un código de invitación. Canjealo y arrancás con
+        <strong>1000 monedas</strong>, que son <strong>10 puntos</strong> de nota.
+        Después apostás en las carreras que se abren en clase.
+      </p>
+    </header>
+
+    <form class="form" [formRoot]="registration" (submit)="send()">
+      <!-- ── Paso 1: el código ──────────────────────────────────────────── -->
+      <fieldset class="step">
+        <legend class="step__legend"><span class="step__number">1</span> Tu código</legend>
+
+        <div class="field">
+          <label class="field__label" for="code">Código de invitación</label>
+          <input
+            id="code"
+            class="field__input field__input--code num"
+            [formField]="registration.code"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            placeholder="AVBD-1234"
+            [attr.aria-describedby]="'code-help'"
+          />
+          <p class="field__help" id="code-help">
+            Cuatro letras, guion, cuatro números. No hay <span class="num">I</span>,
+            <span class="num">L</span>, <span class="num">O</span> ni <span class="num">U</span>, y
+            no hay <span class="num">0</span> ni <span class="num">1</span>: se dictan en voz alta.
+          </p>
+          <app-field-errors
+            [errors]="registration.code().errors()"
+            [touched]="registration.code().touched()"
+          />
+        </div>
+
+        <!-- El estado de la comprobación. Los tres casos se ven distinto. -->
+        <div class="verdict" aria-live="polite">
+          @if (codeCheck.isLoading()) {
+            <p class="verdict__checking">Comprobando el código…</p>
+          } @else if (codeAccepted()) {
+            <app-callout tone="success" title="Código válido">
+              <p>
+                Te acredita <strong class="num">{{ coinsGranted() }}</strong> monedas, que son
+                <strong class="num">{{ pointsGranted() }}</strong> puntos. Completá tus datos y
+                quedás adentro.
+              </p>
+            </app-callout>
+          } @else if (codeError()?.code === 'CODE_NOT_FOUND') {
+            <!-- Error de tipeo: lleva a revisar lo escrito. El título es el
+                 mensaje del servidor tal cual; abajo va lo que hay que hacer. -->
+            <app-callout tone="danger" [title]="codeError()?.message ?? ''">
+              <p class="verdict__hint">
+                Revisá letra por letra. Si te dictaron una <span class="num">O</span> era un cero, y
+                si te dictaron una <span class="num">I</span> era un uno: esos caracteres no se usan
+                justamente por esto.
+              </p>
+            </app-callout>
+          } @else if (codeError()?.code === 'CODE_ALREADY_REDEEMED') {
+            <!-- No es un error de tipeo: es alguien que ya se registró, y lo que
+                 necesita es la puerta de al lado. -->
+            <app-callout tone="warning" [title]="codeError()?.message ?? ''">
+              <p class="verdict__hint">
+                Cada código sirve una sola vez. Si ya te registraste con este,
+                <a routerLink="/ingresar">iniciá sesión</a>. Si no fuiste vos, pedile otro al
+                instructor.
+              </p>
+            </app-callout>
+          } @else if (codeError()) {
+            <app-callout tone="danger" title="No se pudo comprobar el código">
+              <p>{{ codeError()?.message }}</p>
+            </app-callout>
+          }
+        </div>
+      </fieldset>
+
+      <!-- ── Paso 2: los datos ──────────────────────────────────────────── -->
+      <fieldset class="step" [class.step--locked]="!codeAccepted()">
+        <legend class="step__legend"><span class="step__number">2</span> Tus datos</legend>
+
+        <div class="grid">
+          <div class="field">
+            <label class="field__label" for="firstName">Nombre</label>
+            <input
+              id="firstName"
+              class="field__input"
+              [formField]="registration.profile.firstName"
+              type="text"
+              autocomplete="given-name"
+            />
+            <app-field-errors
+              [errors]="registration.profile.firstName().errors()"
+              [touched]="registration.profile.firstName().touched()"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="lastName">Apellido</label>
+            <input
+              id="lastName"
+              class="field__input"
+              [formField]="registration.profile.lastName"
+              type="text"
+              autocomplete="family-name"
+            />
+            <app-field-errors
+              [errors]="registration.profile.lastName().errors()"
+              [touched]="registration.profile.lastName().touched()"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="username">Usuario</label>
+            <input
+              id="username"
+              class="field__input"
+              [formField]="registration.profile.username"
+              type="text"
+              autocomplete="username"
+              spellcheck="false"
+            />
+            <app-field-errors
+              [errors]="registration.profile.username().errors()"
+              [touched]="registration.profile.username().touched()"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="password">Contraseña</label>
+            <input
+              id="password"
+              class="field__input"
+              [formField]="registration.profile.password"
+              type="password"
+              autocomplete="new-password"
+              aria-describedby="password-help"
+            />
+            <p class="field__help" id="password-help">Ocho caracteres o más.</p>
+            <app-field-errors
+              [errors]="registration.profile.password().errors()"
+              [touched]="registration.profile.password().touched()"
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      @if (failure()) {
+        <app-callout tone="danger" title="No se pudo completar el registro">
+          <p>{{ failure() }}</p>
+        </app-callout>
+      }
+
+      <app-button
+        type="submit"
+        size="lg"
+        [disabled]="!codeAccepted()"
+        [loading]="registration().submitting()"
+      >
+        Canjear el código y entrar
+      </app-button>
+
+      <p class="alternate">
+        ¿Ya tenés cuenta? <a routerLink="/ingresar">Iniciá sesión</a>.
+      </p>
+    </form>
+  </div>
+</div>

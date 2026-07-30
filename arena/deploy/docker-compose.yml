@@ -1,0 +1,74 @@
+# Arena — entorno local completo: Postgres + el backend.
+#
+#   cd arena/deploy
+#   cp .env.example .env        # y completar JWT_SECRET
+#   docker compose up --build
+#
+# Esto **no** es el despliegue de producción. En producción no hay Postgres local:
+# la base es Supabase y el backend corre solo, bajo `arena-api.service`. Este
+# compose existe para desarrollar y para probar el esquema contra un Postgres
+# descartable antes de tocar el de verdad.
+#
+# Los dos puertos se publican atados a 127.0.0.1. Nada de este proyecto abre un
+# puerto de entrada: el tráfico entra por el túnel, que sale desde adentro.
+
+name: arena
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-arena}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-arena}
+      POSTGRES_DB: ${POSTGRES_DB:-arena}
+    ports:
+      # Solo para poder abrir un psql desde la máquina. Ni el backend ni nadie
+      # más necesita que esto salga del loopback.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - arena-pgdata:/var/lib/postgresql/data
+      # El esquema se aplica al crear el volumen. Es idempotente, así que
+      # `docker compose exec -T db psql … -f -` lo puede volver a aplicar cuando
+      # cambie, sin borrar nada — eso es justo lo que verifica
+      # `node scripts/verify-arena.mjs esquema`.
+      - ../docs/contract/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-arena} -d ${POSTGRES_DB:-arena}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    build:
+      # El contexto es `arena/`: el Dockerfile necesita `backend/` y
+      # `docs/contract/schema.sql`. Ver arena/.dockerignore.
+      context: ..
+      dockerfile: deploy/Dockerfile
+    environment:
+      PORT: "8080"
+      # `db` es el nombre del servicio: la resolución la hace la red del compose.
+      # En producción esta variable apunta al pooler de Supabase.
+      DATABASE_URL: postgres://${POSTGRES_USER:-arena}:${POSTGRES_PASSWORD:-arena}@db:5432/${POSTGRES_DB:-arena}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?falta JWT_SECRET, ver .env.example}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DB_MAX_CONNS: ${DB_MAX_CONNS:-10}
+      # Postgres directo, no el pooler: las sentencias preparadas andan bien.
+      DB_SIMPLE_PROTOCOL: "false"
+      MIGRATE: ${MIGRATE:-true}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-instructor}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-instructor}
+      # En local el frontend está en otro puerto, que para el navegador ya es otro
+      # sitio: la cookie de refresh necesita SameSite=None. Y sin TLS, Secure=false.
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-none}
+      COOKIE_SECURE: "false"
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  arena-pgdata:
