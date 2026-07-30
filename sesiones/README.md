@@ -13,18 +13,22 @@ sesiones/
 
 ## Los archivos de cada sesión
 
-| Archivo | Bloque del guión | Qué es |
-|---|---|---|
-| `guion.md` | todos | Los 12 bloques con sus minutos y qué decir en cada uno. **Es el documento maestro.** |
-| `slides.md` | 0:12 en adelante | Marp. El guión de cada diapositiva vive en sus speaker notes. |
-| `diagramas/*.svg` | 0:12 | El concepto dibujado. Editor cerrado. |
-| `mision-1.md` | 0:35 | Enunciado individual, en `lab/starter`. |
-| `mision-2.md` | 1:25 | Enunciado en parejas, en `project/frontend/starter`. |
-| `correccion.md` | 1:45 | **De vacío a funcionando, paso a paso.** Es lo que hace posible el starter vacío. |
-| `predice-y-ejecuta/` | 1:10 | Snippets rotos + `respuestas.md`. |
-| `wayground.csv` | 0:05 de la **sesión siguiente** | Preguntas sobre **esta** sesión. |
-| `exit-ticket.md` | 1:55 | Tres preguntas. |
-| `tarea.md` | 1:55 | Consigna asíncrona. |
+| Archivo | Bloque del guión | Quién lo lee | Qué es |
+|---|---|---|---|
+| `guion.md` | todos | instructor | Los 12 bloques con sus minutos y qué decir en cada uno. **Es el documento maestro.** |
+| `slides.md` | 0:12 en adelante | ambos | Marp. El guión de cada diapositiva vive en sus speaker notes. |
+| `diagramas/*.excalidraw` | 0:12 | ambos | El concepto dibujado. Editor cerrado. El `.svg` de al lado es generado. |
+| `mision-profe.md` | 0:20 | instructor | **La secuencia de tecleo del live coding**, en `demo/`. |
+| `mision-estudiante-1.md` | 0:35 | alumno | Ejercicio individual, en `lab/starter`. |
+| `mision-estudiante-2.md` | 1:25 | alumno | Ejercicio en parejas, en `project/frontend/starter`. |
+| `correccion.md` | 1:45 | ambos | **De vacío a funcionando, paso a paso.** Es lo que hace posible el starter vacío. |
+| `conceptos.md` | después de clase | alumno | **El apunte de referencia.** Lo que reemplaza a la memoria en la tarea. |
+| `predice-y-ejecuta/` | 1:10 | ambos | Snippets rotos + `respuestas.md`. |
+| `wayground.csv` | 0:05 de la **sesión siguiente** | instructor | Preguntas sobre **esta** sesión. |
+| `exit-ticket.md` | 1:55 | ambos | Tres preguntas. |
+| `tarea.md` | 1:55 | alumno | Consigna asíncrona. |
+
+El nombre de las misiones dice **quién teclea**: `mision-profe` es lo que se demuestra en vivo, `mision-estudiante-N` lo que codean ellos. Los ejercicios de alumno se escriben como ejercicio de libro —enunciado, datos, requisitos, resultado esperado, restricciones—, sin voz de instructor: se leen en casa, sin el contexto del aula.
 
 ## El desfase del Wayground
 

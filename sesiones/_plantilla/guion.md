@@ -68,7 +68,7 @@ Proyecto: `lab/solution` → ruta `/sNN`
 
 ## 0:35 — Misión 1 · 15 min
 
-Enunciado: `mision-1.md` · Trabajan en `lab/starter`, ruta `/sNN` · **Individual**
+Enunciado: `mision-estudiante-1.md` · Trabajan en `lab/starter`, ruta `/sNN` · **Individual**
 
 **Estás en silencio.** Disponible si preguntan, pero no circulás ofreciendo ayuda. Los 15 minutos de pelearse solo con el error son la clase.
 
@@ -120,7 +120,7 @@ El paso 2 es todo el ejercicio. Ejecutar primero lo convierte en una demo.
 
 ## 1:25 — Misión 2, en parejas · 20 min
 
-Enunciado: `mision-2.md` · Trabajan en `project/frontend/starter` · **En parejas**
+Enunciado: `mision-estudiante-2.md` · Trabajan en `project/frontend/starter` · **En parejas**
 
 Acá el concepto aterriza en el proyecto ancla. Es el único bloque donde tocan el hipódromo.
 

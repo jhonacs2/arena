@@ -28,7 +28,13 @@ Se producen **cuatro artefactos** desde este mismo spec. No los mezcles:
 | **Solución de referencia** | `project/frontend/solution/` | App completa. Solo la ve el instructor. |
 | **Starter del alumno** | `project/frontend/starter/` | Lo que recibe el alumno. Ver la regla de abajo. |
 | **Lab** | `lab/solution/` y `lab/starter/` | App aparte, una ruta por sesión. El concepto **aislado**. |
-| **Materiales de clase** | `sesiones/sNN-*/` | Guión, slides, misiones, quiz, corrección. |
+| **Materiales de clase** | `sesiones/sNN-*/` | Guión, slides, ejercicios, apunte, corrección. |
+
+Y una cuarta copia que **no es un artefacto**, es una herramienta: `demo/`.
+
+> El live coding **no se da en `solution/`**. Se da en `demo/`, una copia descartable de `starter/` que genera `scripts/prep-demo.mjs` y que está en `.gitignore`.
+
+Escribir en el guión «borrá tal carpeta antes de empezar» es pedirle al instructor que mutile su solución de referencia cinco minutos antes de dar la clase. Y es innecesario: el lienzo correcto para el live coding —el proyecto en el estado justo anterior a esta sesión— **ya es `starter/`**. Detalle en [`sesiones/CLAUDE.md`](sesiones/CLAUDE.md).
 
 ### La regla del starter
 
@@ -42,6 +48,12 @@ Dos consecuencias:
 - **Sí se borra el código que es el ejercicio.** Si el componente de la sesión es lo que se construye, en el starter no existe: lo crean ellos, con el CLI.
 
 Cada sesión tiene su **`correccion.md`**: el paso a paso de vacío a funcionando, para guiar en vivo y para que el alumno se autocorrija.
+
+### Y su `conceptos.md`
+
+> **Las clases son en vivo y no quedan grabadas. La memoria es frágil.**
+
+Sin apunte, el alumno se sienta a hacer la tarea con lo que recuerda de dos horas. Cada sesión deja un **`conceptos.md`** con cada concepto, su definición, **los ejemplos exactos que se corrieron en clase** y los errores con su mensaje literal. Se anuncia en voz alta al cerrar: un apunte que nadie sabe que existe no existe.
 
 ### El lab y el hipódromo son dos cosas distintas
 
@@ -62,11 +74,13 @@ a/                              ← workspace del instructor. Tiene TODO.
 │   ├── design/                 ← tokens.json · tokens.md · IMAGES.md · assets/
 │   ├── curriculum.md           ← sesión → concepto → lab → misión ancla
 │   └── plan.md                 ← estado y qué sigue
-├── project/{backend, frontend/{solution,starter}}
-├── lab/{solution,starter}
+├── project/{backend, frontend/{solution,starter,demo*}}
+├── lab/{solution,starter,demo*}
 ├── sesiones/                   ← _plantilla/ + s00 … s11
 ├── scripts/                    ← verify.mjs y generadores
 └── theme/marp-neobrutal.css
+
+* demo/ no está en git: la genera scripts/prep-demo.mjs y es descartable.
 ```
 
 **Este workspace no se publica.** `scripts/publish-student-repo.sh` genera el repo del alumno con solo `project/backend` + `project/frontend/starter` + `lab/starter`, y se taggea `s01`, `s02`… al cerrar cada clase.
@@ -157,6 +171,7 @@ Saltea con gracia lo que todavía no existe. Si falla, **arreglá antes de segui
 | hoja de sedas y `silks.golden.ts` | `gen-silks-specimen.mjs` |
 | `public/contract/`, `internal/seed/data/` | `sync-contract.mjs` |
 | `public/fonts/` y `src/fonts.css` | `fetch-fonts.mjs` |
+| `sesiones/**/diagramas/*.svg` | `gen-diagram-svg.mjs` — la fuente es el `.excalidraw` |
 
 `verify.mjs` los corre en modo `--check` y falla si algo quedó desfasado.
 
@@ -175,10 +190,12 @@ Saltea con gracia lo que todavía no existe. Si falla, **arreglá antes de segui
 | 7. El starter arranca sin el código de la sesión, y su `correccion.md` lleva de vacío a funcionando | siempre |
 | 8. La ruta `/sNN` del lab existe en `solution/`. En `starter/` **no**: crearla es el ejercicio | siempre |
 | 9. Los materiales de `sesiones/sNN-*/` están completos | siempre |
-| 10. La vista maneja los tres estados: cargando, vacío, error | **S7** |
-| 11. Se probó contra el mock **y** contra el backend real, y se ve igual | **S7** |
+| 10. `conceptos.md` alcanza para hacer la tarea **sin la memoria de la clase** | siempre |
+| 11. Los ejercicios de alumno se leen como ejercicio de libro, sin voz de instructor | siempre |
+| 12. La vista maneja los tres estados: cargando, vacío, error | **S7** |
+| 13. Se probó contra el mock **y** contra el backend real, y se ve igual | **S7** |
 
-Los puntos 10 y 11 **no aplican antes de S7**: hasta ahí los datos son constantes tipadas y no hay nada que cargar ni que pueda fallar. Decirlo en voz alta en el code review de las sesiones tempranas es mejor que exigir algo imposible y acostumbrar a saltear la lista.
+Los puntos 12 y 13 **no aplican antes de S7**: hasta ahí los datos son constantes tipadas y no hay nada que cargar ni que pueda fallar. Decirlo en voz alta en el code review de las sesiones tempranas es mejor que exigir algo imposible y acostumbrar a saltear la lista.
 
 ---
 

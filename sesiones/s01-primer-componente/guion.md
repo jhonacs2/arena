@@ -114,7 +114,7 @@ Si algo necesita más de 30 segundos, va a la tarea. **No te enganches acá.**
 
 > «Un componente son **dos archivos que se hablan**.»
 >
-> «A la izquierda, **la clase**: un archivo TypeScript. Ahí viven los datos y las decisiones. Cuánto sale el café, si hay stock, qué pasa cuando alguien pide.»
+> «A la izquierda, **la demo**: un archivo TypeScript. Ahí viven los datos y las decisiones. Cuánto sale el café, si hay stock, qué pasa cuando alguien pide.»
 >
 > «A la derecha, **el template**: un archivo HTML. Es lo que se ve. Y ojo con esto, porque es la primera trampa: **el template no es HTML común**. Es HTML con instrucciones adentro, y esas instrucciones las lee Angular antes de dibujar.»
 >
@@ -145,14 +145,18 @@ Señalá cada flecha del diagrama mientras decís:
 
 > «Cierren el editor. Los próximos quince minutos yo escribo y ustedes miran. No copien: van a hacer esto mismo después, y con las manos libres se entiende mejor. Si me equivoco, avisen.»
 
-**En pantalla:** VS Code y el navegador lado a lado. Proyecto: `lab/solution`.
+**En pantalla:** VS Code y el navegador lado a lado. Proyecto: **`lab/demo`**.
 
-> Trabajás sobre `lab/solution`, que ya tiene el resultado. **Borrá `src/app/sessions/s01/` antes de empezar** para escribirlo en vivo, o tené a mano `correccion.md`, que es exactamente esta secuencia.
+> **Antes de entrar al aula:** `node scripts/prep-demo.mjs` y después `cd lab/demo && npm start`.
+>
+> `lab/demo` es una copia descartable de `lab/starter`: arranca en el mismo estado en que están los alumnos, con el componente de S1 sin existir. **No le borres nada a `lab/solution`** — tu solución de referencia queda intacta, y si el bloque se descarrila, `prep-demo.mjs` te devuelve el lienzo limpio en un segundo.
+>
+> La secuencia de tecleo completa, con las dos roturas deliberadas, está en **`mision-profe.md`**. Ponela en el segundo monitor: este guión lleva la clase, ese archivo lleva el teclado.
 
 ### 0:20 — El CLI crea el componente · 2 min
 
 ```bash
-cd lab/solution
+cd lab/demo
 ng generate component sessions/s01 --flat
 ```
 
@@ -239,7 +243,7 @@ En el template:
 
 ```html
 <button type="button" (click)="toggleAvailability()">
-  {{ coffee.available ? 'Marcar agotado' : 'Marcar available' }}
+  {{ coffee.available ? 'Marcar agotado' : 'Marcar disponible' }}
 </button>
 ```
 
@@ -292,11 +296,11 @@ Escribí en el input y mostrá cómo el `<p>` de abajo cambia mientras escribís
 
 ## 0:35 · Misión 1 — 15 min
 
-**En pantalla:** diapositiva 15 con el enunciado. Enunciado completo en `mision-1.md`.
+**En pantalla:** diapositiva 15 con el enunciado. Enunciado completo en `mision-estudiante-1.md`.
 
 > «Ahora ustedes. Mismo mostrador, en `lab/starter`. El componente **no existe**: lo crean con el CLI, igual que recién. Quince minutos.»
 
-> **Estás en silencio.** Disponible si preguntan, pero no circulás ofreciendo ayuda. Los quince minutos de pelearse con el error **son la clase**.
+> **Estás en silencio.** Disponible si preguntan, pero no circulás ofreciendo ayuda. Los quince minutos de pelearse con el error **son la demo**.
 
 **Reloj de pistas** — solo si más de la mitad está trabada en lo mismo:
 
@@ -359,7 +363,7 @@ Casi siempre eligen el tercero, y tienen razón:
 
 ## 1:25 · Misión 2, en parejas — 20 min
 
-**En pantalla:** diapositiva 21. Enunciado en `mision-2.md`.
+**En pantalla:** diapositiva 21. Enunciado en `mision-estudiante-2.md`.
 
 > «Ahora al proyecto de verdad. En parejas, veinte minutos: diez escribe uno y dicta el otro, y a los diez se invierten. El que dicta no toca el teclado; el que escribe no decide.»
 
@@ -402,6 +406,12 @@ Y decí esto, textual, porque si no lo van a esperar:
 > «La tercera es la que más me sirve: qué quedó confuso. Vale “nada”, vale “todo”, vale una palabra. Con eso arranco la clase que viene.»
 
 **Tarea:** `tarea.md`. **Leela en voz alta antes de cortar.** Una tarea que solo se manda por chat no se hace.
+
+**Y decí esto, que es lo que más se olvida:**
+
+> «Última cosa, y es importante. En el repo les dejé un archivo que se llama **`conceptos.md`**. Está todo lo de hoy: cada concepto con su definición y **los ejemplos exactos que corrimos acá**. La clase es en vivo y no queda grabada, así que cuando se sienten a hacer la tarea, eso es lo que tienen en vez de acordarse. Ténganlo abierto al lado del editor.»
+
+> ⚠️ No lo saltees por falta de tiempo. Si nadie sabe que el apunte existe, es como si no existiera — y es lo único que tienen entre esta clase y la que viene.
 
 ---
 

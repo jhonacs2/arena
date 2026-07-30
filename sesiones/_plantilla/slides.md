@@ -141,7 +141,7 @@ en lo mismo, una pista para todos en voz alta, sin resolver.
 
 **Listo cuando:** …
 
-<!-- El enunciado completo está en mision-1.md. -->
+<!-- El enunciado completo está en mision-estudiante-1.md. -->
 
 ---
 

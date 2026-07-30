@@ -85,8 +85,8 @@ Una carpeta `sesiones/sNN-<slug>/` con estos archivos, siempre los mismos:
 guion.md              los 12 bloques con sus minutos y qué decir en cada uno
 slides.md             Marp. El guión vive en las speaker notes del MISMO archivo
 diagramas/*.svg       para el bloque 0:12, sin editor abierto
-mision-1.md           enunciado + criterios de listo (lab, individual)
-mision-2.md           enunciado + criterios de listo (hipódromo, en parejas)
+mision-estudiante-1.md           enunciado + criterios de listo (lab, individual)
+mision-estudiante-2.md           enunciado + criterios de listo (hipódromo, en parejas)
 predice-y-ejecuta/    snippets rotos + respuestas.md con la explicación
 wayground.csv         preguntas SOBRE esta sesión — se corren en la SIGUIENTE
 exit-ticket.md        3 preguntas

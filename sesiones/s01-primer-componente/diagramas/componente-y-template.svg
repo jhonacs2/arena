@@ -1,90 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460" font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 46 894 431" width="894" height="431" role="img">
   <style>
-    :root, svg {
-      --ink:    oklch(0.17 0.02 155);
-      --chalk:  oklch(0.97 0.008 110);
-      --accent: oklch(0.64 0.15 55);
-      --muted:  oklch(0.5 0.02 155);
-    }
+    svg { --dg-surface: #f5f6f0; --dg-surface-raised: #ffffff; --dg-surface-sunken: #ebece4; --dg-text: #08120c; --dg-text-muted: #5b675e; --dg-border: #08120c; --dg-shadow: #08120c; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #d8151e; --dg-live-ink: #f5f6f0; --dg-success: #137d41; --dg-success-ink: #f5f6f0; --dg-danger: #d8151e; --dg-danger-ink: #f5f6f0; }
     @media (prefers-color-scheme: dark) {
-      :root, svg {
-        --ink:   oklch(0.97 0.008 110);
-        --chalk: oklch(0.17 0.02 155);
-        --accent: oklch(0.78 0.14 55);
-        --muted: oklch(0.72 0.014 110);
-      }
+      svg { --dg-surface: #121c15; --dg-surface-raised: #1e2a22; --dg-surface-sunken: #030905; --dg-text: #e1e2da; --dg-text-muted: #a5a59c; --dg-border: #bebfb5; --dg-shadow: #030905; --dg-accent: #fb9d59; --dg-accent-ink: #08120c; --dg-live: #fd7468; --dg-live-ink: #08120c; --dg-success: #c6e8ce; --dg-success-ink: #08120c; --dg-danger: #fd7468; --dg-danger-ink: #08120c; }
     }
-    .caja   { fill: var(--chalk); stroke: var(--ink); stroke-width: 3; }
-    .sombra { fill: var(--ink); }
-    .titulo { font-size: 19px; font-weight: 800; fill: var(--ink); letter-spacing: -0.02em; }
-    .sub    { font-size: 12px; fill: var(--muted); }
-    .item   { font-size: 14px; fill: var(--ink); font-family: ui-monospace, 'Cascadia Mono', monospace; }
-    .flecha { stroke: var(--ink); stroke-width: 3; fill: none; }
-    .sintaxis { font-size: 15px; font-weight: 700; fill: var(--ink); font-family: ui-monospace, 'Cascadia Mono', monospace; }
-    .nombre { font-size: 11px; fill: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
-    .pastilla { fill: var(--accent); stroke: var(--ink); stroke-width: 2; }
-    .pastilla-txt { font-size: 12px; font-weight: 700; fill: var(--ink); }
   </style>
 
   <defs>
-    <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink)" />
-    </marker>
+    <marker id="mk-triangle-end-vardgborder08120c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-border, #08120c)" /></marker>
+    <marker id="mk-triangle-start-vardgborder08120c" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-border, #08120c)" transform="rotate(180 5 5)" /></marker>
   </defs>
-
-  <rect width="100%" height="100%" fill="var(--chalk)" />
-
-  <!-- ── Caja: la clase ─────────────────────────────────────────────── -->
-  <rect class="sombra" x="34" y="74" width="230" height="240" />
-  <rect class="caja"   x="30" y="70" width="230" height="240" />
-  <text class="nombre" x="50" y="98">TypeScript</text>
-  <text class="titulo" x="50" y="124">La clase</text>
-  <text class="sub"    x="50" y="146">Los datos y las decisiones</text>
-
-  <text class="item" x="50" y="188">cafe = { … }</text>
-  <text class="item" x="50" y="214">cliente = ''</text>
-  <text class="item" x="50" y="240">cantidad = 1</text>
-  <text class="item" x="50" y="266">agregar()</text>
-
-  <!-- ── Caja: el template ──────────────────────────────────────────── -->
-  <rect class="sombra" x="644" y="74" width="230" height="240" />
-  <rect class="caja"   x="640" y="70" width="230" height="240" />
-  <text class="nombre" x="660" y="98">HTML</text>
-  <text class="titulo" x="660" y="124">El template</text>
-  <text class="sub"    x="660" y="146">Lo que se ve</text>
-
-  <text class="item" x="660" y="188">&lt;h2&gt;…&lt;/h2&gt;</text>
-  <text class="item" x="660" y="214">&lt;input&gt;</text>
-  <text class="item" x="660" y="240">&lt;button&gt;</text>
-  <text class="item" x="660" y="266">&lt;p&gt;…&lt;/p&gt;</text>
-
-  <!-- ── Flecha 1: interpolación ────────────────────────────────────── -->
-  <line class="flecha" x1="270" y1="120" x2="630" y2="120" marker-end="url(#punta)" />
-  <text class="sintaxis" x="450" y="112" text-anchor="middle">{{ nombre }}</text>
-  <text class="nombre"   x="450" y="140" text-anchor="middle">Interpolación · texto</text>
-
-  <!-- ── Flecha 2: property binding ─────────────────────────────────── -->
-  <line class="flecha" x1="270" y1="184" x2="630" y2="184" marker-end="url(#punta)" />
-  <text class="sintaxis" x="450" y="176" text-anchor="middle">[disabled]="…"</text>
-  <text class="nombre"   x="450" y="204" text-anchor="middle">Property binding · propiedad</text>
-
-  <!-- ── Flecha 3: event binding ────────────────────────────────────── -->
-  <line class="flecha" x1="630" y1="248" x2="270" y2="248" marker-end="url(#punta)" />
-  <text class="sintaxis" x="450" y="240" text-anchor="middle">(click)="…"</text>
-  <text class="nombre"   x="450" y="268" text-anchor="middle">Event binding · el DOM avisa</text>
-
-  <!-- ── Flecha 4: two-way ──────────────────────────────────────────── -->
-  <line class="flecha" x1="270" y1="298" x2="630" y2="298" marker-start="url(#punta)" marker-end="url(#punta)" />
-  <text class="sintaxis" x="450" y="290" text-anchor="middle">[(ngModel)]="…"</text>
-  <text class="nombre"   x="450" y="318" text-anchor="middle">Two-way · en los dos sentidos</text>
-
-  <!-- ── Nota ───────────────────────────────────────────────────────── -->
-  <rect class="pastilla" x="240" y="368" width="420" height="34" />
-  <text class="pastilla-txt" x="450" y="390" text-anchor="middle">
-    [(ngModel)] es [ngModel] + (ngModelChange) — necesita FormsModule
-  </text>
-
-  <text class="sub" x="450" y="432" text-anchor="middle">
-    Un componente standalone declara en imports lo que usa. Nadie lo declara por él.
-  </text>
+  <rect x="6" y="46" width="894" height="431" fill="var(--dg-surface, #f5f6f0)" />
+  <rect x="36" y="76" width="250" height="250" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="30" y="70" width="250" height="250" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="90.88">TYPESCRIPT</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="117.75">La clase</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="143.5">Los datos y las decisiones</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="186.75">coffee = { … }</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="214.75">customer = ''</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="242.75">quantity = 1</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="270.75">add()</tspan></text>
+  <rect x="626" y="76" width="250" height="250" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="620" y="70" width="250" height="250" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="90.88">HTML</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="117.75">El template</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="143.5">Lo que se ve</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="186.75">&lt;h2&gt;…&lt;/h2&gt;</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="214.75">&lt;input&gt;</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="242.75">&lt;button&gt;</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="642" y="270.75">&lt;p&gt;…&lt;/p&gt;</tspan></text>
+  <path d="M 290 126 L 610 126" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="94.88">INTERPOLACIÓN · TEXTO</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="15" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="113.38">{{ name }}</tspan></text>
+  <path d="M 290 190 L 610 190" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="158.88">PROPERTY BINDING · PROPIEDAD</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="15" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="177.38">[disabled]=&quot;…&quot;</tspan></text>
+  <path d="M 610 254 L 290 254" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="222.88">EVENT BINDING · EL DOM AVISA</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="15" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="241.38">(click)=&quot;…&quot;</tspan></text>
+  <path d="M 290 318 L 610 318" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-start="url(#mk-triangle-start-vardgborder08120c)" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="286.88">TWO-WAY · EN LOS DOS SENTIDOS</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="15" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="305.38">[(ngModel)]=&quot;…&quot;</tspan></text>
+  <rect x="240" y="378" width="420" height="38" fill="var(--dg-accent, #cf6f19)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="var(--dg-accent-ink, #08120c)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="397.13">[(ngModel)] es [ngModel] + (ngModelChange)</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="middle" dominant-baseline="central"><tspan x="450" y="445.5">Un componente standalone declara en imports lo que usa. Nadie lo declara por él.</tspan></text>
 </svg>

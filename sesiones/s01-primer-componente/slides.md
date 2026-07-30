@@ -450,7 +450,7 @@ y event binding juntos, con azúcar sintáctica."
 ## Individual · 15 min
 
 <!--
-lab/starter. El enunciado completo está en mision-1.md.
+lab/starter. El enunciado completo está en mision-estudiante-1.md.
 
 ESTÁS EN SILENCIO. Disponible si preguntan, pero no circulás ofreciendo
 ayuda. Los quince minutos de pelearse con el error SON la clase.

@@ -8,6 +8,7 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **1** | Backend Go, completo y congelado | ✅ **terminada** |
 | **2** | Baseline visual del hipódromo | ✅ **terminada** |
 | **3** | S1 · Primer componente | ✅ **terminada** — falta darla |
+| **3.5** | Revisión del formato de los materiales | ✅ **terminada** |
 | **4–13** | Una sesión por fase, S2 … S11 | ⬜ siguiente |
 | **14** | Publicación y deploy | ⬜ |
 
@@ -85,6 +86,23 @@ Tres cosas que se arreglaron porque se verificaron en vez de suponerse:
 - El deck de Marp salía **sin un solo color**: un `sesiones/s01-*/` dentro de un comentario del tema CSS cerraba el comentario en el `*/` del glob y corrompía todo lo que seguía
 - La franja de la portada usaba `::after`, que **Marp ya usa para la paginación** — y era un `linear-gradient`, prohibido por §10. Ahora es un borde sólido
 - La respuesta del primer «predice y ejecuta» era **la contraria** de lo que había escrito: `class` y `[class.x]` no compiten, se combinan
+
+## Fase 3.5 — Revisión del formato de los materiales ✅
+
+Cuatro cambios que salieron de leer S1 completa. Se aplicaron a S1 y a `_plantilla/`, así que S2 los hereda.
+
+- **Los diagramas se autoran en Excalidraw.** El `.excalidraw` es la fuente y el `.svg` lo genera `gen-diagram-svg.mjs`. El motivo es que el bloque de las 0:12 se da **dibujando**: agregar una flecha en vivo mientras alguien pregunta vale más que un SVG prolijo intocable.
+- **El live coding no se da en `solution/`.** `prep-demo.mjs` copia `starter/` → `demo/` en un segundo. El guión decía «borrá `sessions/s01` antes de empezar» — mutilar la solución de referencia cinco minutos antes de dar la clase, y además innecesario: el lienzo correcto ya era `starter/`.
+- **`mision-profe` y `mision-estudiante-N`.** El nombre dice quién teclea. Los ejercicios de alumno se reescribieron como **ejercicio de libro** —enunciado, datos, requisitos numerados, resultado esperado dibujado, restricciones, autoevaluación, pistas escalonadas—, sin voz de instructor: se leen en casa, sin el contexto del aula.
+- **`conceptos.md`, el apunte.** Las clases son en vivo y no quedan grabadas. Cada sesión deja cada concepto con su definición, **los ejemplos exactos que se corrieron en clase** y los errores con su mensaje literal. Se anuncia en voz alta a las 1:55: un apunte que nadie sabe que existe no existe.
+
+Tres defectos reales que aparecieron al mirar en vez de suponer:
+
+- El generador de diagramas deducía el token del color, y en claro `text`, `border`, `shadow` y `accent-ink` son **los cuatro** ink-900. En oscuro se separan: la sombra dura salía **blanca** y el texto de la pastilla quedaba claro sobre claro. Se resolvió con `customData` explícito, que Excalidraw preserva al guardar, más un aviso del generador para el único caso genuinamente ambiguo (un relleno).
+- El diagrama mostraba `cafe`, `cliente`, `cantidad`, `agregar()` — **código en español**, contra §3.
+- `'Marcar available'` en el guión **y en `lab/solution`**: texto de usuario en inglés, resto del barrido de renombrado.
+
+Y una decisión de nombre: la carpeta se llama `demo/` y no `clase/` porque `check-language.mjs` marcó `prep-clase.mjs` con razón —los nombres de archivo son código—. `demo/` además dice *qué es* en vez de *cuándo se usa*.
 
 ## Fases 4–13 — Una sesión por fase
 

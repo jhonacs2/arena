@@ -110,7 +110,7 @@ En el template:
 
 ```html
 <button type="button" class="button button--ghost" (click)="toggleAvailability()">
-  {{ coffee.available ? 'Marcar agotado' : 'Marcar available' }}
+  {{ coffee.available ? 'Marcar agotado' : 'Marcar disponible' }}
 </button>
 ```
 

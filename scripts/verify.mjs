@@ -350,6 +350,8 @@ check('diseño', 'la gramática de sedas no colisiona dentro de una carrera', ()
 
 check('diseño', 'los tokens CSS están al día', () => runScript('gen-tokens-css.mjs', ['--check']));
 
+check('diseño', 'los diagramas y sus SVG coinciden', () => runScript('gen-diagram-svg.mjs', ['--check']));
+
 // ══ BACKEND GO ═════════════════════════════════════════════════════════════
 
 const BACKEND = join(ROOT, 'project/backend');

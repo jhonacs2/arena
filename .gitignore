@@ -45,3 +45,8 @@ coverage/
 # exports de slides (se regeneran con marp)
 sesiones/**/slides.pdf
 sesiones/**/slides.html
+
+# copias donde se da el live coding: descartables, se regeneran con
+# scripts/prep-demo.mjs. Ver el encabezado de ese script.
+lab/demo/
+project/frontend/demo/
