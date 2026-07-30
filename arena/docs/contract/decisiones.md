@@ -17,42 +17,97 @@ producto que consumen.
 |---|---|
 | Conversión | **100 monedas = 1 punto** |
 | Saldo inicial al canjear el código | **1000 monedas = 10 puntos** |
+| **Piso de la nota** | **10 puntos.** Apostar mal no la baja nunca |
 | Piso del saldo | **0.** Nunca negativo |
 | Monto de una apuesta | `1 ≤ monto ≤ saldo` |
 | Apuestas por carrera y por alumno | **exactamente una** |
-| Regalos del instructor | sí, en cualquier momento |
+| Cuotas | **pari-mutuel**: sale del pool, no hay casa |
+| Recarga automática | **no hay**. El instructor regala a pedido |
 
-**Puntos = `floor(saldo / 100)`.** Es una función del saldo, no una columna: no hay
-dos números que puedan desincronizarse.
+```
+puntos = max(10, floor(monedas / 100)) + puntos regalados
+```
+
+Es una función del saldo, no una columna: no hay dos números que puedan
+desincronizarse. Lo verifica `schema.test.sql`.
+
+### El piso de 10 es la decisión más importante del proyecto
+
+Los 10 puntos que el alumno recibe al canjear el código **no se pueden perder
+apostando**. Una racha perdedora le saca monedas —y con eso, capacidad de seguir
+jugando— pero no le toca la calificación.
+
+Sin el piso, el juego se convierte en un riesgo académico: la respuesta racional
+pasa a ser no apostar nunca, que es lo contrario de lo que se busca. Con el piso,
+la única variable es cuánto **suben**, y entonces jugar es gratis y no jugar es lo
+que cuesta.
+
+### Dos regalos distintos, que no son lo mismo
+
+| El instructor regala… | Efecto |
+|---|---|
+| **monedas** | le da con qué seguir jugando. Pasa por el juego y se puede volver a perder |
+| **puntos** | le sube la nota directo. No pasa por el juego y no se puede perder |
+
+Viven en tablas separadas (`coin_transactions` y `point_grants`) porque un punto
+regalado por explicar algo en el code review no debería poder perderse en una
+apuesta.
 
 ### Qué significa «fundirse»
 
-El alumno arranca con 10 puntos ya acreditados. Si apuesta mal y llega a 0
-monedas, **no queda en negativo: queda en 0 puntos**, y esos 10 puntos que tenía
-los tiene que compensar con el resto de la cursada. Eso es lo que se decidió con
-«me van a deber nota y se tendrán que esforzar más».
+Que se queda sin con qué jugar, **no que baje de nota**. No hay recarga
+automática: el que funde te pide y vos decidís. El panel del instructor muestra la
+lista de saldos justamente para que puedas ver a quién le pasó sin que tenga que
+levantar la mano.
 
-> **Asunción explícita, marcada porque es la única lectura que tomé sin
-> confirmar:** el saldo tiene piso en 0 y una apuesta nunca puede superar el
-> saldo. La deuda es *pedagógica* —puntos que faltan— no un saldo negativo en la
-> base. Si querés deuda literal, es un cambio de una línea: sacar el `CHECK
-> (balance >= 0)` y el tope del monto. Está aislado a propósito.
+> La contracara de no tener recarga automática: en cada clase vas a tener que
+> mirar esa lista. Si molesta, la recarga por sesión es una tabla más y un botón
+> — está aislado a propósito.
 
-### Una apuesta por carrera, y por qué no es un detalle
+### Pari-mutuel: apuestan entre ellos, no contra la casa
 
-Con cuotas fijas, si un alumno pudiera apostar a **todos** los caballos de una
-carrera se garantizaría ganancia siempre que la suma de las probabilidades
-implícitas quede por debajo de 1. Sería una máquina de imprimir nota.
+Lo apostado en una carrera forma un **pool**, y el pool se reparte entre quienes
+acertaron, en proporción a lo que pusieron.
 
-**Una sola apuesta por carrera lo elimina de raíz**, y además hace que la decisión
-importe, que es lo interesante.
+```
+Carrera con 800 monedas apostadas. Ganó Viento Norte, que tenía 300.
+  Ana puso 100 → 100 × 800 / 300 = 266
+  Bruno puso 200 → 200 × 800 / 300 = 533
+```
 
-### La masa de monedas crece, y está bien
+Tres consecuencias, y las tres importan:
 
-Las cuotas son fijas y paga «la casa», así que el total de monedas en circulación
-sube con el tiempo. Es deliberado: **participar da monedas, y las monedas son
-nota**. El panel del instructor muestra monedas y puntos, y el mapeo final a la
-calificación lo decide el instructor — no lo decide la app.
+**Es suma cero.** El total de monedas del curso solo cambia cuando vos regalás.
+Con cuotas fijas contra una casa, la masa de monedas deriva sin control y la
+conversión a nota se desfasa sola.
+
+**No hay cuota que congelar.** El pago no se puede saber al apostar: depende de
+cómo apueste el resto. Por eso en `bets` no hay `odds_at_bet` — no existe un
+número al momento de la apuesta que tenga sentido guardar. La cuota nominal del
+caballo existe, pero solo alimenta al simulador y le indica al alumno quién es
+favorito antes de que haya pool suficiente.
+
+**El resto de la división no se descarta.** `800 / 300` no es exacto: los pagos
+truncados suman 799 y sobra 1 moneda. Esa moneda se reparte de a una entre los
+ganadores por orden de monto, hasta agotarla. Si se descartara, el pari-mutuel
+dejaría de ser suma cero y el curso perdería monedas que nadie perdió apostando.
+
+> Al escribir el test de esto apareció un bug que vale documentar: **`sum(bigint)`
+> en Postgres devuelve `numeric`**, así que la división salía decimal y al
+> guardarla en una columna `bigint` se **redondeaba** en vez de truncar. La suma
+> seguía dando 800 —la conservación se cumplía— pero la moneda del resto le
+> quedaba al apostador equivocado. Verificar solo la conservación no lo detecta:
+> hay que asertar los pagos uno por uno.
+
+### Una apuesta por carrera, y por qué
+
+Con pari-mutuel, cubrir todos los caballos **no** es un arbitraje: te devuelve el
+pool menos la parte de los demás, que es pérdida esperada. Así que la regla no
+está para tapar un agujero, está por dos motivos propios:
+
+1. **Que la decisión importe.** Elegir un caballo es el juego; comprar todos es no
+   jugar.
+2. **Que el pool no lo domine quien más boletos compre**, sino quien acierte.
 
 ---
 
@@ -109,8 +164,11 @@ Reglas duras:
 
 - Las apuestas se cierran **en el servidor**, al pasar a `running`. El botón
   deshabilitado en el frontend es una cortesía, no un control.
-- La cuota se **congela en la apuesta** (`odds_at_bet`). Nunca se recalcula desde
-  la cuota actual del caballo.
+- **La liquidación se calcula una sola vez**, al pasar a `finished`, y queda
+  escrita en `race_settlements` con el pool y el pool ganador. No se recalcula
+  nunca: recalcular con datos que cambiaron es cómo se paga dos veces.
+- **Si nadie acertó, se devuelve cada apuesta íntegra.** No hay a quién pagarle, y
+  quedarse el pool sería inventar una casa que este modelo no tiene.
 - La simulación es **autoritativa del servidor**. El cliente dibuja lo que recibe.
 - El ledger es **append-only**. No se borra ni se edita una transacción; se
   compensa con otra.

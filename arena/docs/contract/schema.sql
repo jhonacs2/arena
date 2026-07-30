@@ -1,4 +1,10 @@
--- Arena — esquema Postgres (Supabase)
+-- Arena — esquema Postgres
+--
+-- Postgres corre en el **mismo VPS** que el backend. No es Supabase: su plan
+-- gratuito pausa el proyecto tras 7 días sin actividad y una clase semanal cae
+-- justo en esa ventana, y con el bucle de carrera a 10 Hz una base en otra red
+-- paga un viaje de red por consulta. Nada de acá usa extensiones de Supabase, así
+-- que mover la base es cambiar `DATABASE_URL`.
 --
 -- Las reglas que este esquema hace cumplir están en decisiones.md. Todo lo que se
 -- pueda expresar como restricción de la base va acá y no en Go: una regla en el
@@ -160,12 +166,15 @@ create table if not exists horses (
   number  int not null,
   name    text not null,
 
-  -- Cuota decimal ×100 en entero: 3.40 se guarda 340. Con float, 2.10 × 700
-  -- monedas da 1469.9999999999998 y el saldo de alguien queda mal por un centavo
-  -- que nadie puede explicar.
-  odds    int not null,
+  -- Cuota **nominal**, ×100 en entero: 3.40 se guarda 340.
+  --
+  -- Con pari-mutuel esta cuota NO determina el pago: el pago sale del pool. Sirve
+  -- para dos cosas: alimentar al simulador —es su parámetro de fuerza, el mismo
+  -- que usa `docs/contract/race-simulation.md`— y mostrarle al alumno qué caballo
+  -- es favorito antes de que haya apuestas suficientes para que el pool diga algo.
+  nominal_odds int not null,
 
-  constraint odds_minima check (odds >= 101),
+  constraint nominal_odds_minima check (nominal_odds >= 101),
   constraint number_positivo check (number >= 1),
   unique (race_id, number)
 );
@@ -192,18 +201,23 @@ create table if not exists bets (
   horse_id     uuid not null references horses (id),
 
   amount       bigint not null,
-  odds_at_bet  int not null,     -- congelada acá. Nunca se lee la cuota actual.
   status       bet_status not null default 'placed',
-  payout       bigint,           -- se llena al liquidar
+
+  -- Se llena al liquidar. En pari-mutuel el pago **no se puede saber al apostar**:
+  -- depende de cómo apostó el resto. Por eso acá no hay cuota congelada — no
+  -- existe una cuota al momento de la apuesta que tenga sentido guardar.
+  payout       bigint,
 
   created_at   timestamptz not null default now(),
   settled_at   timestamptz,
 
   constraint amount_positivo check (amount >= 1),
-  constraint odds_congelada_valida check (odds_at_bet >= 101),
 
-  -- Una apuesta por carrera y por alumno. Es la restricción que impide cubrir
-  -- todos los caballos y garantizarse nota — ver decisiones.md §1.
+  -- Una apuesta por carrera y por alumno. En pari-mutuel esto no impide un
+  -- arbitraje —cubrir todos los caballos devuelve el pool menos la parte de los
+  -- demás, que es una pérdida esperada, no una ganancia—. Está por dos razones
+  -- distintas: que la decisión importe, y que el pool no lo domine quien más
+  -- apueste en cantidad de boletos.
   unique (race_id, user_id)
 );
 
@@ -225,11 +239,90 @@ create table if not exists race_results (
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────
+-- Liquidación pari-mutuel — una fila por carrera
+-- ─────────────────────────────────────────────────────────────────────────────
+
+-- Lo apostado se reparte entre quienes acertaron; no hay casa. El pago de cada
+-- ganador es `amount * pool / winning_pool`, división entera.
+--
+-- La división entera deja un resto (en las carreras reales se llama *breakage*).
+-- Ese resto **no se descarta**: se reparte de a una moneda entre los ganadores
+-- ordenados por (amount desc, created_at asc, id asc) hasta agotarlo. Si se
+-- descartara, el pari-mutuel dejaría de ser suma cero y el total de monedas del
+-- curso bajaría sin que nadie lo haya perdido apostando.
+--
+-- Si nadie acertó, `winning_pool = 0` y **se devuelve cada apuesta íntegra**: no
+-- hay a quién pagarle y quedarse el pool sería inventar una casa.
+create table if not exists race_settlements (
+  race_id      uuid primary key references races (id) on delete cascade,
+  winner_id    uuid not null references horses (id),
+
+  pool         bigint not null,   -- suma de todo lo apostado en la carrera
+  winning_pool bigint not null,   -- suma de lo apostado al ganador
+  paid_out     bigint not null,   -- suma de los pagos efectivos
+  refunded     boolean not null default false,
+
+  settled_at   timestamptz not null default now(),
+
+  constraint pool_no_negativo check (pool >= 0 and winning_pool >= 0),
+  constraint winning_pool_cabe check (winning_pool <= pool),
+
+  -- La conservación, como restricción de la base y no como esperanza. Vale en los
+  -- dos casos por el mismo motivo: si se devolvió, la suma de devoluciones es el
+  -- pool; si se pagó, el reparto del resto agota el pool hasta la última moneda.
+  constraint conserva_monedas check (paid_out = pool),
+
+  -- Devolución y ganador conviven: hubo un ganador de la carrera, pero nadie le
+  -- había apostado. `refunded` sin `winning_pool = 0` sería un reparto perdido.
+  constraint devolucion_solo_sin_aciertos check (refunded = (winning_pool = 0))
+);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Regalos de puntos — append-only, aparte de las monedas
+-- ─────────────────────────────────────────────────────────────────────────────
+
+-- Dos regalos distintos que el instructor puede hacer, y no son lo mismo:
+--   regalar MONEDAS   → le da con qué seguir jugando
+--   regalar PUNTOS    → le sube la nota directo, sin pasar por el juego
+--
+-- Separados porque tienen efectos distintos y porque un punto regalado no debería
+-- poder perderse en una apuesta.
+create table if not exists point_grants (
+  id         bigserial primary key,
+  user_id    uuid not null references users (id),
+  points     numeric(6, 2) not null,
+  reason     text not null,
+  granted_by uuid not null references users (id),
+  created_at timestamptz not null default now(),
+
+  constraint points_no_cero check (points <> 0),
+  constraint reason_no_vacio check (length(trim(reason)) > 0)
+);
+
+create index if not exists point_grants_user_idx on point_grants (user_id);
+
+create or replace function grants_solo_insert() returns trigger as $$
+begin
+  raise exception 'point_grants es append-only: compensá con otro registro';
+end $$ language plpgsql;
+
+drop trigger if exists grants_sin_update on point_grants;
+create trigger grants_sin_update before update or delete on point_grants
+  for each row execute function grants_solo_insert();
+
+-- ─────────────────────────────────────────────────────────────────────────────
 -- Vista de puntos
 -- ─────────────────────────────────────────────────────────────────────────────
 
 -- Los puntos son una función del saldo, no una columna: dos números que
--- representan lo mismo se desincronizan siempre. 100 monedas = 1 punto.
+-- representan lo mismo se desincronizan siempre.
+--
+-- **El piso de 10 es la regla que más importa de todo el esquema.** Son los 10
+-- puntos que el alumno recibe al canjear el código, y apostar mal no los puede
+-- tocar: una racha perdedora le saca monedas —y con eso, capacidad de seguir
+-- jugando— pero nunca calificación. Sin este `greatest`, el juego se convierte en
+-- un riesgo académico y nadie se anima a apostar, que es lo contrario de lo que se
+-- busca.
 create or replace view user_scores as
 select
   u.id,
@@ -237,7 +330,10 @@ select
   u.first_name,
   u.last_name,
   u.balance,
-  (u.balance / 100)::int as points,
+  greatest(10, u.balance / 100)::int as points_from_coins,
+  coalesce((select sum(g.points) from point_grants g where g.user_id = u.id), 0) as points_granted,
+  greatest(10, u.balance / 100)::numeric
+    + coalesce((select sum(g.points) from point_grants g where g.user_id = u.id), 0) as points,
   (select count(*) from bets b where b.user_id = u.id) as bets_placed,
   (select count(*) from bets b where b.user_id = u.id and b.status = 'won') as bets_won
 from users u

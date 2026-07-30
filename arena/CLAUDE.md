@@ -36,7 +36,7 @@ no se publica. Eso cambia dos cosas respecto del resto del repo:
 ```
 Angular   22.x        (última estable — la raíz está en 18, acá no)
 Go        1.26.x
-Postgres  Supabase
+Postgres  16+, en el mismo VPS que el backend
 ```
 
 **Comparte la línea visual con el hipódromo:** los tokens salen de
@@ -44,9 +44,15 @@ Postgres  Supabase
 bordes de 3px, sombras duras `4px 4px 0`, cero gradientes, `oklch()`. Y **contraste
 AA verificado mecánicamente**, igual que allá.
 
-Supabase se usa **solo como Postgres**. La autenticación es propia —JWT HS256 y
-PBKDF2 de stdlib, el mismo patrón que el backend del hipódromo— porque el registro
-es por código de invitación y no encaja con Supabase Auth.
+**Nada de Supabase.** Se evaluó y se descartó por dos razones: su plan gratuito
+pausa el proyecto tras 7 días sin actividad y una clase semanal cae justo en esa
+ventana, y con el bucle de carrera a 10 Hz una base en otra red paga un viaje de
+red por consulta. El backend habla **Postgres plano** —sin SDK, sin extensiones—,
+así que mover la base es cambiar `DATABASE_URL`.
+
+La autenticación es propia: JWT HS256 y PBKDF2 de stdlib, el mismo patrón que el
+backend del hipódromo. El registro es por código de invitación, que no encaja con
+ningún proveedor de auth de estantería.
 
 ## 3. El idioma, igual que en todo el repo
 
@@ -62,26 +68,40 @@ Esta es la sección que distingue Arena de un juego.
 - **Toda validación pasa en el servidor.** Un botón deshabilitado es cortesía. El
   rol, el estado de la carrera, el monto y el «una apuesta por carrera» se
   verifican en el handler, en una transacción.
-- **La cuota se congela en la apuesta** (`odds_at_bet`). Nunca se recalcula desde
-  la cuota actual del caballo.
+- **La liquidación se calcula una vez** y queda escrita en `race_settlements`.
+  Recalcular un pago con datos que cambiaron es cómo se paga dos veces.
 - **El ledger es append-only**, y lo impone un trigger, no una convención. Un
   error se compensa con otro movimiento; no se edita la historia de la nota de
   alguien.
 - **Los puntos son una vista**, no una columna. Dos números que representan lo
-  mismo se desincronizan siempre.
+  mismo se desincronizan siempre. Y la vista lleva el **piso de 10**: apostar mal
+  no baja la nota.
 - **La simulación es autoritativa del servidor** y la semilla queda guardada: si
   alguien reclama un resultado, se vuelve a correr igual.
 - **`bet.placed` no revela el caballo** mientras la carrera está `open`.
 
 ## 5. Los montos son enteros
 
-Monedas en unidades. **Cuotas ×100 en entero:** `340` es 3.40.
+Monedas en unidades. **Cuotas nominales ×100 en entero:** `340` es 3.40.
 
 Con `float`, `2.10 × 700` da `1469.9999999999998` y el saldo de alguien queda mal
 por un centavo que nadie puede explicar — y acá ese centavo es nota. En Go es
 `int64`, en Postgres `bigint`, en TypeScript `number` pero **siempre entero**.
 
-`payout = amount * oddsAtBet / 100`, división entera, redondeo hacia abajo.
+El pago es pari-mutuel, no cuota fija:
+
+```
+payout = amount * pool / winningPool      división entera, trunca
+```
+
+y el resto de esa división **se reparte**, no se descarta — ver
+[`docs/contract/decisiones.md`](docs/contract/decisiones.md) §1.
+
+> **La trampa que ya nos mordió una vez:** en Postgres `sum(bigint)` devuelve
+> `numeric`. Sin castear, la división sale decimal y al guardarla en `bigint` se
+> **redondea** en vez de truncar; la suma total sigue cerrando, pero la moneda del
+> resto le queda al apostador equivocado. `schema.test.sql` asierta los pagos uno
+> por uno justamente porque verificar solo el total no lo detecta.
 
 ## 6. Despliegue
 
@@ -89,7 +109,7 @@ por un centavo que nadie puede explicar — y acá ese centavo es nota. En Go es
 |---|---|
 | Frontend | Cloudflare Pages |
 | Backend | VPS de Hostinger |
-| Base | Supabase |
+| Base | Postgres en el mismo VPS |
 
 El backend **no expone puerto**: `cloudflared` corre como servicio en el VPS y abre
 la conexión hacia afuera (Cloudflare Tunnel). El frontend llama a `/api` en su
