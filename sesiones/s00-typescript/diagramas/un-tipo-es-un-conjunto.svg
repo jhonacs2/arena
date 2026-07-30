@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 6 894 416" width="894" height="416" role="img">
+  <style>
+    svg { --dg-surface: #f5f6f0; --dg-surface-raised: #ffffff; --dg-surface-sunken: #ebece4; --dg-text: #08120c; --dg-text-muted: #5b675e; --dg-border: #08120c; --dg-shadow: #08120c; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #d8151e; --dg-live-ink: #f5f6f0; --dg-success: #137d41; --dg-success-ink: #f5f6f0; --dg-danger: #d8151e; --dg-danger-ink: #f5f6f0; }
+    @media (prefers-color-scheme: dark) {
+      svg { --dg-surface: #121c15; --dg-surface-raised: #1e2a22; --dg-surface-sunken: #030905; --dg-text: #e1e2da; --dg-text-muted: #a5a59c; --dg-border: #bebfb5; --dg-shadow: #030905; --dg-accent: #fb9d59; --dg-accent-ink: #08120c; --dg-live: #fd7468; --dg-live-ink: #08120c; --dg-success: #c6e8ce; --dg-success-ink: #08120c; --dg-danger: #fd7468; --dg-danger-ink: #08120c; }
+    }
+  </style>
+
+  <defs>
+    <marker id="mk-triangle-end-vardgborder08120c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-border, #08120c)" /></marker>
+  </defs>
+  <rect x="6" y="6" width="894" height="416" fill="var(--dg-surface, #f5f6f0)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="40">Un tipo es el conjunto de valores que algo puede tener</tspan></text>
+  <rect x="36" y="82" width="360" height="250" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="30" y="76" width="360" height="250" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="102.88">TIPO FLOJO</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="24" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="131">string</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="159.5">infinitas cadenas, todas válidas</tspan></text>
+  <rect x="52" y="180" width="76" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="62" y="194.13">'chico'</tspan></text>
+  <rect x="138" y="180" width="93" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="148" y="194.13">'mediano'</tspan></text>
+  <rect x="241" y="180" width="84" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="251" y="194.13">'grande'</tspan></text>
+  <rect x="52" y="218" width="93" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="62" y="232.13">'mediana'</tspan></text>
+  <rect x="155" y="218" width="76" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="165" y="232.13">'venti'</tspan></text>
+  <rect x="241" y="218" width="36" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="251" y="232.13">''</tspan></text>
+  <rect x="52" y="256" width="68" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="62" y="270.13">'asdf'</tspan></text>
+  <rect x="130" y="256" width="28" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="140" y="270.13">…</tspan></text>
+  <path d="M 398 200 L 502 200" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="400" y="179.5">apretar el tipo</tspan></text>
+  <rect x="516" y="82" width="360" height="250" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="510" y="76" width="360" height="250" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="102.88">TIPO APRETADO</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="24" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="131">CoffeeSize</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="159.5">estas tres cadenas, y ninguna más</tspan></text>
+  <rect x="532" y="180" width="76" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="542" y="194.13">'chico'</tspan></text>
+  <rect x="618" y="180" width="93" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="628" y="194.13">'mediano'</tspan></text>
+  <rect x="721" y="180" width="84" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="731" y="194.13">'grande'</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="240.13">type CoffeeSize =</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="262.13">  | 'chico'</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="282.13">  | 'mediano'</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="302.13">  | 'grande';</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="364.75">sizeFactor('mediana')</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="390.13">devuelve 1 y nadie avisa</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="510" y="364.75">sizeFactor('mediana')</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="var(--dg-accent, #cf6f19)" text-anchor="start" dominant-baseline="central"><tspan x="510" y="390.13">no compila, y el error dice dónde</tspan></text>
+</svg>

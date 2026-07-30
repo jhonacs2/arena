@@ -3,11 +3,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 /**
  * La pantalla de inicio del lab.
  *
- * Es lo único que viene hecho. Todo lo demás lo vas a construir vos, una
- * sesión por vez, y lo vas a ver aparecer en la barra de la izquierda.
+ * Junto con S0 es lo único que viene hecho. Todo lo demás lo vas a construir
+ * vos, una sesión por vez, y lo vas a ver aparecer en la barra de la izquierda.
  */
 @Component({
-  selector: 'app-inicio',
+  selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -15,19 +15,25 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <p class="eyebrow">Módulo Angular · Talento DH</p>
       <h1>El lab</h1>
       <p class="intro">
-        Acá vas a practicar el concept de cada clase, aislado y en chiquito, antes de aplicarlo al
+        Acá vas a practicar el concepto de cada clase, aislado y en chiquito, antes de aplicarlo al
         proyecto del hipódromo.
       </p>
     </header>
 
     <section class="notice">
-      <h2>Todavía no hay ninguna sesión</h2>
+      <h2>Empezá por S0</h2>
       <p>
-        La sidebar de la izquierda está vacía porque las rutas las declara alguien, y ese alguien vas
-        a ser vos. Al terminar la primera clase vas a ver aparecer <strong>S1</strong> ahí.
+        En la barra de la izquierda hay una sola sesión, <strong>S0 · TypeScript</strong>. Esa
+        pantalla viene hecha: lo que se construye ahí son los tipos, en
+        <code>sessions/s00/menu.ts</code>.
+      </p>
+      <p>
+        De S1 en adelante la barra la vas a hacer crecer vos: las rutas las declara alguien, y ese
+        alguien vas a ser vos.
       </p>
       <p class="small">
-        Buscá <code>TODO(S1)</code> en <code>src/app/</code> para saber dónde empezar.
+        Buscá <code>TODO(S0)</code> hoy y <code>TODO(S1)</code> la clase que viene, en
+        <code>src/app/</code>.
       </p>
     </section>
   `,

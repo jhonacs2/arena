@@ -79,7 +79,7 @@ a/                              ← workspace del instructor. Tiene TODO.
 │   └── plan.md                 ← estado y qué sigue
 ├── project/{backend, frontend/{solution,starter,demo*}}
 ├── lab/{solution,starter,demo*}
-├── sesiones/                   ← _plantilla/ + s00 … s11
+├── sesiones/                   ← _plantilla/ + s00 … s10
 ├── scripts/                    ← verify.mjs y generadores
 └── theme/marp-neobrutal.css
 

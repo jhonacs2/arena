@@ -41,6 +41,7 @@ Aprender a mirar la pantalla y decidir si está bien es parte del ejercicio; un 
 
 | | Tema |
 |---|---|
+| **S0** | Tipos, uniones, opcionales y genéricos |
 | **S1** | Primer componente standalone y los cuatro bindings |
 | S2 | `input`, `output` y `ng-content` |
 | S3 | Signals y control flow |
@@ -50,5 +51,4 @@ Aprender a mirar la pantalla y decidir si está bien es parte del ejercicio; un 
 | S7 | `HttpClient` |
 | S8 | Reactive Forms |
 | S9 | Routing |
-| S10 | WebSockets |
-| S11 | Producción |
+| S10 | WebSockets, OnPush y NgModules como legado |

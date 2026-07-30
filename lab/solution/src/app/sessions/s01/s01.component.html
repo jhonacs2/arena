@@ -68,8 +68,8 @@
     <p class="empty">Todavía no hay nada. Tomá el primer pedido.</p>
   } @else {
     <ol class="orders__list" role="list">
-      @for (linea of orders; track $index) {
-        <li>{{ linea }}</li>
+      @for (order of orders; track $index) {
+        <li>{{ order }}</li>
       }
     </ol>
     <button type="button" class="button button--ghost" (click)="clearOrders()">Vaciar comanda</button>

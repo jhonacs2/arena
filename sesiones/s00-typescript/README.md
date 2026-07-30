@@ -1,56 +1,90 @@
-# Tema 0 · TypeScript — asíncrono
+# S0 · TypeScript
 
-**Antes de S1. 100% asíncrono. Entre 90 y 120 minutos.**
+**La primera clase del módulo. 2 horas, en vivo.**
 
-No es una sesión: es el vocabulario mínimo para que S1 no se convierta en una clase de TypeScript. Si alguien llega sin esto, va a pasar la primera hora peleando con `strict` en vez de mirando Angular.
+El material está en los archivos de siempre — `guion.md` es el documento maestro
+y todo lo demás sale de ahí. Este README tiene lo único que no entra en ninguno
+de ellos: **lo que hay que tener instalado antes de entrar**.
 
-> El material usa **los tipos reales del proyecto**. El alumno tipa el dominio del hipódromo antes de la primera clase, así que llega a S1 reconociendo `Race`, `Horse` y `RaceStatus` en lugar de viéndolos por primera vez.
+> **Antes esto era un tema asíncrono.** Se convirtió en clase en vivo porque el
+> vocabulario de tipos es lo que sostiene las once sesiones que siguen, y leerlo
+> solo no es lo mismo que ver aparecer y desaparecer un error en pantalla. El
+> contenido de aquel material está repartido entre `guion.md` y `conceptos.md`.
 
 ---
 
-## Qué tiene que quedar
+## Antes de la primera clase — 20 minutos
 
-| Tema | Por qué está |
+**Esto se manda por el canal del curso una semana antes, y se pregunta en el
+chat el día anterior.** Los quince minutos de instalar cosas en vivo son quince
+minutos de clase perdidos para todos.
+
+### 1 · Node
+
+Versión **20.11 o superior**, o **22**. El equipo está en 22.22.3.
+
+```bash
+node --version
+```
+
+Si no está: <https://nodejs.org> — la versión LTS.
+
+### 2 · Un editor con TypeScript
+
+**Visual Studio Code**: <https://code.visualstudio.com>. Cualquier editor sirve,
+pero el material asume VS Code en un punto concreto: **apoyar el mouse sobre una
+variable y ver qué tipo tiene**. Esa acción aparece cinco veces en la primera
+clase.
+
+### 3 · El repositorio
+
+```bash
+git clone <la URL del repo del curso>
+cd <la carpeta>
+
+cd lab/starter
+npm install
+npm start
+```
+
+Si eso abre <http://localhost:4200> y se ve un pizarrón de cafetería con una
+tabla de precios, **estás listo**.
+
+Y el otro proyecto, que se usa en la segunda mitad de la clase:
+
+```bash
+cd project/frontend/starter
+npm install
+```
+
+### 4 · Si algo falla
+
+| Pasa | Probá |
 |---|---|
-| Tipos primitivos y anotaciones | Todo lo demás se apoya acá |
-| `interface` vs `type` | En el proyecto se usan las dos: `interface Race`, `type RaceStatus` |
-| Uniones de literales | `'upcoming' \| 'live' \| 'finished'` aparece en la primera pantalla |
-| Narrowing | Es lo que hace que el `switch` sobre el estado sea exhaustivo |
-| Opcionales y `strictNullChecks` | `favourite()` devuelve `Horse \| undefined`, y hay que hacerse cargo |
-| Genéricos básicos | `Page<Race>` y `Page<Bet>` son el mismo tipo con distinto contenido |
-| Utility types | `Pick`, `Omit`, `Partial`, `Readonly` |
-| `readonly` e inmutabilidad | Es regla del curso y se evalúa |
-| Módulos ES | `import` / `export`, que es como está armado todo el proyecto |
+| `npm install` falla con errores de permisos | No uses `sudo`. Instalá Node desde el instalador oficial, no desde el gestor de paquetes del sistema |
+| `ng: command not found` | No hace falta instalar Angular globalmente. Todos los comandos del curso van por `npm run` o `npx` |
+| El puerto 4200 está ocupado | `npm start -- --port 4300` |
+| Levanta pero no se ve nada | Mirá la terminal: si hay un error de compilación, está ahí con archivo y línea |
+
+**Si después de veinte minutos no funciona, escribí al canal con el error
+completo copiado.** No lo dejes para el día de la clase.
 
 ---
 
-## Qué hace el alumno
+## Qué se lleva el alumno de esta sesión
 
-1. Lee o mira el material (enlaces abajo).
-2. Abre **`docs/contract/openapi.yaml`** y escribe las interfaces de `Race`, `Horse` y `Bet` a mano, sin mirar `core/models`.
-3. Compara con `project/frontend/starter/src/app/core/models/`. Las diferencias son el material de la primera pregunta de S1.
-4. Contesta el Wayground — **se corre en el bloque 0:05 de S1**.
-
-## Entrega
-
-Un archivo `tipos.ts` con las tres interfaces. No se corrige una por una: se mira por arriba y lo que aparezca repetido se comenta en clase.
-
----
-
-## Errores que van a aparecer, y está bien
-
-Los tres que más se repiten, y que conviene tener listos para el bloque 0:05 de S1:
-
-| Lo que escriben | Por qué no alcanza |
+| | |
 |---|---|
-| `status: string` | Acepta `'galopando'`. La unión de literales es lo que lo impide. |
-| `horses: Horse[]` sin `readonly` | El curso exige inmutabilidad; `readonly Horse[]` la hace explícita. |
-| `favourite: Horse` | El contrato admite carreras sin favorito calculable. Va `Horse \| undefined`. |
+| **Concepto único** | Un tipo es el conjunto de valores que algo puede tener, y alguien lo revisa antes de que el código corra |
+| **Lab** | `/s00` — el menú de Café Compilado, en `sessions/s00/menu.ts` |
+| **Hipódromo** | `core/models/race.model.ts` — los tipos del contrato |
+| **Apunte** | `conceptos.md` |
 
----
+## Qué NO se ve hoy
 
-## Material
+Ni una línea de Angular. La pantalla del lab viene escrita y el guión lo dice en
+voz alta: los componentes son S1.
 
-- **TypeScript Handbook** — *Everyday Types* y *Narrowing*: <https://www.typescriptlang.org/docs/handbook/2/everyday-types.html>
-- **TypeScript Playground** para probar sin instalar nada: <https://www.typescriptlang.org/play>
-- El propio `docs/contract/openapi.yaml` del proyecto
+Tampoco se ven clases, herencia, `enum`, decoradores ni tipos condicionales.
+Los decoradores aparecen en S1 con `@Component`, y no hace falta entender cómo
+funcionan para usarlos.

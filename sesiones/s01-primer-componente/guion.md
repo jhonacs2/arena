@@ -6,7 +6,7 @@
 |---|---|
 | **Concepto único** | Un componente es una clase y un template, y hay cuatro caminos entre los dos. |
 | **Al final saben** | Explicar qué es un componente · crear uno con el CLI · usar los cuatro bindings · decir por qué Angular repinta. |
-| **Requisito previo** | Tema 0 (TypeScript, asíncrono). Nada más. |
+| **Requisito previo** | S0 (TypeScript). Nada más. |
 | **Archivos** | `lab/starter/src/app/` · `project/frontend/starter/src/app/` |
 
 ---
@@ -51,11 +51,11 @@ Leé dos o tres en voz alta y cerrá así:
 
 ---
 
-## 0:05 · Wayground de Tema 0 — 7 min
+## 0:05 · Wayground de S0 — 7 min
 
 **Correr:** `sesiones/s00-typescript/wayground.csv`.
 
-> «Es la única vez que el quiz no es de la clase anterior, porque no hay clase anterior. De la próxima en adelante, arrancamos siempre repasando lo de la vez pasada.»
+> «De acá en adelante arrancamos siempre así: siete minutos repasando lo de la clase pasada. No se corrige nota, se corrigen ideas.»
 
 Máximo **30 segundos** de explicación por pregunta, y solo si la falló más de un tercio:
 
@@ -63,7 +63,8 @@ Máximo **30 segundos** de explicación por pregunta, y solo si la falló más d
 |---|---|
 | `type RaceStatus = string` | «`string` acepta `'galopando'`. La unión de literales es lo que hace que el compilador te frene antes de que llegue al navegador.» |
 | `Horse` en vez de `Horse \| undefined` | «Una carrera sin caballos no debería existir, pero el tipo no lo puede garantizar. TypeScript te obliga a decidir qué pasa si no hay.» |
-| `readonly` | «`readonly` no congela el objeto: impide `push` y asignar por índice. Hoy alcanza con eso.» |
+| `readonly lines: OrderLine[]` deja hacer `push` | «Son dos `readonly` y no es repetido: uno protege el campo, el otro la lista. Es el que más se olvida.» |
+| Los tipos «quedan» al ejecutar | «Se borran. Lo que corre en el navegador es JavaScript. Hoy vamos a ver quién hace esa traducción: el CLI.» |
 
 Si algo necesita más de 30 segundos, va a la tarea. **No te enganches acá.**
 
@@ -104,7 +105,7 @@ Si algo necesita más de 30 segundos, va a la tarea. **No te enganches acá.**
 
 | Preguntan | Respondé |
 |---|---|
-| «¿Y los NgModules ya no existen?» | «Existen, y hay miles de proyectos con ellos. Los vemos en S11, para que puedan leer código de antes. Hoy no los necesitamos.» |
+| «¿Y los NgModules ya no existen?» | «Existen, y hay miles de proyectos con ellos. Los vemos en S10, al cierre, para que puedan leer código de antes. Hoy no los necesitamos.» |
 | «¿Angular y AngularJS son lo mismo?» | «No. Comparten el nombre y nada más. Si buscan algo y ven `$scope`, es AngularJS y no les sirve.» |
 | «¿Por qué 18 y no la última?» | «Porque es la que vamos a ver en proyectos reales ahora. Y porque hay APIs de 19 y 20 que no compilan acá: la lista está en el repo.» |
 

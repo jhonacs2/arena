@@ -57,7 +57,7 @@ docs/curriculum.md mapa de las 11 sesiones
 project/backend/   monolito Go
 project/frontend/  solution/ y starter/
 lab/               app de enseñanza, una ruta por sesión
-sesiones/          _plantilla/ + s00 … s11
+sesiones/          _plantilla/ + s00 … s10
 scripts/           verificación y generadores
 theme/             tema Marp de las diapositivas
 ```

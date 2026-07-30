@@ -416,10 +416,12 @@ const sourceFiles = () =>
   });
 
 /**
- * S11 enseña NgModules como contexto legacy. La ruta /s11 del lab TIENE que
+ * S10 cierra con NgModules como contexto legacy. La ruta /s10 del lab TIENE que
  * contener un NgModule — es el material de la clase. Se exime solo ahí.
+ *
+ * (Era la ruta /s11 hasta que S11 se repartió: docs/curriculum.md.)
  */
-const isNgModuleExempt = (file) => /[\\/]lab[\\/].*[\\/]s11[\\/]/.test(file);
+const isNgModuleExempt = (file) => /[\\/]lab[\\/].*[\\/]s10[\\/]/.test(file);
 
 /**
  * Vacía los comentarios conservando los saltos de línea, para no correr los

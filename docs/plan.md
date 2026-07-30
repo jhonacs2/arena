@@ -9,8 +9,9 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **2** | Baseline visual del hipódromo | ✅ **terminada** |
 | **3** | S1 · Primer componente | ✅ **terminada** — falta darla |
 | **3.5** | Revisión del formato de los materiales | ✅ **terminada** |
-| **4–13** | Una sesión por fase, S2 … S11 | ⬜ siguiente |
-| **14** | Publicación y deploy | ⬜ |
+| **3.75** | S0 · TypeScript, y S11 repartida | ✅ **terminada** — falta darla |
+| **4–12** | Una sesión por fase, S2 … S10 | ⬜ siguiente |
+| **13** | Publicación y deploy | ⬜ |
 
 ---
 
@@ -104,12 +105,29 @@ Tres defectos reales que aparecieron al mirar en vez de suponer:
 
 Y una decisión de nombre: la carpeta se llama `demo/` y no `clase/` porque `check-language.mjs` marcó `prep-clase.mjs` con razón —los nombres de archivo son código—. `demo/` además dice *qué es* en vez de *cuándo se usa*.
 
-## Fases 4–13 — Una sesión por fase
+## Fase 3.75 — S0 · TypeScript, y S11 repartida ✅
 
-Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los 9 archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
+TypeScript era el **tema 0 asíncrono**. Pasó a ser la **primera clase en vivo**: el vocabulario de tipos sostiene las once sesiones que siguen, y leerlo solo no es lo mismo que ver aparecer y desaparecer un error en pantalla.
 
-**Recomendación:** construir S1, **darla**, ajustar la plantilla del guión con lo que salga, y recién ahí seguir con S2. El guión de 12 bloques es una hipótesis hasta que se corre con alumnos reales.
+El módulo son 11 clases, así que una tuvo que salir. Se repartió **S11**: los 30 minutos de NgModules legacy se suman a S10, y el build de producción, el deploy y el code review cruzado pasan al cierre asíncrono. **La numeración de S1 a S10 no cambió** — renumerar habría roto las rutas `/sNN` del lab, los `TODO(SN)` del starter y el tag `s01`, sin ganar nada pedagógico.
 
-## Fase 14 — Publicación
+- **Lab `/s00`**: el menú de Café Compilado en `sessions/s00/menu.ts` — TypeScript puro, sin una línea de Angular. Uniones de literales, opcionales, narrowing, `readonly`, genéricos y `Omit`
+- **Hipódromo**: `core/models/race.model.ts` del starter pasó a su versión **floja**, con seis `TODO(S0)`. Apretarlo hasta que diga lo que dice `openapi.yaml` es la Misión 2
+- **`sesiones/s00-typescript/`**: los 12 archivos — guión de 12 bloques, 33 diapositivas Marp, diagrama, dos misiones, tres ejercicios de predicción, quiz, exit ticket, tarea y un README con el setup previo
+
+Dos excepciones que quedaron escritas como regla, no como caso particular:
+
+- **En `/s00` la ruta y el componente vienen dados también en `starter/`** (`lab/CLAUDE.md`). Crear la ruta es el ejercicio de todas las sesiones menos esta: las rutas son S9 y los componentes son S1, y en la clase 0 no se vio ninguno de los dos
+- **El bloque 0:05 de S0 no es un Wayground sino un diagnóstico en vivo**, porque no hay sesión anterior de la cual preguntar
+
+Y una decisión de método que se pagó sola: **los ocho mensajes de error del material están copiados de la salida de `tsc`, no escritos de memoria.** Dos de las tres respuestas del bloque «predice y ejecuta» son contraintuitivas —`readonly lines: OrderLine[]` **sí** deja hacer `push`, y `JSON.parse(t) as Race` **compila sin una advertencia**—, y son justamente las que no se pueden improvisar en clase.
+
+## Fases 4–12 — Una sesión por fase
+
+Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
+
+**Recomendación:** dar S0 y S1, ajustar la plantilla del guión con lo que salga, y recién ahí seguir con S2. El guión de 12 bloques es una hipótesis hasta que se corre con alumnos reales.
+
+## Fase 13 — Publicación
 
 `publish-student-repo.sh` · tags por sesión · deploy del frontend · README del alumno con setup en 5 minutos.

@@ -5,11 +5,13 @@ Una carpeta por sesión, todas con los mismos archivos. La plantilla vacía est�
 ```
 sesiones/
 ├── _plantilla/            copiar de acá para arrancar una sesión nueva
-├── s00-typescript/        tema 0, asíncrono, antes de S1
+├── s00-typescript/        la primera clase
 ├── s01-primer-componente/
 ├── …
-└── s11-produccion/
+└── s10-websockets/        + los 30 min de NgModules legacy
 ```
+
+Son **once clases, S0 a S10**. Lo que era S11 se repartió: NgModules va en S10, y el build de producción, el deploy y el code review cruzado pasaron al cierre asíncrono — [`docs/curriculum.md`](../docs/curriculum.md).
 
 ## Los archivos de cada sesión
 
@@ -36,8 +38,8 @@ El nombre de las misiones dice **quién teclea**: `mision-profe` es lo que se de
 
 Es lo que más fácil se rompe al armar los materiales. Dos consecuencias:
 
-- El bloque 0:05 de **S1** usa `s00-typescript/wayground.csv`.
-- El quiz de **S11** no se corre en clase: va a la evaluación asíncrona de cierre.
+- El bloque 0:05 de **S0** no es un quiz: no hay sesión anterior. Es un diagnóstico en vivo.
+- El quiz de **S10** no se corre en clase: va a la evaluación asíncrona de cierre.
 
 ## Generar las diapositivas
 

@@ -24,8 +24,8 @@ Lo único que el lab comparte con el hipódromo es la **paleta** (`styles.css` c
 src/app/
 ├── app.component.*        el armazón: barra lateral + router-outlet
 ├── app.routes.ts          una ruta por sesión, con loadComponent
-├── sesiones.ts            el índice: número, slug, título, concepto, disponible
-└── sesiones/
+├── sessions.ts            el índice: number, slug, title, concept, available
+└── sessions/
     └── sNN/               s01.component.ts · .html · .css · .spec.ts
 ```
 
@@ -33,7 +33,7 @@ src/app/
 
 Son **dos lugares** y hay que tocar los dos:
 
-1. `sesiones.ts` — poner `disponible: true`. De ahí sale la **barra lateral**.
+1. `sessions.ts` — poner `available: true`. De ahí sale la **barra lateral**.
 2. `app.routes.ts` — sumar la ruta con `loadComponent`. De ahí sale la **navegación**.
 
 Olvidarse del segundo da una entrada de menú que no lleva a ningún lado; olvidarse del primero, una ruta que existe pero no se ve.
@@ -42,7 +42,17 @@ Olvidarse del segundo da una entrada de menú que no lleva a ningún lado; olvid
 
 En **`solution/`** están las once sesiones: las dadas navegables y las futuras en gris. Sirve de mapa del curso.
 
-En **`starter/`** la barra arranca **vacía**: el alumno la ve crecer a medida que suma sesiones. Ver aparecer su propia navegación es parte de entender que las rutas las declara alguien, no el framework.
+En **`starter/`** la barra arranca con **una sola entrada, S0**, y el alumno la ve crecer a medida que suma sesiones. Ver aparecer su propia navegación es parte de entender que las rutas las declara alguien, no el framework.
+
+### S0 es la excepción, y es la única
+
+> **En `/s00` la ruta y el componente vienen dados también en `starter/`.**
+
+De S1 en adelante, crear la ruta *es* parte del ejercicio. En S0 no puede serlo: las rutas son S9 y los componentes son S1, y el alumno no vio ninguno de los dos todavía. Pedirle que escriba un `loadComponent` en su primera clase sería dictarle sintaxis para que la copie, que es exactamente lo que [`sesiones/CLAUDE.md`](../sesiones/CLAUDE.md) prohíbe.
+
+Lo que sí es el ejercicio de S0 está en **`sessions/s00/menu.ts`**: TypeScript puro, sin una sola línea de Angular. La pantalla está para que se vea en el navegador lo que hacen esas funciones, y el archivo lo dice en su comentario de cabecera.
+
+Que el componente de S0 use `@for` e interpolación entra en la regla de `docs/curriculum.md`: **la pieza adelantada se da hecha y se nombra**.
 
 ---
 

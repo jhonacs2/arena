@@ -114,7 +114,10 @@ Cada paso lleva **qué se escribe, dónde, y por qué ahí**. Un paso que solo m
 
 > `sesiones/sNN/wayground.csv` tiene preguntas **sobre la sesión NN** y se corre al empezar la **sesión NN+1**.
 
-El bloque 0:05 de S1 usa `s00-typescript/wayground.csv`. El quiz de S11 va a la evaluación asíncrona de cierre.
+Las dos puntas de la cadena:
+
+- **S0 no tiene quiz de apertura** — no hay sesión anterior. Su bloque 0:05 es un diagnóstico en vivo, y su `wayground.csv` se corre al empezar S1.
+- **El quiz de S10** va a la evaluación asíncrona de cierre, no a una clase.
 
 ---
 

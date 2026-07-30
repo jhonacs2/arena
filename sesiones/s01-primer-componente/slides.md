@@ -62,15 +62,16 @@ NO EXPLIQUES NADA TODAVÍA. Este bloque es para que hablen.
 
 ## Wayground
 
-## TypeScript
+## de S0
 
 <!--
-sesiones/s00-typescript/wayground.csv — el material asíncrono.
+sesiones/s00-typescript/wayground.csv — las preguntas de la clase pasada.
 
-Es la ÚNICA sesión donde el quiz no es de la anterior: no hay anterior.
+Decilo: "de acá en adelante arrancamos siempre así: siete minutos repasando
+lo de la clase pasada. No se corrige nota, se corrigen ideas."
 
 Máximo 30 segundos por pregunta, y solo si la falló más de un tercio. Los
-tres tropiezos esperables, con su respuesta, están en el guión. Si algo
+cuatro tropiezos esperables, con su respuesta, están en el guión. Si algo
 necesita más de 30 segundos, va a la tarea: no te enganches acá.
 -->
 
@@ -257,7 +258,8 @@ DECILO TEXTUAL: "Cierren el editor. Los próximos quince minutos yo escribo y
 ustedes miran. No copien: van a hacer esto mismo después, y con las manos
 libres se entiende mejor. Si me equivoco, avisen."
 
-Proyecto: lab/solution → ruta /s01. La tabla minuto a minuto está en el
+Proyecto: lab/demo, preparado antes de entrar con `node scripts/prep-demo.mjs`.
+NO se trabaja en lab/solution. La tabla minuto a minuto está en el
 guión. Si querés escribirlo desde cero, borrá antes src/app/sessions/s01/.
 -->
 

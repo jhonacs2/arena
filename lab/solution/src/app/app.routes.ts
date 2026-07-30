@@ -6,10 +6,15 @@ import { Routes } from '@angular/router';
  */
 export const routes: Routes = [
   {
+    path: 's00',
+    title: 'S0 · TypeScript · Lab',
+    loadComponent: () => import('./sessions/s00/s00.component').then((m) => m.S00Component),
+  },
+  {
     path: 's01',
     title: 'S1 · Primer componente · Lab',
     loadComponent: () => import('./sessions/s01/s01.component').then((m) => m.S01Component),
   },
-  { path: '', redirectTo: 's01', pathMatch: 'full' },
-  { path: '**', redirectTo: 's01' },
+  { path: '', redirectTo: 's00', pathMatch: 'full' },
+  { path: '**', redirectTo: 's00' },
 ];

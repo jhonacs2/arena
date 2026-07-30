@@ -30,8 +30,8 @@ Toda sesión tiene la misma forma. La estructura es fija; lo que cambia es el co
 
 Es el detalle que más fácil se rompe al armar los materiales. Dos consecuencias:
 
-- El bloque 0:05 de **S1** corre `sesiones/s00-typescript/wayground.csv` — el tema 0, que va asíncrono antes de empezar.
-- El quiz de **S11** no se corre en clase: entra en la evaluación asíncrona de cierre.
+- El bloque 0:05 de **S0** no es un quiz: no hay sesión anterior. Es un diagnóstico en vivo con tres programas de JavaScript que no fallan y están mal.
+- El quiz de **S10** no se corre en clase: entra en la evaluación asíncrona de cierre.
 
 ---
 
@@ -39,6 +39,7 @@ Es el detalle que más fácil se rompe al armar los materiales. Dos consecuencia
 
 | # | Tema | Lab (`/sNN`) | Misión 2 — hipódromo | Predice y ejecuta |
 |---|---|---|---|---|
+| **S0** | Tipos y anotaciones · `interface` y `type` · uniones de literales · opcionales y `undefined` · narrowing · `readonly` · genéricos · utility types · módulos ES | El menú de Café Compilado: apretar los tipos de `menu.ts` | `core/models/race.model.ts` — los tipos del contrato, y cinco líneas que tienen que dejar de compilar | Widening de una propiedad de objeto · `readonly` que protege el campo pero no la lista · `as` que compila y explota |
 | **S1** | Filosofía e historia de Angular · Web Components · CLI · primer standalone · binding uni y bidireccional | Primer componente standalone: interpolación, `[prop]`, `(event)`, `[(ngModel)]` | Shell con header + listado de carreras con datos hardcodeados | `{{ }}` donde va `[ ]` · `[(ngModel)]` sin importar `FormsModule` |
 | **S2** | Anatomía de un componente · segmentación de templates · `input()` `output()` `model()` · ciclo de vida · `ng-content` | Componente hijo con entrada y salida; `ng-content` con y sin `select` | `<app-race-card>` reutilizable · `<app-badge>` con proyección | `input.required()` sin binding · `output()` que nadie escucha · `ng-content` duplicado |
 | **S3** | Signals: `signal` `computed` `set/update` · control flow `@if/@for/@switch` · inmutabilidad | Contador y lista filtrada con signals | Filtro por estado + búsqueda · `@for` con `track` · ordenar sin mutar | `array.push()` sobre un signal y la vista no repinta · `@for` sin `track` · `computed` que muta su fuente |
@@ -48,8 +49,7 @@ Es el detalle que más fácil se rompe al armar los materiales. Dos consecuencia
 | **S7** | `HttpClient` · GET/POST/PUT/DELETE · interceptores funcionales · `catchError` | Un GET contra el mock y los tres estados | Conectar al backend real · `auth.interceptor` · `error.interceptor` · cargando / vacío / error | Interceptor que no clona la request · `catchError` que se traga el error y devuelve `of(null)` |
 | **S8** | Reactive Forms · `FormBuilder` · validadores custom · errores de formulario | Formulario con validador custom | Login, registro y formulario de apuesta con validación de saldo | Validador que devuelve `boolean` en vez de `ValidationErrors` · `formControlName` sin `formGroup` alrededor |
 | **S9** | Routing operativo · `provideRouter` · params · guards funcionales · lazy `loadComponent` | Dos rutas, un param, un guard | App multipantalla · `authGuard` y `verifiedGuard` · lazy por feature | La ruta `**` declarada antes que las demás · guard que no devuelve nada · param que llega `undefined` sin `withComponentInputBinding()` |
-| **S10** | WebSockets · zona y detección de cambios · `OnPush` · `@defer` | Socket mock que empuja a un signal | `race-live`: carrera en vivo, saldo reactivo, leaderboard con `@defer` | **El clásico**: llega el evento, el signal cambia, la vista no repinta |
-| **S11** | NgModules como contexto legacy (30 min) · build de producción · deploy · code review cruzado | Un `NgModule` mínimo, solo para leerlo | App desplegada · revisión cruzada entre equipos | Build que pasa en dev y explota en `--configuration production` |
+| **S10** | WebSockets · zona y detección de cambios · `OnPush` · `@defer` · **NgModules como contexto legacy (30 min)** | Socket mock que empuja a un signal · un `NgModule` mínimo, solo para leerlo | `race-live`: carrera en vivo, saldo reactivo, leaderboard con `@defer` | **El clásico**: llega el evento, el signal cambia, la vista no repinta |
 
 ### Cuando un tema se necesita antes de su sesión
 
@@ -61,19 +61,28 @@ En S1 el `@for` viene escrito y el enunciado lo aclara: *«el control flow es S3
 
 Lo mismo aplica a `standalone: true` (se usa desde S1, se explica cuando toca) y a `OnPush` (está en todos los componentes desde el principio, se explica en S10).
 
-### S11 rompe el guión, a propósito
+### S0 rompe dos reglas, y las dos a propósito
 
-Los 30 minutos de NgModules legacy y el deploy en vivo no entran en el molde de 12 bloques. S11 usa una variante: pregunta de apertura, Wayground de S10, los 30 min de NgModules, descanso, deploy guiado, y **code review cruzado entre equipos** en lugar de misiones. Va documentado en `sesiones/s11-*/guion.md`.
+TypeScript era **tema 0 asíncrono** y pasó a ser la primera clase en vivo. El motivo: el vocabulario de tipos sostiene las once sesiones que siguen, y leerlo solo no es lo mismo que ver aparecer y desaparecer un error en pantalla.
 
----
+Eso obliga a dos excepciones, y las dos están escritas donde corresponde:
 
-## Tema 0 — TypeScript, asíncrono
+- **En `/s00` del lab, la ruta y el componente vienen dados también en `starter/`.** De S1 en adelante crear la ruta *es* el ejercicio; en S0 no puede serlo, porque las rutas son S9 y los componentes son S1. Lo que sí es el ejercicio está en `sessions/s00/menu.ts`, TypeScript puro. Detalle en [`lab/CLAUDE.md`](../lab/CLAUDE.md).
+- **El bloque 0:05 no es un Wayground**, es un diagnóstico en vivo: no hay sesión anterior de la cual preguntar.
 
-Va **antes de S1**, 100% asíncrono. Produce el `wayground.csv` que se corre en el bloque 0:05 de S1.
+Y la rúbrica del code review tampoco aplica entera: los puntos 1 y 2 hablan de componentes, y en S0 no hay ninguno. `sesiones/s00-typescript/guion.md` trae la rúbrica de cinco puntos que se usa ese día, y el guión dice en voz alta que es la excepción.
 
-Tipos y anotaciones · interfaces y `type` · uniones y literales · genéricos básicos · `strict` y `strictNullChecks` · narrowing · utility types (`Pick`, `Omit`, `Partial`) · módulos ES.
+### S11 se repartió
 
-El material sale del propio contrato: `Race`, `Horse`, `Bet` y `RaceStatus` son los ejemplos. El alumno tipa el dominio real antes de la primera clase, y llega a S1 con el vocabulario puesto.
+El módulo son 11 clases y TypeScript ocupa una. Lo que era S11 —NgModules legacy, build de producción, deploy y code review cruzado— se repartió así:
+
+| Qué era de S11 | Dónde quedó |
+|---|---|
+| NgModules como contexto legacy (30 min) | **S10**, después del bloque de WebSockets |
+| Build de producción y deploy | Cierre asíncrono, guiado por `docs/plan.md` fase 14 |
+| Code review cruzado entre equipos | Cierre asíncrono, con la misma rúbrica de siempre |
+
+Numeración: **S0 … S10**. Las sesiones S1 a S10 conservan exactamente el número que ya tenían, así que las rutas `/sNN` del lab, los `TODO(SN)` del starter y los tags publicados siguen valiendo.
 
 ---
 
@@ -109,3 +118,5 @@ La misma en las 11 sesiones, para que el alumno sepa contra qué lo miran desde 
 6. ¿Respeta la regla de dependencias — `features/` → `core/` + `shared/`, nunca al revés?
 
 Los puntos 1 a 3 los verifica `scripts/verify.mjs`. Del 4 al 6 los verifica una persona, que es justamente por qué el bloque existe.
+
+**S0 es la excepción y hay que decirlo en voz alta:** ese día no hay ni un componente en juego, así que los puntos 1 y 2 no aplican. Su guión trae una rúbrica de cinco puntos propia, sobre tipos, y aclara que desde S1 se vuelve a esta.

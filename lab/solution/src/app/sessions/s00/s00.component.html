@@ -1,0 +1,77 @@
+<header class="header">
+  <p class="eyebrow">Sesión 0 · Lab</p>
+  <h1>Café Compilado</h1>
+  <p class="intro">
+    Esta pantalla no es el ejercicio: es lo que muestran las funciones de
+    <code>menu.ts</code>, que sí lo es. Cambiá un tipo ahí al lado y mirá qué pasa acá.
+  </p>
+</header>
+
+<section class="board">
+  <h2>El pizarrón</h2>
+
+  <table class="prices">
+    <caption>
+      Precios por tamaño. Salen de <code>priceFor()</code>, no están escritos a mano.
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Café</th>
+        @for (size of sizes; track size) {
+          <th scope="col" class="prices__size">{{ size }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (coffee of menu; track coffee.id) {
+        <tr>
+          <th scope="row" class="prices__name">{{ describe(coffee) }}</th>
+          @for (size of sizes; track size) {
+            <td class="num">{{ priceFor(coffee, size) }}</td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>
+
+<div class="cards">
+  <section class="card">
+    <h2>El más barato</h2>
+
+    <!-- `cheapest()` devuelve `Coffee | undefined`, así que hay dos casos que
+         mostrar. El tipo obliga a escribir el segundo. -->
+    @if (best) {
+      <p class="card__lead">{{ best.name }}</p>
+      <p class="card__meta">{{ best.origin }} · <span class="num">{{ best.price }}</span></p>
+    } @else {
+      <p class="empty">El menú está vacío.</p>
+    }
+  </section>
+
+  <section class="card">
+    <h2>Primera página</h2>
+    <p class="card__meta">
+      <span class="num">{{ page.items.length }}</span> de
+      <span class="num">{{ page.total }}</span> cafés
+    </p>
+    <ol class="card__list" role="list">
+      @for (coffee of page.items; track coffee.id) {
+        <li>{{ coffee.name }}</li>
+      }
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>Pedido de {{ order.customer }}</h2>
+    <ol class="card__list" role="list">
+      @for (line of order.lines; track $index) {
+        <li>
+          {{ line.quantity }} × {{ line.coffee.name }} {{ line.size }} ·
+          <span class="num">{{ priceFor(line.coffee, line.size) * line.quantity }}</span>
+        </li>
+      }
+    </ol>
+    <p class="card__lead">Total: <span class="num">{{ total }}</span></p>
+  </section>
+</div>
