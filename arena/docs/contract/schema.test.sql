@@ -129,22 +129,27 @@ begin
   raise notice 'ok · pari-mutuel conserva: Ana 266 + Bruno 534 = 800 = pool';
 end $$;
 
--- ── 4. El piso de 10 puntos ─────────────────────────────────────────────────
--- Carla apostó 500 y perdió; después funde el resto. La nota no se mueve de 10.
+-- ── 4. Perder SÍ baja la nota ───────────────────────────────────────────────
+-- Carla apostó 500 y perdió; después funde el resto. La nota la sigue.
+--
+-- Esta sección afirmaba lo contrario —un piso de 10 puntos— hasta que se corrigió
+-- el contrato: el piso contradecía «si funden las monedas me van a deber nota y se
+-- tendrán que esforzar más». Lo único intocable son los puntos regalados, y eso lo
+-- prueba §5.
 update users set balance = 500 where username = 'carla';
 
 do $$ declare pts numeric; begin
   select points into pts from user_scores where username = 'carla';
-  if pts <> 10 then raise exception 'FALLO: con 500 monedas los puntos dan %, esperado 10', pts; end if;
-  raise notice 'ok · 500 monedas → 10 puntos (sin el piso serían 5)';
+  if pts <> 5 then raise exception 'FALLO: con 500 monedas los puntos dan %, esperado 5', pts; end if;
+  raise notice 'ok · 500 monedas → 5 puntos';
 end $$;
 
 update users set balance = 0 where username = 'carla';
 
 do $$ declare pts numeric; begin
   select points into pts from user_scores where username = 'carla';
-  if pts <> 10 then raise exception 'FALLO: fundida, los puntos dan %, esperado 10', pts; end if;
-  raise notice 'ok · 0 monedas → 10 puntos. Apostar mal no baja la nota';
+  if pts <> 0 then raise exception 'FALLO: fundida, los puntos dan %, esperado 0', pts; end if;
+  raise notice 'ok · 0 monedas → 0 puntos. Apostar mal sí baja la nota';
 end $$;
 
 -- ── 5. Ganar sí sube, y el regalo de puntos se suma aparte ──────────────────

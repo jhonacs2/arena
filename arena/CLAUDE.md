@@ -21,6 +21,26 @@ documento que manda: la economía, los estados de una carrera y quién puede qu�
 
 ---
 
+## 0. El contrato no se reescribe: se reporta el desacuerdo
+
+> **Si estás implementando y el contrato te parece equivocado, PARÁ Y DECILO. No lo edites.**
+
+`docs/contract/` es fuente de verdad compartida entre varias personas y varios agentes trabajando en paralelo. Reescribirla desde una pieza tiene dos efectos, y el segundo es el caro:
+
+1. Las otras piezas siguen construyendo contra lo que leyeron, y se descubre tarde.
+2. **Queda por escrito, con autoridad, una decisión que nadie tomó.** Un `git log` convincente que afirma «la decisión es X» es peor que un desacuerdo abierto, porque el próximo que lo lea lo va a creer.
+
+Ya pasó una vez: un agente reescribió la economía entera afirmando en el commit que eran «las decisiones tomadas». De sus tres cambios, dos contradecían instrucciones explícitas del usuario y el tercero era una pregunta que nunca se había respondido. Se detectó **solo porque otro agente tenía un test que toca Postgres de verdad** y el esquema le voló; con un doble en memoria, habría entregado un backend que compila, testea verde y no arranca.
+
+**La regla, entonces:**
+
+- Un desacuerdo con el contrato se reporta. No se resuelve editando.
+- Si el contrato y el código se separaron, **manda el contrato** — y `decisiones.md` manda sobre `schema.sql` y `api.md`, que lo declara en su primera línea.
+- Un cambio al contrato lo aplica **una sola mano, en una sola pasada**, y sólo con la decisión confirmada.
+- **Nunca escribas «la decisión es X» sobre algo que decidiste vos.** Si lo elegiste porque el contrato no lo cubría, decí eso.
+
+Y el corolario que vale para todo lo demás: **el test que vale es el que toca la cosa real.** El bug del reparto —`sum(bigint)` devuelve `numeric` en Postgres, así que la división redondeaba en vez de truncar y la moneda del resto le quedaba al apostador equivocado— no lo encuentra ningún doble en memoria, y verificar sólo que el total cierre tampoco: hay que asertar los pagos uno por uno.
+
 ## 1. No es material de clase
 
 Los alumnos **usan** Arena, no leen su código. No hay starter, no hay corrección,
@@ -36,7 +56,7 @@ no se publica. Eso cambia dos cosas respecto del resto del repo:
 ```
 Angular   22.x        (última estable — la raíz está en 18, acá no)
 Go        1.26.x
-Postgres  16+, en el mismo VPS que el backend
+Postgres  Supabase (pooler en modo transaction)
 ```
 
 **Comparte la línea visual con el hipódromo:** los tokens salen de
@@ -44,11 +64,16 @@ Postgres  16+, en el mismo VPS que el backend
 bordes de 3px, sombras duras `4px 4px 0`, cero gradientes, `oklch()`. Y **contraste
 AA verificado mecánicamente**, igual que allá.
 
-**Nada de Supabase.** Se evaluó y se descartó por dos razones: su plan gratuito
-pausa el proyecto tras 7 días sin actividad y una clase semanal cae justo en esa
-ventana, y con el bucle de carrera a 10 Hz una base en otra red paga un viaje de
-red por consulta. El backend habla **Postgres plano** —sin SDK, sin extensiones—,
-así que mover la base es cambiar `DATABASE_URL`.
+**La base es Supabase**, como se pidió. Una reescritura anterior de este archivo la
+descartó por dos razones reales —la pausa a los 7 días del plan gratuito y el viaje
+de red por consulta con el bucle a 10 Hz— pero se le había respondido «de Supabase
+no te preocupes», que no es «cambiala».
+
+El backend habla **Postgres plano** —sin SDK, sin extensiones— así que mover la base
+sigue siendo cambiar `DATABASE_URL`. Dos cosas que sí importan: usar el **pooler en
+modo transaction** (puerto 6543) con `DB_SIMPLE_PROTOCOL=1`, y que la pausa a los 7
+días necesita un ping que **toque la base**. Las dos están en
+`arena/deploy/README.md`.
 
 La autenticación es propia: JWT HS256 y PBKDF2 de stdlib, el mismo patrón que el
 backend del hipódromo. El registro es por código de invitación, que no encaja con
@@ -74,8 +99,9 @@ Esta es la sección que distingue Arena de un juego.
   error se compensa con otro movimiento; no se edita la historia de la nota de
   alguien.
 - **Los puntos son una vista**, no una columna. Dos números que representan lo
-  mismo se desincronizan siempre. Y la vista lleva el **piso de 10**: apostar mal
-  no baja la nota.
+  mismo se desincronizan siempre. **No hay piso**: perder monedas sí baja la nota.
+  Lo único intocable son los puntos regalados, que viven en `point_grants` y no
+  pasan por el juego.
 - **La simulación es autoritativa del servidor** y la semilla queda guardada: si
   alguien reclama un resultado, se vuelve a correr igual.
 - **`bet.placed` no revela el caballo** mientras la carrera está `open`.
@@ -109,7 +135,7 @@ y el resto de esa división **se reparte**, no se descarta — ver
 |---|---|
 | Frontend | Cloudflare Pages |
 | Backend | VPS de Hostinger |
-| Base | Postgres en el mismo VPS |
+| Base | Supabase |
 
 El backend **no expone puerto**: `cloudflared` corre como servicio en el VPS y abre
 la conexión hacia afuera (Cloudflare Tunnel). El frontend llama a `/api` en su
