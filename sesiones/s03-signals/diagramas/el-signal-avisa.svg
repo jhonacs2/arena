@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 2 918 506" width="918" height="506" role="img">
+  <style>
+    svg { --dg-surface: #f5f6f0; --dg-surface-raised: #ffffff; --dg-surface-sunken: #ebece4; --dg-text: #08120c; --dg-text-muted: #5b675e; --dg-border: #08120c; --dg-shadow: #08120c; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #d8151e; --dg-live-ink: #f5f6f0; --dg-success: #137d41; --dg-success-ink: #f5f6f0; --dg-danger: #d8151e; --dg-danger-ink: #f5f6f0; }
+    @media (prefers-color-scheme: dark) {
+      svg { --dg-surface: #121c15; --dg-surface-raised: #1e2a22; --dg-surface-sunken: #030905; --dg-text: #e1e2da; --dg-text-muted: #a5a59c; --dg-border: #bebfb5; --dg-shadow: #030905; --dg-accent: #fb9d59; --dg-accent-ink: #08120c; --dg-live: #fd7468; --dg-live-ink: #08120c; --dg-success: #c6e8ce; --dg-success-ink: #08120c; --dg-danger: #fd7468; --dg-danger-ink: #08120c; }
+    }
+  </style>
+
+  <defs>
+    <marker id="mk-triangle-end-vardgborder08120c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-border, #08120c)" /></marker>
+    <marker id="mk-triangle-end-vardglived8151e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-live, #d8151e)" /></marker>
+    <marker id="mk-triangle-end-vardgtextmuted5b675e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-text-muted, #5b675e)" /></marker>
+  </defs>
+  <rect x="6" y="2" width="918" height="506" fill="var(--dg-surface, #f5f6f0)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="36">El signal avisa. El computed escucha. La vista se entera.</tspan></text>
+  <rect x="36" y="76" width="230" height="110" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="30" y="70" width="230" height="110" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="94.88">SIGNAL</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="20" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="120.5">orders</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="146.88">el estado. Lo único</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="164.88">que se guarda.</tspan></text>
+  <path d="M 272 122 L 350 122" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="276" y="103.5">avisa</tspan></text>
+  <rect x="368" y="76" width="230" height="110" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="362" y="70" width="230" height="110" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="94.88">COMPUTED</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="20" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="120.5">visible</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="146.88">derivado. No se guarda:</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="164.88">se recalcula solo.</tspan></text>
+  <path d="M 604 122 L 682 122" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgborder08120c)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="608" y="103.5">avisa</tspan></text>
+  <rect x="700" y="76" width="200" height="110" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="694" y="70" width="200" height="110" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="94.88">LA VISTA</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="20" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="120.5">@for</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="146.88">repinta lo que</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="164.88">de verdad cambió.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="240.75">Y lo que pasa cuando modificás lo que ya estaba adentro:</tspan></text>
+  <rect x="36" y="278" width="230" height="130" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+  <rect x="30" y="272" width="230" height="130" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="15" font-weight="500" fill="var(--dg-live, #d8151e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="299.38">orders().push(x)</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="326.88">el array cambia…</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="350.88">…pero para el signal</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="368.88">sigue siendo EL MISMO</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="386.88">array. No avisa nada.</tspan></text>
+  <path d="M 272 330 L 350 330" fill="none" stroke="var(--dg-live, #d8151e)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9" marker-end="url(#mk-triangle-end-vardglived8151e)" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-live, #d8151e)" text-anchor="start" dominant-baseline="central"><tspan x="272" y="307.5">no avisa</tspan></text>
+  <rect x="362" y="272" width="230" height="130" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" stroke-dasharray="8 6" />
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="15" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="299.38">visible</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="326.88">no se entera y</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="344.88">devuelve lo de antes,</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="362.88">guardado en su caché.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-live, #d8151e)" text-anchor="start" dominant-baseline="central"><tspan x="384" y="386.88">Se queda viejo.</tspan></text>
+  <path d="M 604 330 L 682 330" fill="none" stroke="var(--dg-text-muted, #5b675e)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#mk-triangle-end-vardgtextmuted5b675e)" />
+  <rect x="694" y="272" width="200" height="130" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" stroke-dasharray="8 6" />
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="299.38">la pantalla</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="326.88">una mitad muestra</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="344.88">lo nuevo y la otra</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="362.88">lo viejo, a la vez.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-live, #d8151e)" text-anchor="start" dominant-baseline="central"><tspan x="716" y="386.88">Y no hay ningún error.</tspan></text>
+  <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="500" fill="var(--dg-accent, #cf6f19)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="449.38">La regla: nunca modifiques lo que había. Poné algo nuevo.</tspan></text>
+  <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="474.75">update(v =&gt; [...v, x])   ·   nunca   v.push(x)</tspan></text>
+</svg>

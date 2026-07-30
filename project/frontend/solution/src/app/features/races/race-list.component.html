@@ -6,43 +6,85 @@
   </p>
 </header>
 
-<div class="program">
-  <!-- S2 · El listado ya no dibuja carreras: las compone.
-       Los datos bajan por input, el aviso sube por output. -->
-  <ul class="races" role="list">
-    @for (view of races; track view.race.id) {
-      <li>
-        <app-race-card
-          [race]="view.race"
-          [time]="view.time"
-          [favourite]="view.favourite"
-          [selected]="selected?.race?.id === view.race.id"
-          (toggled)="select(view)"
-        >
-          <!-- La pastilla viaja al <ng-content select="[card-status]">.
-               El tono lo decide el listado porque es una decisión de esta
-               pantalla, no de la tarjeta. -->
-          <app-badge card-status [tone]="view.tone">{{ view.statusLabel }}</app-badge>
-
-          <!-- Y esto al <ng-content> sin select, solo en la que está en vivo.
-               La tarjeta no sabe que existe. -->
-          @if (view.race.status === 'live') {
-            <span class="live-note">Se está corriendo ahora</span>
-          }
-        </app-race-card>
-      </li>
+<!-- S3 · Filtro y búsqueda. Nada de lo que hay acá abajo está guardado:
+     `visible()` se recalcula solo cuando cambia el filtro o la búsqueda. -->
+<section class="filters">
+  <div class="tabs" role="group" aria-label="Filtrar carreras">
+    @for (option of filters; track option) {
+      <button
+        type="button"
+        class="tab"
+        [class.tab--active]="filter() === option"
+        [attr.aria-pressed]="filter() === option"
+        (click)="selectFilter(option)"
+      >
+        {{ filterLabels[option] }}
+        <span class="tab__count num">{{ counts()[option] }}</span>
+      </button>
     }
-  </ul>
+  </div>
 
-  <!-- El panel solo existe si hay una carrera elegida. -->
-  @if (selected) {
+  <label class="field field--search">
+    <span>Buscar por carrera o caballo</span>
+    <input name="query" type="search" autocomplete="off" [(ngModel)]="query" />
+  </label>
+</section>
+
+<div class="program">
+  <div>
+    @if (visible().length === 0) {
+      <p class="no-results">
+        @switch (filter()) {
+          @case ('live') {
+            No hay ninguna carrera corriéndose ahora.
+          }
+          @case ('upcoming') {
+            No queda ninguna por largar hoy.
+          }
+          @case ('finished') {
+            Todavía no terminó ninguna.
+          }
+          @default {
+            Ninguna carrera coincide con la búsqueda.
+          }
+        }
+        <button type="button" class="link" (click)="clearFilters()">Ver todas</button>
+      </p>
+    } @else {
+      <ul class="races" role="list">
+        <!-- track por id: si cambia el filtro, Angular mueve las tarjetas que
+             ya existían en vez de destruirlas y volver a crearlas. -->
+        @for (view of visible(); track view.race.id) {
+          <li>
+            <app-race-card
+              [race]="view.race"
+              [time]="view.time"
+              [favourite]="view.favourite"
+              [selected]="selected()?.race?.id === view.race.id"
+              (toggled)="select($event)"
+            >
+              <app-badge card-status [tone]="view.tone">{{ view.statusLabel }}</app-badge>
+
+              @if (view.race.status === 'live') {
+                <span class="live-note">Se está corriendo ahora</span>
+              }
+            </app-race-card>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <!-- El panel se deriva del id: si el filtro deja afuera la carrera abierta,
+       se cierra solo. Nadie tuvo que acordarse de limpiarlo. -->
+  @if (selected(); as view) {
     <aside class="detail">
-      <h2>{{ selected.race.name }}</h2>
-      <p class="detail__time num">{{ selected.time }}</p>
+      <h2>{{ view.race.name }}</h2>
+      <p class="detail__time num">{{ view.time }}</p>
 
-      <h3 class="label">Parrilla</h3>
+      <h3 class="label">Parrilla · por cuota</h3>
       <ul class="lineup" role="list">
-        @for (horse of selected.race.horses; track horse.id) {
+        @for (horse of lineup(); track horse.id) {
           <li class="runner">
             <span class="saddlecloth num">{{ horse.number }}</span>
             <app-silk [horseId]="horse.id" [horseName]="horse.name" size="sm" />
@@ -54,9 +96,7 @@
         }
       </ul>
 
-      @if (selected.favourite) {
-        <!-- TWO-WAY BINDING: el monto va del input a la clase y vuelve al
-             texto de abajo. Es la misma propiedad leída en los dos sentidos. -->
+      @if (view.favourite; as best) {
         <div class="simulator">
           <h3 class="label">Si le apostás al favorito</h3>
 
@@ -66,8 +106,8 @@
           </label>
 
           <p class="simulator__payout">
-            {{ selected.favourite.name }} paga
-            <strong class="num">{{ payout }}</strong>
+            {{ best.name }} paga
+            <strong class="num">{{ payout() }}</strong>
           </p>
           <p class="simulator__note">Saldo virtual. Todavía no se puede apostar de verdad.</p>
         </div>

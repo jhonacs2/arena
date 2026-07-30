@@ -20,6 +20,11 @@ export const routes: Routes = [
     title: 'S2 · Anatomía de un componente · Lab',
     loadComponent: () => import('./sessions/s02/s02.component').then((m) => m.S02Component),
   },
+  {
+    path: 's03',
+    title: 'S3 · Signals y control flow · Lab',
+    loadComponent: () => import('./sessions/s03/s03.component').then((m) => m.S03Component),
+  },
   { path: '', redirectTo: 's00', pathMatch: 'full' },
   { path: '**', redirectTo: 's00' },
 ];

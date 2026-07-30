@@ -11,7 +11,8 @@ Orden de trabajo del módulo. Una fase por vez; cada una termina con `node scrip
 | **3.5** | Revisión del formato de los materiales | ✅ **terminada** |
 | **3.75** | S0 · TypeScript, y S11 repartida | ✅ **terminada** — falta darla |
 | **4** | S2 · Anatomía de un componente | ✅ **terminada** — falta darla |
-| **5–12** | Una sesión por fase, S3 … S10 | ⬜ siguiente |
+| **5** | S3 · Signals y control flow | ✅ **terminada** — falta darla |
+| **6–12** | Una sesión por fase, S4 … S10 | ⬜ siguiente |
 | **13** | Publicación y deploy | ⬜ |
 
 ---
@@ -138,7 +139,17 @@ Dos defectos reales que aparecieron por verificar en vez de suponer:
 
 Y una respuesta de «predice y ejecuta» que la intuición falla: **dos `<ng-content>` iguales compilan sin una queja y el contenido aparece una sola vez** — el contenido proyectado se *mueve*, no se copia, y un nodo del DOM no puede estar en dos lugares.
 
-## Fases 5–12 — Una sesión por fase
+## Fase 5 — S3 · Signals y control flow ✅
+
+- **Lab `/s03`**: el tablero de la comanda. **Tres signals y nada más** —la comanda, el filtro, la búsqueda—; los contadores, el total y el orden por precio son `computed`. El starter trae la lista andando con propiedades comunes y sin nada derivado
+- **Hipódromo**: filtro por estado, búsqueda por carrera o caballo, y la parrilla ordenada por cuota. Las ocho carreras **no** son un signal: vienen de una constante y no cambian
+- **`sesiones/s03-signals/`**: los 12 archivos, con el diagrama «el signal avisa»
+
+La decisión que se cobra sola y quedó escrita en `correccion.md`: **se guarda el id de la carrera abierta, no la carrera.** Derivando el resto, al filtrar una carrera abierta hacia afuera el panel de detalle **se cierra solo** — y nadie escribió esa línea.
+
+Y una corrección al currículo que salió de medirlo en el navegador. Decía «`array.push()` sobre un signal y la vista no repinta». **Es peor que eso:** la lista del `@for` **sí** se actualiza, porque el template se relee en cada revisión; el `computed` que lee el mismo signal **no se recalcula nunca**, ni siquiera al tocar otro signal distinto. Queda media pantalla nueva y media vieja, sin un solo error. La respuesta del bloque de predicciones y el guión dicen eso, no lo otro.
+
+## Fases 6–12 — Una sesión por fase
 
 Cada una entrega: slice de la solución · slice del starter con sus `// TODO(Sn)` · ruta `/sNN` del lab en ambas versiones · los archivos de `sesiones/sNN-*/` · commit `feat(sNN): …` + tag en el repo del alumno.
 

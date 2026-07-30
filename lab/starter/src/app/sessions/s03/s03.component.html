@@ -1,0 +1,57 @@
+<header class="header">
+  <p class="eyebrow">Sesión 3 · Lab</p>
+  <h1>El tablero de la comanda</h1>
+  <p class="intro">
+    La lista anda. No hay filtro, no hay búsqueda, no hay contadores y no hay total: eso es lo que
+    se construye hoy, y ninguno de los cuatro se va a guardar en ninguna parte.
+  </p>
+</header>
+
+<!--
+  TODO(S3) · 3 — Acá van los controles: una fila de pestañas con el filtro y
+  su contador, y un buscador por cliente o café. El CSS ya está escrito
+  (.controls, .tabs, .tab, .tab--active, .tab__count, .field, .actions).
+-->
+
+<section class="board">
+  <h2>En pantalla</h2>
+
+  <ul class="orders" role="list">
+    <!-- TODO(S3) · 5 — este @for tiene que recorrer lo que se VE, no la
+         comanda entera, y llevar `track` por id. -->
+    @for (order of orders; track order.id) {
+      <li class="order" [class.order--served]="order.status === 'served'">
+        <span class="order__customer">{{ order.customer }}</span>
+        <span class="order__coffee">{{ order.quantity }} × {{ order.coffee }}</span>
+        <span class="order__status">{{ statusLabels[order.status] }}</span>
+        <span class="order__total num">{{ lineTotal(order) }}</span>
+
+        <span class="order__actions">
+          <button
+            type="button"
+            class="button button--ghost"
+            [disabled]="order.status === 'served'"
+            (click)="advance(order.id)"
+          >
+            <!-- TODO(S3) · 5 — el texto del botón sale de un @switch sobre el
+                 estado: «Marcar lista», «Entregar», «Entregada». -->
+            Avanzar
+          </button>
+          <button type="button" class="button button--ghost" (click)="remove(order.id)">Quitar</button>
+        </span>
+      </li>
+    }
+  </ul>
+
+  <div class="actions">
+    <button type="button" class="button" (click)="add()">Agregar comanda</button>
+    <button type="button" class="button button--ghost" (click)="reset()">Reiniciar</button>
+  </div>
+</section>
+
+<!--
+  TODO(S3) · 4 y 6 — Acá van los dos paneles: «Por cobrar», con el total de lo
+  que no está entregado, y «Las más caras», con la lista ordenada por importe
+  SIN tocar el orden de la comanda. El CSS ya está escrito (.panels, .panel,
+  .panel__lead, .panel__list, .panel__note).
+-->

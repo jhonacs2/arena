@@ -26,6 +26,66 @@
   margin-block: var(--space-6) var(--space-2);
 }
 
+/* ── Filtro y búsqueda (S3) ────────────────────────────────────────────── */
+.filters {
+  display: grid;
+  gap: var(--space-4);
+  margin-block-end: var(--space-6);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.tab--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.tab__count {
+  font-size: var(--text-xs);
+  opacity: 0.75;
+}
+
+.field--search input {
+  max-inline-size: 28rem;
+}
+
+.no-results {
+  padding: var(--space-6);
+  border: var(--border-width) dashed var(--border);
+  color: var(--text-muted);
+}
+
+.link {
+  display: block;
+  margin-block-start: var(--space-2);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--text);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* Bento: la lista manda y el detalle acompaña. A partir de 60rem se acuestan;
    abajo de eso el detalle va debajo. */
 .program {

@@ -1,0 +1,135 @@
+<header class="header">
+  <p class="eyebrow">Sesión 3 · Lab</p>
+  <h1>El tablero de la comanda</h1>
+  <p class="intro">
+    Tres <code>signal()</code> y cuatro <code>computed()</code>. Nada de lo que se ve abajo está
+    guardado: se calcula solo cada vez que la comanda cambia.
+  </p>
+</header>
+
+<section class="controls">
+  <!-- @for sobre una lista fija. `track` es OBLIGATORIO: sin él no compila. -->
+  <div class="tabs" role="group" aria-label="Filtrar comandas">
+    @for (option of filters; track option) {
+      <button
+        type="button"
+        class="tab"
+        [class.tab--active]="filter() === option"
+        [attr.aria-pressed]="filter() === option"
+        (click)="selectFilter(option)"
+      >
+        {{ filterLabels[option] }}
+        <span class="tab__count num">{{ counts()[option] }}</span>
+      </button>
+    }
+  </div>
+
+  <label class="field">
+    <span>Buscar por cliente o café</span>
+    <!-- [(ngModel)] sobre un signal: Angular 18 lo escribe con set() por vos. -->
+    <input name="query" type="search" autocomplete="off" [(ngModel)]="query" />
+  </label>
+
+  <div class="actions">
+    <button type="button" class="button" (click)="add()">Agregar comanda</button>
+    <button type="button" class="button button--ghost" (click)="reset()">Reiniciar</button>
+  </div>
+</section>
+
+<section class="board">
+  <h2>
+    En pantalla
+    <span class="board__count num">{{ visible().length }}</span>
+    de
+    <span class="board__count num">{{ counts().all }}</span>
+  </h2>
+
+  @if (visible().length === 0) {
+    <!-- @switch para que el mensaje de vacío diga algo útil según el filtro.
+         @default es obligatorio si querés cubrir "cualquier otro caso". -->
+    <p class="empty">
+      @switch (filter()) {
+        @case ('pending') {
+          No queda ninguna pendiente. La barra está al día.
+        }
+        @case ('ready') {
+          Ninguna lista para entregar.
+        }
+        @case ('served') {
+          Todavía no se entregó ninguna.
+        }
+        @default {
+          No hay comandas que coincidan con la búsqueda.
+        }
+      }
+    </p>
+  } @else {
+    <ul class="orders" role="list">
+      <!-- track por id, no por $index: si cambia el orden, Angular sabe que la
+           fila de Ana sigue siendo la de Ana y la mueve en vez de repintarla. -->
+      @for (order of visible(); track order.id) {
+        <li class="order" [class.order--served]="order.status === 'served'">
+          <span class="order__customer">{{ order.customer }}</span>
+          <span class="order__coffee">{{ order.quantity }} × {{ order.coffee }}</span>
+          <span class="order__status">{{ statusLabels[order.status] }}</span>
+          <span class="order__total num">{{ lineTotal(order) }}</span>
+
+          <span class="order__actions">
+            <button
+              type="button"
+              class="button button--ghost"
+              [disabled]="order.status === 'served'"
+              (click)="advance(order.id)"
+            >
+              @switch (order.status) {
+                @case ('pending') {
+                  Marcar lista
+                }
+                @case ('ready') {
+                  Entregar
+                }
+                @default {
+                  Entregada
+                }
+              }
+            </button>
+            <button type="button" class="button button--ghost" (click)="remove(order.id)">
+              Quitar
+            </button>
+          </span>
+        </li>
+      } @empty {
+        <!-- @empty no se usa hoy porque el @if de arriba ya cubre el vacío;
+             está para que se vea que existe. -->
+        <li class="empty">Sin comandas.</li>
+      }
+    </ul>
+  }
+</section>
+
+<div class="panels">
+  <section class="panel">
+    <h2>Por cobrar</h2>
+    <p class="panel__lead num">{{ pendingTotal() }}</p>
+    <p class="panel__note">Todo lo que no está entregado. Se recalcula solo.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Las más caras</h2>
+    @if (byPrice().length === 0) {
+      <p class="empty">Nada que ordenar.</p>
+    } @else {
+      <ol class="panel__list" role="list">
+        @for (order of byPrice(); track order.id) {
+          <li>
+            {{ order.customer }} · <span class="num">{{ lineTotal(order) }}</span>
+          </li>
+        }
+      </ol>
+      <p class="panel__note">
+        Ordenadas sin tocar la comanda: <code>[...lista].sort()</code>, nunca
+        <code>lista.sort()</code>.
+      </p>
+    }
+  </section>
+</div>

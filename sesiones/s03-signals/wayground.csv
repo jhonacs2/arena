@@ -1,0 +1,13 @@
+Question Text,Question Type,Option 1,Option 2,Option 3,Option 4,Correct Answer,Time in seconds,Image Link
+"¿Qué es un signal, en una frase?",Multiple Choice,"Un valor que avisa cuando cambia","Una variable más rápida","Un observable de RxJS","Una propiedad privada",1,30,
+"El tablero muestra las comandas, el filtro, la búsqueda y cuánto falta cobrar. ¿Cuál de los cuatro NO es estado?",Multiple Choice,"Las comandas","El filtro","La búsqueda","Cuánto falta cobrar",4,45,
+"orders es un signal con un array. Hago orders().push(x). ¿Qué se ve?",Multiple Choice,"No cambia nada en la pantalla","Cambia todo: la lista y los totales","La lista se actualiza pero los computed que leen ese signal no","Salta un error en la consola",3,60,
+"¿Por qué el push no dispara nada?",Multiple Choice,"Porque push está prohibido en Angular","Porque el signal guarda el array, y el array sigue siendo el mismo","Porque OnPush bloquea los arrays","Porque falta llamar a detectChanges",2,45,
+"¿Cuál es la forma correcta de agregar un elemento al array de un signal?",Multiple Choice,"lista().push(x)","lista.update(v => [...v, x])","lista.set(lista().push(x))","lista() = [...lista(), x]",2,30,
+"Un computed, ¿cuándo se recalcula?",Multiple Choice,"En cada detección de cambios","Solo cuando cambia alguno de los signals que lee","Cada vez que se lo llama desde el template","Una sola vez, al crearse",2,45,
+"¿Cuál es la diferencia entre set y update?",Multiple Choice,"Ninguna","set reemplaza el valor entero; update parte del que había","update es asíncrono","set solo sirve para números",2,30,
+"@for (order of visible()) { ... } sin track. ¿Qué pasa?",Multiple Choice,"Compila y usa el índice","Compila con una advertencia","No compila: NG5002","Compila pero la lista queda vacía",3,45,
+"¿Para qué sirve track en un @for?",Multiple Choice,"Para ordenar la lista","Para que Angular reconozca que una fila es la misma cuando la lista se reordena","Para contar los elementos","Para mejorar el SEO",2,45,
+"Un computed hace this.numbers().sort(...). numbers se declaró [3,1,2] y nadie llamó a set. ¿Qué ve otro computed que solo lee numbers?",Multiple Choice,"3,1,2","1,2,3","Un error","undefined",2,60,
+"¿Cuál de estos métodos de array NO modifica el original?",Multiple Choice,"sort","splice","map","reverse",3,30,
+"@if, @for y @switch, ¿hay que declararlos en imports?",Multiple Choice,"Sí, como FormsModule","No: son sintaxis del template, no directivas importables","Solo @for","Solo si el componente es standalone",2,30,

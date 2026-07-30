@@ -8,6 +8,7 @@ sesiones/
 ├── s00-typescript/        la primera clase
 ├── s01-primer-componente/
 ├── s02-anatomia-componente/
+├── s03-signals/
 ├── …
 └── s10-websockets/        + los 30 min de NgModules legacy
 ```
