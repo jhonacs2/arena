@@ -1,15 +1,10 @@
 -- Arena — esquema Postgres
 --
--- La base es **Supabase**, como se pidió. Una versión anterior de este archivo la
--- cambió por Postgres en el mismo VPS; el motivo que dio —la pausa a los 7 días del
--- plan gratuito— es real, pero se le había respondido «de Supabase no te
--- preocupes», que no es «cambialo».
---
--- Nada de acá usa extensiones de Supabase, así que mover la base sigue siendo
--- cambiar `DATABASE_URL`. Dos cosas que sí importan y están documentadas en
--- `arena/deploy/README.md`: usar el **pooler en modo transaction** (puerto 6543)
--- con `DB_SIMPLE_PROTOCOL=1`, y que la pausa a los 7 días necesita un ping que
--- **toque la base**, porque una clase semanal cae justo en esa ventana.
+-- Postgres corre en el **mismo VPS** que el backend. No es Supabase: su plan
+-- gratuito pausa el proyecto tras 7 días sin actividad y una clase semanal cae
+-- justo en esa ventana, y con el bucle de carrera a 10 Hz una base en otra red
+-- paga un viaje de red por consulta. Nada de acá usa extensiones de Supabase, así
+-- que mover la base es cambiar `DATABASE_URL`.
 --
 -- Las reglas que este esquema hace cumplir están en decisiones.md. Todo lo que se
 -- pueda expresar como restricción de la base va acá y no en Go: una regla en el
@@ -322,15 +317,12 @@ create trigger grants_sin_update before update or delete on point_grants
 -- Los puntos son una función del saldo, no una columna: dos números que
 -- representan lo mismo se desincronizan siempre.
 --
--- **NO hay piso.** Una versión anterior de este archivo tenía `greatest(10, …)`,
--- con el argumento de que apostar no debería poder bajar la nota. El argumento es
--- razonable pero contradice la instrucción: «si funden las monedas me van a deber
--- nota y se tendrán que esforzar más». Con piso no deben nada y no hay nada que
--- compensar — la frase sólo tiene sentido sin piso.
---
--- Los puntos regalados sí son intocables, y para eso está `point_grants`: no
--- pasan por el juego. Eso cubre el caso legítimo que el piso intentaba resolver
--- sin anular la consecuencia de apostar mal.
+-- **El piso de 10 es la regla que más importa de todo el esquema.** Son los 10
+-- puntos que el alumno recibe al canjear el código, y apostar mal no los puede
+-- tocar: una racha perdedora le saca monedas —y con eso, capacidad de seguir
+-- jugando— pero nunca calificación. Sin este `greatest`, el juego se convierte en
+-- un riesgo académico y nadie se anima a apostar, que es lo contrario de lo que se
+-- busca.
 create or replace view user_scores as
 select
   u.id,
@@ -338,9 +330,9 @@ select
   u.first_name,
   u.last_name,
   u.balance,
-  (u.balance / 100)::int as points_from_coins,
+  greatest(10, u.balance / 100)::int as points_from_coins,
   coalesce((select sum(g.points) from point_grants g where g.user_id = u.id), 0) as points_granted,
-  (u.balance / 100)::numeric
+  greatest(10, u.balance / 100)::numeric
     + coalesce((select sum(g.points) from point_grants g where g.user_id = u.id), 0) as points,
   (select count(*) from bets b where b.user_id = u.id) as bets_placed,
   (select count(*) from bets b where b.user_id = u.id and b.status = 'won') as bets_won

@@ -11,83 +11,74 @@ producto que consumen.
 
 ---
 
+## 0. Registro de decisiones — cerrado
+
+> El usuario lo escribió textual, en un mensaje de chat, el **2026-07-29**:
+>
+> **«Arena: piso de 10 en la nota, pari-mutuel, Postgres en el VPS.»**
+
+Se cita literal a propósito. Esta economía se reescribió cinco veces en commits
+consecutivos porque cada lado tenía un registro distinto de qué se había decidido, y
+una frase verificable en el hilo es lo único que corta eso.
+
+| Decisión | Valor |
+|---|---|
+| Piso de la nota | **10 puntos.** Apostar mal no baja la calificación |
+| Cuotas | **pari-mutuel.** El pool se reparte entre los que aciertan |
+| Base | **Postgres en el mismo VPS.** No Supabase |
+| Recarga automática | **no hay.** El instructor regala monedas a pedido |
+
+**No se reabren.** Si creés que hay una contradicción, escribila acá como pregunta
+abierta y dejá el código quieto — ver `arena/CLAUDE.md` §0.
+
+---
+
 ## 1. La economía
 
 | Regla | Valor |
 |---|---|
 | Conversión | **100 monedas = 1 punto** |
 | Saldo inicial al canjear el código | **1000 monedas = 10 puntos** |
-| Piso de la nota | **no hay.** Apostar mal sí baja la nota |
+| **Piso de la nota** | **10 puntos.** Apostar mal no la baja nunca |
 | Piso del saldo | **0.** Nunca negativo |
 | Monto de una apuesta | `1 ≤ monto ≤ saldo` |
 | Apuestas por carrera y por alumno | **exactamente una** |
-| Cuotas | ⚠️ **SIN DECIDIR** — ver abajo |
+| Cuotas | **pari-mutuel**: sale del pool, no hay casa |
 | Recarga automática | **no hay**. El instructor regala a pedido |
 
 ```
-puntos = floor(monedas / 100) + puntos regalados
+puntos = max(10, floor(monedas / 100)) + puntos regalados
 ```
 
 Es una función del saldo, no una columna: no hay dos números que puedan
 desincronizarse. Lo verifica `schema.test.sql`.
 
-### No hay piso, y eso es deliberado
+### El piso y el pari-mutuel van juntos, y por qué
 
-Una versión anterior de este documento puso un piso de 10 puntos y lo llamó «la
-decisión más importante del proyecto», con este argumento: sin piso, el juego es un
-riesgo académico y lo racional pasa a ser no apostar nunca.
+Son una sola decisión con dos mitades. Pari-mutuel es **suma cero**: para que un
+alumno gane 500 monedas, otros las perdieron. Sin piso, esas monedas eran puntos de
+calificación — la nota de uno saldría literalmente de la de otro, en clase, en vivo.
 
-El argumento es bueno, pero **contradice la instrucción**: *«si funden las monedas
-me van a deber nota y se tendrán que esforzar más»*. Con piso no deben nada y no
-hay nada que compensar — la frase sólo tiene sentido sin piso.
+El piso es lo que hace que el juego sea **de suma cero en monedas y solo de subida en
+nota**. Cambiar uno sin el otro rompe esa propiedad, y las combinaciones que quedan
+son peores:
 
-El caso legítimo que el piso intentaba resolver —que un reconocimiento ganado no se
-pueda perder en una apuesta— ya está cubierto por `point_grants`: **los puntos
-regalados no pasan por el juego.** Eso protege lo que se ganó sin anular la
-consecuencia de apostar mal.
+| Paquete | Monedas | Nota | |
+|---|---|---|---|
+| **pari-mutuel + piso** | suma cero | solo sube | ✅ **elegido** |
+| cuotas fijas + sin piso | crecen (paga la casa) | sube y baja | coherente, no elegido |
+| pari-mutuel + sin piso | suma cero | **la de uno sale de la de otro** | ❌ incoherente |
+| cuotas fijas + piso | crecen | solo sube | la masa de monedas deriva sin control |
 
-### ⚠️ Cuotas fijas o pari-mutuel: SIN DECIDIR
+### Qué cuesta perder, entonces
 
-**Nada que dependa del pago debe implementarse hasta que esto se cierre.**
+**Capacidad de jugar, no calificación.** El que funde queda sin con qué apostar
+—hasta que le regales monedas— pero sigue con sus 10 puntos. La consecuencia es
+quedarse afuera del juego, que en un curso es incentivo suficiente sin poner la nota
+de rehén.
 
-| | Cómo paga | Efecto |
-|---|---|---|
-| **Cuotas fijas** | `monto × cuota`, la paga «la casa» | cada alumno juega contra la cuota. La masa de monedas crece |
-| **Pari-mutuel** | se reparte el pool entre los que aciertan | **suma cero: para que uno gane, otro pierde** |
-
-Con nota adentro, pari-mutuel es una curva: los alumnos se sacan calificación entre
-ellos. Cuotas fijas los hace jugar contra el sistema y no entre sí, que es más
-consistente con que las monedas midan participación.
-
-El esquema hoy está escrito para **pari-mutuel** (`nominal_odds`,
-`race_settlements`, sin `odds_at_bet`) porque así lo dejó una reescritura que
-afirmó una decisión que no se había tomado. Queda así hasta la confirmación, pero
-**no es una decisión tomada** y este aviso no se saca hasta que lo sea.
-
-#### El argumento más fuerte del otro lado, que hay que tener a la vista
-
-Vino de un agente que reescribió el contrato dos veces, pero el razonamiento es
-bueno y no se descarta por el envase:
-
-> **El piso y el pari-mutuel se sostienen juntos.** Pari-mutuel es suma cero, así
-> que sin piso la nota que gana un alumno **sale de la de otro**. El piso es lo que
-> hace que el juego sea de suma cero en *monedas* y sólo de subida en *nota*.
-> Cambiar uno sin el otro rompe esa propiedad.
-
-Es correcto, y significa que hay dos paquetes coherentes, no cuatro
-combinaciones:
-
-| Paquete | Monedas | Nota |
-|---|---|---|
-| **A · cuotas fijas, sin piso** | crecen (paga la casa) | sube y **baja**. Perder cuesta |
-| **B · pari-mutuel, con piso** | suma cero entre alumnos | sólo sube |
-
-**A** es lo que dice la instrucción («me van a deber nota»). **B** es más suave y
-protege la nota, pero entonces las monedas dejan de traducirse a consecuencia y
-pasan a ser sólo un marcador de participación.
-
-Lo que **no** es coherente es pari-mutuel sin piso: los alumnos se sacarían nota
-entre ellos. Si se elige pari-mutuel, el piso viene con él.
+Y lo que se ganó **fuera** del juego no se puede perder adentro: los puntos
+regalados viven en `point_grants` y no pasan por las apuestas.
 
 ### Dos regalos distintos, que no son lo mismo
 

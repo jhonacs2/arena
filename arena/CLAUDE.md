@@ -56,7 +56,7 @@ no se publica. Eso cambia dos cosas respecto del resto del repo:
 ```
 Angular   22.x        (última estable — la raíz está en 18, acá no)
 Go        1.26.x
-Postgres  Supabase (pooler en modo transaction)
+Postgres  16+, en el mismo VPS que el backend
 ```
 
 **Comparte la línea visual con el hipódromo:** los tokens salen de
@@ -64,16 +64,18 @@ Postgres  Supabase (pooler en modo transaction)
 bordes de 3px, sombras duras `4px 4px 0`, cero gradientes, `oklch()`. Y **contraste
 AA verificado mecánicamente**, igual que allá.
 
-**La base es Supabase**, como se pidió. Una reescritura anterior de este archivo la
-descartó por dos razones reales —la pausa a los 7 días del plan gratuito y el viaje
-de red por consulta con el bucle a 10 Hz— pero se le había respondido «de Supabase
-no te preocupes», que no es «cambiala».
+**La base es Postgres en el mismo VPS que el backend. No Supabase.** Decidido por el
+usuario en un mensaje literal: *«Arena: piso de 10 en la nota, pari-mutuel, Postgres
+en el VPS.»* Las dos razones que lo motivaron son reales y quedan anotadas porque
+explican por qué no se vuelve: el plan gratuito de Supabase pausa el proyecto tras 7
+días sin actividad —y una clase semanal cae justo en esa ventana—, y con el bucle de
+carrera a 10 Hz una base en otra red paga un viaje de red por consulta.
 
 El backend habla **Postgres plano** —sin SDK, sin extensiones— así que mover la base
-sigue siendo cambiar `DATABASE_URL`. Dos cosas que sí importan: usar el **pooler en
-modo transaction** (puerto 6543) con `DB_SIMPLE_PROTOCOL=1`, y que la pausa a los 7
-días necesita un ping que **toque la base**. Las dos están en
-`arena/deploy/README.md`.
+sigue siendo cambiar `DATABASE_URL` en cualquier dirección. Lo que quedó escrito en
+`arena/deploy/README.md` sobre el pooler en modo transaction y el ping semanal aplica
+**solo** si algún día se vuelve a Supabase; con la base local no hace falta ninguno
+de los dos.
 
 La autenticación es propia: JWT HS256 y PBKDF2 de stdlib, el mismo patrón que el
 backend del hipódromo. El registro es por código de invitación, que no encaja con
@@ -99,9 +101,9 @@ Esta es la sección que distingue Arena de un juego.
   error se compensa con otro movimiento; no se edita la historia de la nota de
   alguien.
 - **Los puntos son una vista**, no una columna. Dos números que representan lo
-  mismo se desincronizan siempre. **No hay piso**: perder monedas sí baja la nota.
-  Lo único intocable son los puntos regalados, que viven en `point_grants` y no
-  pasan por el juego.
+  mismo se desincronizan siempre. La vista lleva el **piso de 10**: perder monedas
+  saca capacidad de seguir jugando, nunca calificación. Y los puntos regalados se
+  suman aparte, en `point_grants`, porque no pasan por el juego.
 - **La simulación es autoritativa del servidor** y la semilla queda guardada: si
   alguien reclama un resultado, se vuelve a correr igual.
 - **`bet.placed` no revela el caballo** mientras la carrera está `open`.
