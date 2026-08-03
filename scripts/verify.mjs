@@ -352,6 +352,10 @@ check('diseño', 'los tokens CSS están al día', () => runScript('gen-tokens-cs
 
 check('diseño', 'los diagramas y sus SVG coinciden', () => runScript('gen-diagram-svg.mjs', ['--check']));
 
+// Solo mira las sesiones que YA tienen su deck escrito: el de reveal es
+// opcional sesión por sesión, y una sesión sin deck no es un error.
+check('diseño', 'los decks de reveal salen de su slides.md', () => runScript('gen-reveal.mjs', ['--check']));
+
 // ══ BACKEND GO ═════════════════════════════════════════════════════════════
 
 const BACKEND = join(ROOT, 'project/backend');

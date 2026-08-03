@@ -186,3 +186,27 @@ Las diapositivas se exportan **siempre en claro**: si dependieran de `prefers-co
 ```bash
 npx @marp-team/marp-cli --theme-set theme/ --html --allow-local-files sesiones/sNN-*/slides.md
 ```
+
+## Y hay un segundo deck, en reveal.js
+
+El mismo `slides.md` se proyecta también con reveal.js. **No hay dos originales**: `slides.md` sigue siendo el archivo que se edita, y el HTML lo escribe un generador.
+
+```bash
+node scripts/gen-reveal.mjs sesiones/sNN-*    # escribe slides.reveal.html al lado
+node scripts/gen-reveal.mjs --check           # dentro de verify.mjs
+```
+
+Se abre con doble clic —no necesita servidor, ni red, ni Node—, las notas del guión son las mismas y salen con **S**, y `?print-pdf` imprime.
+
+| | Marp | reveal |
+|---|---|---|
+| Tema | `theme/marp-neobrutal.css` | `theme/reveal-neobrutal.css` |
+| Clases | `portada` `bloque` `codigo` `ojo` | las mismas |
+| Notas | tecla **P** | tecla **S** |
+| Código | sin colorear | coloreado con highlight.js, con la paleta del repo |
+
+Tres cosas que reveal hace distinto y que ya costaron una pasada:
+
+1. **Reveal escribe `display: block` inline** en la diapositiva que está en pantalla. Ningún `display: flex` del CSS le gana: el centrado vertical vive en el `div.slide-body` que agrega el generador. Lo mismo con el número de página — se apaga con `visibility`, no con `display`.
+2. **Los diagramas van pegados inline y sin su modo oscuro.** Adentro de un `<img>`, el `prefers-color-scheme` del SVG lo resuelve el sistema operativo del que proyecta, y el diagrama sale oscuro sobre una diapositiva clara.
+3. **`color-scheme` en un deck de un solo tema es `light`, no `light dark`.** Con `light dark` y el sistema en oscuro, el navegador pinta de blanco todo lo que no tenga color propio. `gen-tokens-css.mjs` ya lo emite bien para los dos temas.

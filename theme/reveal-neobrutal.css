@@ -1,0 +1,618 @@
+/* neobrutal — tema reveal.js del módulo
+ *
+ * Hermano de theme/marp-neobrutal.css: los mismos tokens, las mismas cuatro
+ * clases de diapositiva y la misma tipografía. Lo que cambia es el motor.
+ *
+ *   node scripts/gen-reveal.mjs sesiones/s00-typescript
+ *
+ * El HTML lo escribe ese script desde slides.md — no se edita a mano.
+ *
+ * Clases de diapositiva (las declara slides.md con <!-- _class: x -->):
+ *   portada   portada de la sesion
+ *   bloque    separador de bloque del guion
+ *   codigo    diapositiva de codigo a pantalla casi completa
+ *   ojo       la advertencia que no se olvidan
+ *
+ * Reveal no trae tipografia propia en dist/reveal.css —eso vive en sus temas,
+ * y no copiamos ninguno—, asi que todo lo que se ve sale de este archivo.
+ */
+
+/* @tokens:start */
+  /* Generado desde docs/design/tokens.json — no editar a mano.
+     Cambiar un color: se edita el JSON y se corre node scripts/gen-tokens-css.mjs */
+
+  :root {
+    /* primitivas */
+    --ink-900:      oklch(0.17 0.02 155);
+    --ink-500:      oklch(0.5 0.02 155);
+    --slate-950:    oklch(0.13 0.008 250);
+    --slate-850:    oklch(0.235 0.01 250);
+    --slate-800:    oklch(0.3 0.011 250);
+    --slate-700:    oklch(0.36 0.011 250);
+    --chalk-000:    oklch(1 0 110);
+    --chalk-050:    oklch(0.97 0.008 110);
+    --chalk-100:    oklch(0.94 0.01 110);
+    --chalk-150:    oklch(0.91 0.01 110);
+    --chalk-200:    oklch(0.89 0.012 110);
+    --chalk-300:    oklch(0.8 0.013 110);
+    --chalk-400:    oklch(0.72 0.014 110);
+    --chalk-600:    oklch(0.61 0.014 110);
+    --turf-500:     oklch(0.52 0.13 152);
+    --turf-700:     oklch(0.38 0.1 152);
+    --turf-300:     oklch(0.62 0.125 152);
+    --turf-200:     oklch(0.9 0.05 152);
+    --rail-500:     oklch(0.64 0.15 55);
+    --rail-200:     oklch(0.92 0.045 55);
+    --flag-500:     oklch(0.56 0.22 27);
+    --flag-300:     oklch(0.65 0.16 27);
+    --flag-200:     oklch(0.91 0.045 27);
+
+    /* sedas de jockey — los 10 colores registrados del deporte.
+       Solo dentro del SVG de la seda. Ningún texto se pinta encima. */
+    --silk-black:   oklch(0.2 0.01 260);
+    --silk-white:   oklch(0.98 0 110);
+    --silk-red:     oklch(0.55 0.22 27);
+    --silk-blue:    oklch(0.48 0.19 260);
+    --silk-yellow:  oklch(0.85 0.165 95);
+    --silk-green:   oklch(0.52 0.15 148);
+    --silk-orange:  oklch(0.7 0.17 55);
+    --silk-purple:  oklch(0.45 0.2 305);
+    --silk-pink:    oklch(0.75 0.15 5);
+    --silk-cyan:    oklch(0.78 0.12 220);
+
+    color-scheme: light;
+  }
+
+  :root {
+    /* semánticos — claro. Las diapositivas son siempre claras: se proyectan */
+    --surface:        var(--chalk-050);
+    --surface-raised: var(--chalk-000);
+    --surface-sunken: var(--chalk-100);
+    --text:           var(--ink-900);
+    --text-muted:     var(--ink-500);
+    --border:         var(--ink-900);
+    --shadow:         var(--ink-900);
+    --accent:         var(--rail-500);
+    --accent-ink:     var(--ink-900);
+    --live:           var(--flag-500);
+    --live-ink:       var(--chalk-050);
+    --success:        var(--turf-500);
+    --success-ink:    var(--chalk-050);
+    --danger:         var(--flag-500);
+    --danger-ink:     var(--chalk-050);
+  }
+/* @tokens:end */
+
+/* ── Tipografía ───────────────────────────────────────────────────────────
+   Las tres familias auto-hospedadas en theme/reveal/fonts/, copiadas de las
+   que baja scripts/fetch-fonts.mjs. Nada de CDN: docs/design/tokens.md §3.
+   Un deck que depende de la red es un deck que se cae en el aula. */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('reveal/fonts/bricolage-grotesque-latin.woff2') format('woff2');
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-display: block;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('reveal/fonts/bricolage-grotesque-latin-ext.woff2') format('woff2');
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-display: block;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Public Sans';
+  src: url('reveal/fonts/public-sans-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Public Sans';
+  src: url('reveal/fonts/public-sans-latin-ext.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Martian Mono';
+  src: url('reveal/fonts/martian-mono-latin.woff2') format('woff2');
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: block;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Martian Mono';
+  src: url('reveal/fonts/martian-mono-latin-ext.woff2') format('woff2');
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: block;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --font-display: 'Bricolage Grotesque', 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Public Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --border-width: 3px;
+  --shadow-hard: 4px 4px 0 var(--shadow);
+  --shadow-hard-sm: 2px 2px 0 var(--shadow);
+  --shadow-hard-lg: 6px 6px 0 var(--shadow);
+}
+
+/* ── Lienzo ───────────────────────────────────────────────────────────────
+   Mismo tamaño que el deck de Marp: 1280 × 720. Reveal escala esa caja al
+   proyector, así que las medidas de acá son siempre las mismas píxeles
+   nominales, den donde den la clase. */
+.reveal-viewport {
+  background: var(--surface);
+}
+
+.reveal {
+  font-family: var(--font-body);
+  font-size: 25px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--text);
+}
+
+/* Reveal centra el texto por defecto. Acá no: una diapositiva centrada es
+   una diapositiva sin columna de lectura. */
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides > section {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 56px 72px;
+}
+
+/* Reveal le escribe `display: block` inline a la diapositiva que está en
+   pantalla, así que el centrado vertical no puede vivir en la sección: vive
+   en este envoltorio, que lo pone gen-reveal.mjs. */
+.reveal .slide-body {
+  height: 100%;
+}
+
+/* ── Títulos ──────────────────────────────────────────────────────────────
+   Bricolage tiene eje de ancho variable: los títulos largos se condensan sin
+   cambiar de familia y sin bajar de tamaño. */
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.4em;
+  font-variation-settings: 'wdth' 92;
+  text-transform: none;
+  color: inherit;
+}
+
+.reveal h1 { font-size: 68px; }
+.reveal h2 { font-size: 44px; }
+.reveal h3 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* La regla bajo el h2 es un borde de 3px, no una hairline: es el mismo
+   lenguaje que las cards de la app. */
+.reveal h2 {
+  border-bottom: var(--border-width) solid var(--border);
+  padding-bottom: 0.22em;
+}
+
+.reveal p { margin: 0 0 0.7em; }
+.reveal strong { font-weight: 700; }
+
+.reveal em {
+  font-style: normal;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0 0.22em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ── Listas ───────────────────────────────────────────────────────────────
+   Sin viñeta redonda: un cuadrado sólido, que es la primitiva del sistema. */
+.reveal ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 0.6em;
+  display: block;
+}
+
+.reveal ul > li {
+  position: relative;
+  padding-left: 1.15em;
+  margin-bottom: 0.42em;
+}
+
+.reveal ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.52em;
+  width: 0.42em;
+  height: 0.42em;
+  background: var(--accent);
+  border: 2px solid var(--border);
+}
+
+.reveal ol {
+  padding-left: 1.3em;
+  margin: 0 0 0.6em;
+  display: block;
+}
+
+.reveal ol > li { margin-bottom: 0.42em; }
+.reveal ol > li::marker { font-family: var(--font-mono); font-weight: 700; }
+
+/* ── Código ───────────────────────────────────────────────────────────────
+   El bloque de código es una card: borde de 3 px y sombra dura. Sin
+   gradiente, sin blur, sin radio.
+
+   Va sobre --surface-raised y no sobre la hundida a propósito: es la
+   superficie donde los seis colores de sintaxis de más abajo llegan a AA con
+   margen. Medido, no estimado. */
+.reveal code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-sunken);
+  padding: 0.08em 0.3em;
+  border: 2px solid var(--border);
+}
+
+.reveal pre {
+  display: block;
+  width: auto;
+  margin: 0 0 0.7em;
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  padding: 22px 26px;
+  font-size: 1em;
+  line-height: 1.42;
+  box-sizing: border-box;
+}
+
+.reveal pre code {
+  display: block;
+  border: 0;
+  padding: 0;
+  background: none;
+  font-size: 22px;
+  line-height: 1.42;
+  max-height: none;
+  overflow: visible;
+  white-space: pre;
+  word-wrap: normal;
+  tab-size: 2;
+}
+
+/* ── Colores de sintaxis ──────────────────────────────────────────────────
+   No hay tema de highlight.js: los seis roles se pintan con primitivas de la
+   paleta, que es la única fuente de color del repo.
+   Contraste sobre --surface-raised, calculado con scripts/lib/oklch.mjs:
+
+     comentario   ink-500      5,94:1
+     palabra clave flag-500    5,21:1
+     cadena       turf-700     9,56:1
+     número       silk-purple  8,30:1
+     tipo         silk-blue    6,78:1
+     resto        ink-900     19,05:1
+
+   El acento rail-500 NO se usa acá: da 3,3:1 sobre tiza y no llega a AA. En
+   un proyector de aula eso es texto que no se lee desde la última fila. */
+.reveal .hljs { color: var(--text); background: none; }
+
+.reveal .hljs-comment,
+.reveal .hljs-quote {
+  color: var(--text-muted);
+}
+
+.reveal .hljs-keyword,
+.reveal .hljs-selector-tag,
+.reveal .hljs-operator,
+.reveal .hljs-meta,
+.reveal .hljs-doctag {
+  color: var(--flag-500);
+  font-weight: 700;
+}
+
+.reveal .hljs-string,
+.reveal .hljs-regexp,
+.reveal .hljs-template-tag,
+.reveal .hljs-symbol,
+.reveal .hljs-addition {
+  color: var(--turf-700);
+}
+
+.reveal .hljs-number,
+.reveal .hljs-literal,
+.reveal .hljs-variable.constant_ {
+  color: var(--silk-purple);
+}
+
+.reveal .hljs-type,
+.reveal .hljs-title.class_,
+.reveal .hljs-built_in,
+.reveal .hljs-selector-class {
+  color: var(--silk-blue);
+}
+
+.reveal .hljs-title,
+.reveal .hljs-title.function_,
+.reveal .hljs-attr,
+.reveal .hljs-property {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.reveal .hljs-params,
+.reveal .hljs-punctuation {
+  color: var(--text);
+}
+
+/* ── Tablas ───────────────────────────────────────────────────────────────
+   Los minutos van en mono y tabular para que la columna no baile. */
+.reveal table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.82em;
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+  margin: 0 0 0.6em;
+}
+
+.reveal th,
+.reveal td {
+  border: 2px solid var(--border);
+  padding: 0.4em 0.62em;
+  text-align: left;
+}
+
+.reveal th {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.86em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.reveal td:first-child {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.reveal blockquote {
+  margin: 0 0 0.6em;
+  padding: 0.7em 1em;
+  width: auto;
+  border: var(--border-width) solid var(--border);
+  border-left-width: 12px;
+  background: var(--surface-sunken);
+  box-shadow: var(--shadow-hard);
+  font-size: 0.92em;
+  font-style: normal;
+}
+
+/* ── Diagramas ────────────────────────────────────────────────────────────
+   El SVG viene inline —lo pega gen-reveal.mjs— para poder sacarle el bloque
+   de modo oscuro: las diapositivas se ven siempre en claro. */
+.reveal .diagram {
+  display: block;
+  margin: 0.2em auto;
+  max-width: 100%;
+  max-height: 470px;
+  height: auto;
+}
+
+.reveal img {
+  max-width: 100%;
+  max-height: 470px;
+  border: 0;
+  box-shadow: none;
+  background: none;
+  margin: 0.2em auto;
+  display: block;
+}
+
+/* ── Portada ──────────────────────────────────────────────────────────────
+   El fondo lo pone data-background-color desde tokens.json, así el color
+   cubre también las bandas del proyector cuando no es 16:9. */
+.reveal section.portada .slide-body,
+.reveal section.bloque .slide-body,
+.reveal section.ojo .slide-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reveal section.portada {
+  color: var(--chalk-050);
+  --text: var(--chalk-050);
+  --border: var(--chalk-050);
+  --shadow: var(--chalk-050);
+  /* La franja de acento al pie es la firma del sistema y lo único saturado
+     de la diapositiva. Borde y no gradiente: docs/design/CLAUDE.md. */
+  border-block-end: 22px solid var(--accent);
+}
+
+.reveal section.portada code,
+.reveal section.bloque code,
+.reveal section.ojo code {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+
+.reveal section.portada h1 { font-size: 92px; margin-bottom: 0.12em; }
+.reveal section.portada h2 { border: 0; font-size: 34px; font-weight: 600; opacity: 0.82; padding: 0; }
+
+/* ── Separador de bloque ──────────────────────────────────────────────────
+   Anuncia en qué minuto del guión estamos. El número va enorme y en mono,
+   como el marcador de una carrera. */
+.reveal section.bloque {
+  color: var(--accent-ink);
+  --text: var(--ink-900);
+  --border: var(--ink-900);
+  --shadow: var(--ink-900);
+}
+
+.reveal section.bloque h1 {
+  font-family: var(--font-mono);
+  font-size: 128px;
+  font-variation-settings: 'wdth' 100;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.08em;
+}
+
+.reveal section.bloque h2 { border: 0; font-size: 42px; padding: 0; }
+
+/* ── Diapositiva de código ────────────────────────────────────────────────
+   Arriba respira un poco más que en Marp: acá la cabecera vive adentro de la
+   diapositiva y con 40 px quedaba pegada al título. */
+.reveal section.codigo { padding: 62px 56px 40px; }
+.reveal section.codigo h2 { font-size: 32px; margin-bottom: 0.3em; }
+.reveal section.codigo pre code { font-size: 25px; }
+
+/* El h2 que sigue a un bloque de código es el mensaje de error: no lleva
+   regla debajo, porque no está abriendo una sección sino cerrando una. */
+.reveal section.codigo pre + h2 {
+  border: 0;
+  padding: 0;
+  margin-top: 0.5em;
+  font-size: 26px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.reveal section.codigo pre + h2 code {
+  background: var(--surface-sunken);
+  border: 2px solid var(--border);
+}
+
+/* ── Advertencia ──────────────────────────────────────────────────────────
+   Para las tres o cuatro cosas por módulo que se olvidan siempre. */
+.reveal section.ojo {
+  color: var(--live-ink);
+  --text: var(--chalk-050);
+  --border: var(--live-ink);
+  --shadow: var(--live-ink);
+}
+
+.reveal section.ojo h1 { font-size: 58px; }
+
+/* ── Cabecera y paginación ────────────────────────────────────────────────
+   La cabecera va dentro de cada diapositiva y no fija en la ventana: así
+   escala con el deck y queda alineada con la columna de texto, en vez de
+   irse al borde del proyector cuando la sala no es 16:9.
+
+   En la portada no se emite: ahí el título de la sesión ya es el contenido. */
+.reveal .deck-header {
+  position: absolute;
+  top: 20px;
+  left: 72px;
+  z-index: 30;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: currentColor;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.reveal section.codigo .deck-header { left: 56px; }
+
+/* El número va abajo a la IZQUIERDA y no a la derecha como en Marp: reveal ya
+   tiene sus flechas en esa esquina, y encimados no se lee ninguno de los dos. */
+.reveal .slide-number {
+  right: auto;
+  left: 22px;
+  bottom: 16px;
+  background: none;
+  color: var(--text);
+  opacity: 0.5;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+}
+
+.reveal .slide-number a { text-decoration: none; }
+
+/* Los controles y la barra de progreso toman el acento, no el azul de
+   fábrica de reveal. */
+.reveal .controls { color: var(--text); }
+.reveal .progress { color: var(--accent); height: 5px; background: var(--surface-sunken); }
+
+/* ── Los muebles fijos y las diapositivas a sangre ────────────────────────
+   Flechas, número y barra viven fuera de la diapositiva, así que no heredan
+   su color: se lo pasa la que está presente. Y la barra se apaga sobre los
+   fondos de color — su mitad sin recorrer es tiza y solo ensucia el borde.
+
+   Se esconden con `visibility` y no con `display`, que reveal escribe inline. */
+.reveal-viewport:has(section.present.portada) .slide-number,
+.reveal-viewport:has(section.present.portada) .progress,
+.reveal-viewport:has(section.present.bloque) .progress,
+.reveal-viewport:has(section.present.ojo) .progress {
+  visibility: hidden;
+}
+
+.reveal-viewport:has(section.present.portada) .controls {
+  color: var(--chalk-050);
+}
+
+.reveal-viewport:has(section.present.bloque) .slide-number,
+.reveal-viewport:has(section.present.bloque) .controls {
+  color: var(--accent-ink);
+}
+
+.reveal-viewport:has(section.present.ojo) .slide-number,
+.reveal-viewport:has(section.present.ojo) .controls {
+  color: var(--live-ink);
+}
+
+/* ── Utilidades ───────────────────────────────────────────────────────────*/
+.reveal .dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.reveal .chico { font-size: 0.78em; }
+
+.reveal .mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Impresión a PDF ──────────────────────────────────────────────────────
+   Con ?print-pdf. Los fondos de color tienen que sobrevivir al PDF o la
+   portada sale blanca. */
+@media print {
+  .deck-header { position: fixed; }
+
+  .reveal .slides section {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

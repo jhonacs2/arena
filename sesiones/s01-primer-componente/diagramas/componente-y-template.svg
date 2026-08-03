@@ -2,7 +2,7 @@
   <style>
     svg { --dg-surface: #f5f6f0; --dg-surface-raised: #ffffff; --dg-surface-sunken: #ebece4; --dg-text: #08120c; --dg-text-muted: #5b675e; --dg-border: #08120c; --dg-shadow: #08120c; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #d8151e; --dg-live-ink: #f5f6f0; --dg-success: #137d41; --dg-success-ink: #f5f6f0; --dg-danger: #d8151e; --dg-danger-ink: #f5f6f0; }
     @media (prefers-color-scheme: dark) {
-      svg { --dg-surface: #121c15; --dg-surface-raised: #1e2a22; --dg-surface-sunken: #030905; --dg-text: #e1e2da; --dg-text-muted: #a5a59c; --dg-border: #bebfb5; --dg-shadow: #030905; --dg-accent: #fb9d59; --dg-accent-ink: #08120c; --dg-live: #fd7468; --dg-live-ink: #08120c; --dg-success: #c6e8ce; --dg-success-ink: #08120c; --dg-danger: #fd7468; --dg-danger-ink: #08120c; }
+      svg { --dg-surface: #1b1f23; --dg-surface-raised: #2a2e33; --dg-surface-sunken: #05080a; --dg-text: #e1e2da; --dg-text-muted: #a5a59c; --dg-border: #83847b; --dg-shadow: #bebfb5; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #e06257; --dg-live-ink: #08120c; --dg-success: #419b5f; --dg-success-ink: #08120c; --dg-danger: #e06257; --dg-danger-ink: #08120c; }
     }
   </style>
 

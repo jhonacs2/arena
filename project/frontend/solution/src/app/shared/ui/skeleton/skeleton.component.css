@@ -71,10 +71,10 @@
 
 @media (prefers-color-scheme: dark) {
   .bar {
-    background: var(--ink-700);
+    background: var(--slate-700);
   }
 }
 
 [data-theme='dark'] .bar {
-  background: var(--ink-700);
+  background: var(--slate-700);
 }

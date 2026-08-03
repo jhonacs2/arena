@@ -32,7 +32,10 @@
 
 .step {
   border: var(--border-width) solid var(--border);
-  background: var(--surface);
+  /* Elevada, no `--surface`: una tarjeta del mismo color que la página depende
+     enteramente del borde para existir. Y así el contraste con `.step--locked`,
+     que es hundida, se lee de una. */
+  background: var(--surface-raised);
   box-shadow: var(--shadow-hard);
   padding: var(--space-6) var(--space-4) var(--space-4);
   display: flex;

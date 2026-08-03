@@ -31,7 +31,7 @@
   color: var(--text);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-hard-sm) inset;
+  box-shadow: var(--shadow-sunk);
 }
 
 /* El campo enfocado se levanta: pierde la sombra interior y gana la de afuera.

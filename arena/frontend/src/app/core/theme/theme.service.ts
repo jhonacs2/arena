@@ -7,8 +7,9 @@ const STORAGE_KEY = 'arena:tema';
 /**
  * Modo claro y oscuro.
  *
- * El oscuro está **diseñado**, no invertido: reasigna tokens semánticos y el
- * borde neobrutalista pasa de tinta a tiza (`docs/design/CLAUDE.md`).
+ * El oscuro está **diseñado**, no invertido: reasigna tokens semánticos y la
+ * sombra dura pasa de tinta a tiza, porque en oscuro la profundidad se dibuja
+ * con luz (`docs/design/CLAUDE.md`).
  *
  * `system` es el valor por defecto y la mayoría no toca nunca el interruptor.
  */

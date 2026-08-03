@@ -38,6 +38,10 @@ const CHECK = process.argv.includes('--check');
  */
 const TARGETS = [
   { file: 'theme/marp-neobrutal.css', selector: 'section', modes: 'light' },
+  // Reveal no reescribe los selectores como Marp, así que acá sí va `:root`.
+  // `modes: 'light'` por el mismo motivo: un deck no puede verse distinto
+  // según cómo tenga el sistema la máquina desde la que se proyecta.
+  { file: 'theme/reveal-neobrutal.css', selector: ':root', modes: 'light' },
   { file: 'project/frontend/solution/src/styles.css' },
   { file: 'project/frontend/starter/src/styles.css' },
   { file: 'lab/solution/src/styles.css' },
@@ -77,7 +81,11 @@ function block({ selector = ':root', modes = 'both' } = {}) {
   }
 
   emit('');
-  emit('    color-scheme: light dark;');
+  // En los destinos de un solo tema, `light dark` es mentira y se paga cara:
+  // con el sistema en oscuro, el navegador pinta de blanco todo lo que no
+  // tenga color propio —texto suelto, scrollbars, controles— arriba de un
+  // fondo que sigue siendo claro. Una diapositiva es siempre clara: decilo.
+  emit(`    color-scheme: ${modes === 'light' ? 'light' : 'light dark'};`);
   emit('  }');
 
   const semanticos = (map, label) => {
@@ -104,7 +112,7 @@ function block({ selector = ':root', modes = 'both' } = {}) {
 
   emit('');
   emit(`  @media (prefers-color-scheme: dark) { ${selector}:not([data-theme="light"]) {`);
-  semanticos(tokens.semantic.dark, 'oscuro. El borde se invierte a tiza: es un modo diseñado, no un filtro');
+  semanticos(tokens.semantic.dark, 'oscuro. La que se invierte a tiza es la SOMBRA, no el borde — ver $shadowComment en tokens.json');
   emit('  } }');
 
   // El selector explícito tiene que poder ganarle a la media query en ambos sentidos.

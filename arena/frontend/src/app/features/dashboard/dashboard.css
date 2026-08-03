@@ -39,10 +39,13 @@
   border-block-start: var(--border-width) solid var(--accent-ink);
 }
 
+/* Sin `opacity`. La tenía en 0.8 y eso bajaba «100 monedas = 1 punto» —11px, y
+   es la regla que explica la nota— a 4.27:1 en claro y 4.14:1 en oscuro: por
+   debajo de AA en los dos temas. check-contrast.mjs no lo ve porque mide
+   tokens, y la opacidad se aplica acá. Lo subordinado ya lo dice el tamaño. */
 .wallet__rule {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
-  opacity: 0.8;
 }
 
 /* Las carreras y el ledger ocupan todo el ancho disponible cuando hay dos

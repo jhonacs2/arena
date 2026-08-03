@@ -65,40 +65,70 @@ Va contra el instinto del estilo. Es lo que evita que veinte cards con acento fu
 
 ### Primitivas
 
+Tres familias, y cada una es un material: **`ink-`** es la tinta con la que se escribe, **`chalk-`** es la tiza, **`slate-`** es la pizarra sobre la que se escribe en oscuro.
+
 | Token | `oklch` | Para qué |
 |---|---|---|
-| `--ink-950` | `0.13 0.018 155` | lo más hundido en oscuro |
-| `--ink-900` | `0.17 0.02 155` | verde-negro pizarra · texto, borde y sombra en claro |
-| `--ink-850` | `0.215 0.020 155` | **superficie en oscuro** |
-| `--ink-800` | `0.27 0.021 155` | superficie elevada en oscuro |
-| `--ink-700` | `0.36 0.02 155` | skeletons en oscuro |
+| `--ink-900` | `0.17 0.02 155` | verde-negro pizarra · texto, borde y sombra en claro; tinta sobre acentos en oscuro |
 | `--ink-500` | `0.50 0.02 155` | texto secundario en claro |
+| `--slate-950` | `0.13 0.008 250` | lo más hundido en oscuro |
+| `--slate-850` | `0.235 0.010 250` | **superficie en oscuro** |
+| `--slate-800` | `0.30 0.011 250` | superficie elevada en oscuro |
+| `--slate-700` | `0.36 0.011 250` | skeletons en oscuro |
 | `--chalk-000` | `1.00 0 110` | superficie elevada en claro |
 | `--chalk-050` | `0.97 0.008 110` | tiza tibia · superficie en claro |
 | `--chalk-100` | `0.94 0.010 110` | superficie hundida en claro |
 | `--chalk-150` | `0.91 0.010 110` | **texto en oscuro** |
-| `--chalk-300` | `0.80 0.013 110` | **borde en oscuro** |
+| `--chalk-300` | `0.80 0.013 110` | **sombra dura en oscuro** |
 | `--chalk-400` | `0.72 0.014 110` | texto secundario en oscuro |
+| `--chalk-600` | `0.61 0.014 110` | **borde en oscuro** |
 | `--turf-500` | `0.52 0.13 152` | verde pista · `finished`, ganada |
-| `--rail-500` | `0.64 0.150 55` | arena · **acento primario**, `upcoming` |
+| `--turf-300` | `0.62 0.125 152` | ganada en oscuro |
+| `--rail-500` | `0.64 0.150 55` | arena · **acento primario en los dos temas**, `upcoming` |
 | `--flag-500` | `0.56 0.220 27` | bandera · `live`, error |
+| `--flag-300` | `0.65 0.160 27` | `live`, error en oscuro |
 
 La tiza es tibia (`h 110`, `C 0.008`) pero **no es crema**: a `L 0.97` con esa croma es papel, no beige. La distinción importa — el crema con acento terracota es el fondo por defecto de medio internet.
 
+**La pizarra es fría y casi acromática** (`h 250`, `C 0.010`). Antes las superficies del oscuro eran `ink-850/800/950` —matiz 155, croma 0,02, el mismo verde que `turf`—, y ese es el segundo error clásico del modo oscuro después de la halación: un matiz que en un trazo de texto es la pizarra de la marca, extendido a pantalla completa no lee como pizarra, lee como **pantano**. Y el fondo competía de matiz con el verde semántico de «ganada». A `L 0.235` la pizarra nueva es `#1b1f23`: seis puntos entre el rojo y el azul, un carbón neutro con un susurro frío, no un color.
+
+Eso deja el tema con una lógica de una sola línea: **todo lo que es información es tibio —la tiza, el ámbar, el coral, el verde— y el suelo es frío.** Es de noche en el hipódromo, y lo que está iluminado es lo que hay que leer.
+
 ### Modo oscuro: diseñado, no invertido
 
-No es un filtro. En oscuro el borde neobrutalista se invierte de tinta a tiza: la card pasa de «recorte negro sobre papel» a «recorte de tiza sobre pizarra». Solo se reasignan tokens **semánticos**; las primitivas nunca cambian.
+No es un filtro. En oscuro la card pasa de «recorte negro sobre papel» a «recorte de tiza sobre pizarra». Solo se reasignan tokens **semánticos**.
 
-La primera versión de este modo oscuro estaba mal, y vale la pena dejar escrito por qué — son los tres errores que se repiten en cualquier tema oscuro:
+Este modo oscuro se rehizo dos veces, y las dos vale la pena dejarlas escritas.
+
+**La primera pasada** arregló tres errores que se repiten en cualquier tema oscuro:
 
 | Estaba | Está | Por qué |
 |---|---|---|
-| Superficie en `L 0.17`, casi negro | `L 0.215` | Texto casi blanco sobre negro casi puro produce **halación**: el texto vibra y cansa. |
-| `--surface`, `--surface-raised` y `--surface-sunken` **casi iguales** | ΔL de 0,055 y 0,085 | Sin diferencia de luminancia, la pantalla se ve plana y sucia, y el borde queda como único indicio de dónde termina una card. |
-| Texto y borde los dos en `L 0.97` | texto `0.91`, borde `0.80` | Un borde tan brillante como la letra **compite con la letra**. El borde delimita; no tiene que gritar. |
-| Sombra dura en tiza | sombra en `ink-950` | Veinte sombras blancas sobre pizarra son veinte manchas. Una sombra más oscura que la superficie da profundidad sin ruido. |
+| Superficie casi negra | `L 0.235` | Texto casi blanco sobre negro casi puro produce **halación**: el texto vibra y cansa. |
+| `--surface`, `--surface-raised` y `--surface-sunken` **casi iguales** | ΔL de 0,065 y 0,105 | Sin diferencia de luminancia la pantalla se ve plana y sucia, y el borde queda como único indicio de dónde termina una card. |
+| Texto y borde los dos en `L 0.97` | texto `0.91`, borde `0.61` | Un borde tan brillante como la letra **compite con la letra**. El borde delimita; no tiene que gritar. |
 
-El texto bajó de 17,49:1 a **13,36:1** y el borde de 17,49:1 a **9,35:1**. Los dos siguen muy por encima de AA: acá el problema nunca fue el contraste, era el exceso.
+**La segunda pasada** revirtió una decisión de la primera. Queda acá con su razón original, porque el que la tomó no estaba siendo tonto — le faltaba el número:
+
+> | Decía | Ahora | |
+> |---|---|---|
+> | Sombra dura en `ink-950`, más oscura que la superficie | Sombra dura en `chalk-300`, **tiza** | «Veinte sombras blancas sobre pizarra son veinte manchas. Una sombra más oscura que la superficie da profundidad sin ruido.» |
+>
+> La segunda mitad de esa frase es falsa y nunca se midió: `ink-950` sobre `ink-850` daba **1,15:1**. No daba profundidad sin ruido, no daba profundidad. Y no se arregla oscureciéndola — a esa altura de la curva sRGB ya no queda luminancia que sacar. El techo con una sombra **negra pura** es 1,32:1 con el fondo en `L 0.25` y 1,55:1 con el fondo en `L 0.30`; para llegar apenas a 2:1 el fondo tendría que irse a `L 0.365`, que ya es gris y no oscuro. **En oscuro la profundidad se dibuja con luz.**
+>
+> La primera mitad, en cambio, era una advertencia buena, y está pagada: el borde bajó de `chalk-300` a `chalk-600`. La tiza no se sumó a la pantalla, **se mudó** — del contorno al bloque desplazado. Área brillante total: menos que antes, no más.
+
+Jerarquía resultante en oscuro, de más fuerte a más débil: **texto 12,77 → sombra 8,94 → texto secundario 6,73 → borde 4,41**. Y `check-contrast.mjs` verifica ahora la sombra como par propio, así que la regresión que causó todo esto falla el build en vez de pasar desapercibida.
+
+### Los bloques de color saltan lo mismo en los dos temas
+
+El tercer error, y el más caro visualmente: **un acento no se aclara porque el fondo se oscureció.** Eso duplica el salto y lo convierte en una linterna. El acento es ahora el **mismo** `rail-500` en claro y en oscuro — en claro queda más oscuro que la página, en oscuro más claro.
+
+| Salto contra el fondo | claro | oscuro antes | oscuro ahora |
+|---|---|---|---|
+| tarjeta de saldo (acento) | 3,24:1 | 8,38:1 | **4,72:1** |
+| badge de ganada | 4,76:1 | 13,16:1 | **4,84:1** |
+| badge EN VIVO | 4,78:1 | 6,53:1 | **4,79:1** |
 
 `scripts/check-contrast.mjs` verifica ahora **las dos cosas**: el contraste y la separación entre superficies. La segunda no es una regla WCAG, es una regla de este sistema, y está mecanizada para que no vuelva a pasar.
 
@@ -108,12 +138,13 @@ El texto bajó de 17,49:1 a **13,36:1** y el borde de 17,49:1 a **9,35:1**. Los 
 
 | | claro | oscuro |
 |---|---|---|
-| texto de cuerpo | 17,49:1 | 13,36:1 |
-| texto secundario | 5,45:1 | 7,04:1 |
-| borde de 3 px | 17,49:1 | 9,35:1 |
-| botón primario | 5,40:1 | 9,16:1 |
-| badge EN VIVO | 4,78:1 | 7,14:1 |
-| badge de ganada | 4,76:1 | 14,39:1 |
+| texto de cuerpo | 17,49:1 | 12,77:1 |
+| texto secundario | 5,45:1 | 6,73:1 |
+| borde de 3 px | 17,49:1 | 4,41:1 |
+| sombra dura | 17,49:1 | 8,94:1 |
+| botón primario | 5,40:1 | 5,40:1 |
+| badge EN VIVO | 4,78:1 | 5,47:1 |
+| badge de ganada | 4,76:1 | 5,53:1 |
 
 El checker ya se ganó el sueldo dos veces: `flag-500` estaba en `L 0.58` y daba **4,42:1** con tiza encima — se veía bien y no llegaba a AA. Y cuatro tokens caían **fuera del gamut sRGB**, donde el navegador los habría recortado en silencio y el contraste real habría dejado de ser el calculado.
 

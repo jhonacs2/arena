@@ -25,12 +25,12 @@
 
   :root {
     /* primitivas */
-    --ink-950:      oklch(0.13 0.018 155);
     --ink-900:      oklch(0.17 0.02 155);
-    --ink-850:      oklch(0.215 0.02 155);
-    --ink-800:      oklch(0.27 0.021 155);
-    --ink-700:      oklch(0.36 0.02 155);
     --ink-500:      oklch(0.5 0.02 155);
+    --slate-950:    oklch(0.13 0.008 250);
+    --slate-850:    oklch(0.235 0.01 250);
+    --slate-800:    oklch(0.3 0.011 250);
+    --slate-700:    oklch(0.36 0.011 250);
     --chalk-000:    oklch(1 0 110);
     --chalk-050:    oklch(0.97 0.008 110);
     --chalk-100:    oklch(0.94 0.01 110);
@@ -38,14 +38,15 @@
     --chalk-200:    oklch(0.89 0.012 110);
     --chalk-300:    oklch(0.8 0.013 110);
     --chalk-400:    oklch(0.72 0.014 110);
+    --chalk-600:    oklch(0.61 0.014 110);
     --turf-500:     oklch(0.52 0.13 152);
     --turf-700:     oklch(0.38 0.1 152);
+    --turf-300:     oklch(0.62 0.125 152);
     --turf-200:     oklch(0.9 0.05 152);
     --rail-500:     oklch(0.64 0.15 55);
-    --rail-300:     oklch(0.78 0.14 55);
     --rail-200:     oklch(0.92 0.045 55);
     --flag-500:     oklch(0.56 0.22 27);
-    --flag-300:     oklch(0.72 0.17 27);
+    --flag-300:     oklch(0.65 0.16 27);
     --flag-200:     oklch(0.91 0.045 27);
 
     /* sedas de jockey — los 10 colores registrados del deporte.
@@ -84,19 +85,19 @@
   }
 
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    /* semánticos — oscuro. El borde se invierte a tiza: es un modo diseñado, no un filtro */
-    --surface:        var(--ink-850);
-    --surface-raised: var(--ink-800);
-    --surface-sunken: var(--ink-950);
+    /* semánticos — oscuro. La que se invierte a tiza es la SOMBRA, no el borde — ver $shadowComment en tokens.json */
+    --surface:        var(--slate-850);
+    --surface-raised: var(--slate-800);
+    --surface-sunken: var(--slate-950);
     --text:           var(--chalk-150);
     --text-muted:     var(--chalk-400);
-    --border:         var(--chalk-300);
-    --shadow:         var(--ink-950);
-    --accent:         var(--rail-300);
+    --border:         var(--chalk-600);
+    --shadow:         var(--chalk-300);
+    --accent:         var(--rail-500);
     --accent-ink:     var(--ink-900);
     --live:           var(--flag-300);
     --live-ink:       var(--ink-900);
-    --success:        var(--turf-200);
+    --success:        var(--turf-300);
     --success-ink:    var(--ink-900);
     --danger:         var(--flag-300);
     --danger-ink:     var(--ink-900);
@@ -104,18 +105,18 @@
 
   [data-theme="dark"] {
     /* semánticos — oscuro forzado */
-    --surface:        var(--ink-850);
-    --surface-raised: var(--ink-800);
-    --surface-sunken: var(--ink-950);
+    --surface:        var(--slate-850);
+    --surface-raised: var(--slate-800);
+    --surface-sunken: var(--slate-950);
     --text:           var(--chalk-150);
     --text-muted:     var(--chalk-400);
-    --border:         var(--chalk-300);
-    --shadow:         var(--ink-950);
-    --accent:         var(--rail-300);
+    --border:         var(--chalk-600);
+    --shadow:         var(--chalk-300);
+    --accent:         var(--rail-500);
     --accent-ink:     var(--ink-900);
     --live:           var(--flag-300);
     --live-ink:       var(--ink-900);
-    --success:        var(--turf-200);
+    --success:        var(--turf-300);
     --success-ink:    var(--ink-900);
     --danger:         var(--flag-300);
     --danger-ink:     var(--ink-900);
@@ -159,6 +160,13 @@
     --shadow-hard: 4px 4px 0 var(--shadow);
     --shadow-hard-sm: 2px 2px 0 var(--shadow);
     --shadow-hard-lg: 6px 6px 0 var(--shadow);
+
+    /* La sombra que HUNDE es la única que no puede usar --shadow.
+       En oscuro --shadow es tiza —el bloque desplazado que levanta la tarjeta—,
+       y una tiza por dentro del borde superior izquierdo dibujaría la luz al
+       revés: el campo se vería levantado justo cuando queremos que se vea
+       hundido. Va con la tinta, que es oscura en los dos temas. */
+    --shadow-sunk: 2px 2px 0 var(--ink-900) inset;
 
     /* Movimiento — tres duraciones, ni una más */
     --ease-snap: cubic-bezier(0.2, 0, 0, 1);

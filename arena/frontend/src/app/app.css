@@ -163,8 +163,13 @@
 }
 
 /* ── Contenido ─────────────────────────────────────────────────────────── */
+/* Columna flex para que una pantalla corta —la de entrada, la de registro—
+   pueda pedir el alto que sobra con `flex: 1` y centrarse en él. Las demás
+   rutas se siguen midiendo por su contenido, como antes. */
 .main-area {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   padding-block: var(--space-8) var(--space-16);
 }
 

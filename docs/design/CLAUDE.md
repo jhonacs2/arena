@@ -27,7 +27,9 @@ Reglas del oscuro:
 - Se reasignan **tokens semánticos** (`--surface`, `--text`, `--border`), **jamás primitivos**.
 - **Las tres superficies tienen que distinguirse a simple vista.** `--surface`, `--surface-raised` y `--surface-sunken` con la misma luminancia es el error más común y el que hace que una pantalla oscura se vea plana y sucia.
 - **Nada de negro puro ni de blanco puro.** Texto casi blanco sobre fondo casi negro produce halación: el texto vibra. El texto oscuro se apoya en una tiza levemente bajada, no en `#fff`.
-- El borde neobrutalista se invierte a tiza, pero **más apagada que el texto**: un borde igual de brillante que la letra compite con ella.
+- **La que se invierte a tiza es la SOMBRA, no el borde.** En oscuro la profundidad se dibuja con luz: una sombra de tinta topea en 1,55:1 aunque la pintes de negro puro, porque la curva sRGB ya está en el piso. El gesto no cambia —`4px 4px 0`, sin blur, radio 0—, cambia de qué color es el bloque. El detalle y los números están en `$shadowComment` de [`tokens.json`](tokens.json).
+- **Y se paga apagando el borde.** Si la sombra brilla y el borde también, la pantalla es una reja iluminada. Jerarquía en oscuro, de más fuerte a más débil: **texto → sombra → texto secundario → borde**. El borde llega justo por encima del piso de 3:1 y ahí se queda.
+- **Los bloques de color saltan lo mismo que en claro.** Un acento no se aclara porque el fondo se oscureció: eso duplica el salto y lo vuelve una linterna. El acento es el **mismo** `rail-500` en los dos temas — en claro queda más oscuro que la página, en oscuro más claro.
 
 ---
 

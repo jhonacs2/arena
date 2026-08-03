@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S0 · TypeScript</title>
+
+<!-- Generado por scripts/gen-reveal.mjs desde slides.md — no editar a mano.
+     Se regenera con: node scripts/gen-reveal.mjs sesiones/s00-typescript -->
+
+<link rel="stylesheet" href="../../theme/reveal/reset.css">
+<link rel="stylesheet" href="../../theme/reveal/reveal.css">
+<link rel="stylesheet" href="../../theme/reveal-neobrutal.css">
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+    <section class="portada" data-background-color="oklch(0.17 0.02 155)">
+    <div class="slide-body">
+    <h1>S0</h1>
+    <h2>TypeScript</h2>
+    </div>
+    <aside class="notes">
+    <p>Módulo Angular · Talento DH 8va.</p>
+    <p>El guión completo está en guion.md, y es un teleprompter: lo que está entre comillas se dice. Estas notas son el resumen de cada diapositiva; si algo no está acá, está allá.</p>
+    <p>Se ven con la tecla P en el HTML de Marp.</p>
+    <p>Es la PRIMERA clase del módulo. Preguntá quién no pudo instalar el entorno ANTES de arrancar, y emparejalo con alguien que sí: hoy hay dos ejercicios y los dos necesitan el proyecto levantado.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>0:00</h1>
+    <h2>Pregunta de apertura</h2>
+    </div>
+    <aside class="notes">
+    <p>5 minutos. Responden en el chat. Sin juicio, sin corregir, sin "casi". Esperá 90 segundos en silencio. Si nadie escribe, contá vos uno tuyo.</p>
+    </aside>
+    </section>
+
+    <section>
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>La última vez que un programa te falló</h2>
+    <p>no escribiéndolo — <strong>usándolo</strong></p>
+    <h1>¿qué era, al final?</h1>
+    </div>
+    <aside class="notes">
+    <p>"Se rompió con vos adelante, y cuando fuiste a ver qué había pasado era una tontería: un nombre mal escrito, un dato que no estaba, un número que en realidad era texto."</p>
+    <p>"Contame cuál fue en el chat. Con una línea alcanza."</p>
+    <p>Van a decir "me faltó un dato", "era undefined", "puse mal el nombre de una propiedad". TODAS SIRVEN.</p>
+    <p>Cerrá con esto, textual: "Fíjense en algo que tienen todas en común: EL ERROR YA ESTABA ESCRITO antes de que el programa corriera. Estaba ahí, en el archivo, esperando. Nadie lo leyó hasta que fue tarde. Hoy vamos a ver quién puede leerlo antes."</p>
+    <p>NO EXPLIQUES NADA TODAVÍA.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>0:05</h1>
+    <h2>Diagnóstico</h2>
+    <h2>Tres programas de JavaScript</h2>
+    </div>
+    <aside class="notes">
+    <p>7 minutos. HOY NO HAY WAYGROUND: es la primera clase, no hay anterior. Decilo: "de la clase que viene en adelante arrancamos siempre con un quiz de lo anterior."</p>
+    <p>Las tres van al chat, UNA POR VEZ, 60 segundos cada una. No adelantes la respuesta. Se ejecutan en la consola del navegador.</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>¿Qué imprime cada línea?</h2>
+    <pre><code class="language-js">const price = '42';
+
+console.log(price * 2);
+console.log(price + 2);
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>Sale 84 y '422'.</p>
+    <p>"El * convierte el texto a número. El + convierte el número a texto. Ninguna de las dos falló, y una de las dos está mal — pero JavaScript no sabe cuál, porque no sabe qué querías."</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>¿Y esto?</h2>
+    <pre><code class="language-js">const race = { name: 'Clásico Apertura' };
+
+console.log(race.nombre);
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>Sale undefined. Sin error, sin aviso, sin nada.</p>
+    <p>"Escribí nombre en vez de name. Es el error más aburrido del mundo y JavaScript me deja seguir. Ese undefined va a viajar por tu programa hasta que rompa en un lugar que no tiene nada que ver, y ahí vas a debuggear el lugar equivocado."</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>¿Cuánto sale un café «mediana»?</h2>
+    <pre><code class="language-js">function sizeFactor(size) {
+  if (size === 'chico') return 0.8;
+  if (size === 'grande') return 1.3;
+  return 1;
+}
+
+sizeFactor('mediana');
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>Sale 1.</p>
+    <p>"Pedí un tamaño que no existe —mediana, con A— y me cobró el precio del mediano. Sin error. Sin aviso. Un cliente pagó de menos y nadie se enteró nunca."</p>
+    <p>CERRÁ EL BLOQUE ACÁ Y NO TE EXTIENDAS: "Tres programas que NO FALLARON. Los tres están mal. Eso es lo que vamos a arreglar hoy, y no se arregla poniendo más cuidado: se arregla poniendo a alguien a revisar."</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>0:12</h1>
+    <h2>El concepto</h2>
+    <h2>Editor cerrado</h2>
+    </div>
+    <aside class="notes">
+    <p>A partir de acá, ni una línea de editor en pantalla. Solo diapositivas.</p>
+    <p>Si alguien pregunta "¿y el código?": "en ocho minutos. Primero quiero que puedan dibujar esto en una servilleta."</p>
+    </aside>
+    </section>
+
+    <section>
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>Un tipo es un conjunto</h2>
+    <svg class="diagram" style="width: 900px" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 894 416" width="894" height="416" role="img">
+      <style>
+        svg { --dg-surface: #f5f6f0; --dg-surface-raised: #ffffff; --dg-surface-sunken: #ebece4; --dg-text: #08120c; --dg-text-muted: #5b675e; --dg-border: #08120c; --dg-shadow: #08120c; --dg-accent: #cf6f19; --dg-accent-ink: #08120c; --dg-live: #d8151e; --dg-live-ink: #f5f6f0; --dg-success: #137d41; --dg-success-ink: #f5f6f0; --dg-danger: #d8151e; --dg-danger-ink: #f5f6f0; }
+        
+      </style>
+    
+      <defs>
+        <marker id="un-tipo-es-un-conjunto-mk-triangle-end-vardgborder08120c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dg-border, #08120c)" /></marker>
+      </defs>
+      <rect x="6" y="6" width="894" height="416" fill="var(--dg-surface, #f5f6f0)" />
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="40">Un tipo es el conjunto de valores que algo puede tener</tspan></text>
+      <rect x="36" y="82" width="360" height="250" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+      <rect x="30" y="76" width="360" height="250" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="102.88">TIPO FLOJO</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="24" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="131">string</tspan></text>
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="52" y="159.5">infinitas cadenas, todas válidas</tspan></text>
+      <rect x="52" y="180" width="76" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="62" y="194.13">'chico'</tspan></text>
+      <rect x="138" y="180" width="93" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="148" y="194.13">'mediano'</tspan></text>
+      <rect x="241" y="180" width="84" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="251" y="194.13">'grande'</tspan></text>
+      <rect x="52" y="218" width="93" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="62" y="232.13">'mediana'</tspan></text>
+      <rect x="155" y="218" width="76" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="165" y="232.13">'venti'</tspan></text>
+      <rect x="241" y="218" width="36" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="251" y="232.13">''</tspan></text>
+      <rect x="52" y="256" width="68" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="62" y="270.13">'asdf'</tspan></text>
+      <rect x="130" y="256" width="28" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="140" y="270.13">…</tspan></text>
+      <path d="M 398 200 L 502 200" fill="none" stroke="var(--dg-border, #08120c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#un-tipo-es-un-conjunto-mk-triangle-end-vardgborder08120c)" />
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="400" y="179.5">apretar el tipo</tspan></text>
+      <rect x="516" y="82" width="360" height="250" fill="var(--dg-shadow, #08120c)" stroke="var(--dg-shadow, #08120c)" stroke-width="1" />
+      <rect x="510" y="76" width="360" height="250" fill="var(--dg-surface-raised, #ffffff)" stroke="var(--dg-border, #08120c)" stroke-width="3" />
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="102.88">TIPO APRETADO</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="24" font-weight="800" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="131">CoffeeSize</tspan></text>
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="159.5">estas tres cadenas, y ninguna más</tspan></text>
+      <rect x="532" y="180" width="76" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="542" y="194.13">'chico'</tspan></text>
+      <rect x="618" y="180" width="93" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="628" y="194.13">'mediano'</tspan></text>
+      <rect x="721" y="180" width="84" height="28" fill="var(--dg-surface-sunken, #ebece4)" stroke="var(--dg-border, #08120c)" stroke-width="2" />
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="731" y="194.13">'grande'</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="240.13">type CoffeeSize =</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="262.13">  | 'chico'</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="282.13">  | 'mediano'</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="13" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="532" y="302.13">  | 'grande';</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="364.75">sizeFactor('mediana')</tspan></text>
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="var(--dg-text-muted, #5b675e)" text-anchor="start" dominant-baseline="central"><tspan x="30" y="390.13">devuelve 1 y nadie avisa</tspan></text>
+      <text font-family="'Martian Mono', ui-monospace, 'Cascadia Mono', monospace" font-size="14" font-weight="500" fill="var(--dg-text, #08120c)" text-anchor="start" dominant-baseline="central"><tspan x="510" y="364.75">sizeFactor('mediana')</tspan></text>
+      <text font-family="'Public Sans', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="var(--dg-accent, #cf6f19)" text-anchor="start" dominant-baseline="central"><tspan x="510" y="390.13">no compila, y el error dice dónde</tspan></text>
+    </svg>
+    
+    </div>
+    <aside class="notes">
+    <p>TRES MINUTOS sobre este diagrama. Es el centro de la clase.</p>
+    <p>"Un TIPO es el conjunto de valores que una cosa puede tener. Nada más que eso."</p>
+    <p>Panel izquierdo: "Acá está string. ¿Cuántas cadenas distintas hay? Infinitas. 'chico' es una cadena. 'mediana' también. 'asdf' también. Cuando yo digo que el tamaño es un string, estoy diciendo CUALQUIERA DE ESTAS INFINITAS SIRVE. Y no es lo que quiero decir. Yo quiero decir tres."</p>
+    <p>Panel derecho: "Esto es el mismo dato con el tipo apretado. Adentro tiene exactamente tres cadenas. No es una regla escrita en un comentario: ES EL TIPO."</p>
+    <p>La línea de abajo es el premio: "Miren qué pasa con 'mediana' en cada lado."</p>
+    </aside>
+    </section>
+
+    <section class="ojo" data-background-color="oklch(0.56 0.22 27)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>Los tipos se borran</h1>
+    <p>TypeScript <strong>no existe</strong> en el navegador.</p>
+    <p>Lo que corre es JavaScript, el mismo de siempre.</p>
+    </div>
+    <aside class="notes">
+    <p>LO QUE MÁS CUESTA EL PRIMER DÍA. No lo pases rápido.</p>
+    <p>"¿Quién hace la revisión? Un programa que se llama COMPILADOR. Lee todo tu código, chequea que los tipos cierren, y recién ahí escribe el JavaScript que se va a ejecutar."</p>
+    <p>"Entonces, ¿para qué sirven los tipos? Para el rato en que escribís. Son un andamio: sostienen mientras construís y después no van a la obra terminada."</p>
+    <p>Y el modo strict: "está prendido siempre, en los cuatro proyectos, y no lo vamos a apagar ni un día."</p>
+    <p>Las cuatro preguntas que van a hacer —el navegador, equivocarse igual, si es más lento, por qué no any— están en el guión con su respuesta.</p>
+    </aside>
+    </section>
+
+    <section>
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>Todo lo de hoy son cuatro preguntas</h2>
+    <table>
+    <thead><tr><th></th><th>La pregunta que contesta el tipo</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Uniones de literales</strong></td><td>¿Cuáles valores, exactamente?</td></tr>
+    <tr><td><strong>Opcionales y <code>undefined</code></strong></td><td>¿Puede no estar?</td></tr>
+    <tr><td><strong><code>readonly</code></strong></td><td>¿Se puede cambiar?</td></tr>
+    <tr><td><strong>Genéricos · utility types</strong></td><td>¿Cómo no repito el mismo tipo dos veces?</td></tr>
+    </tbody>
+    </table>
+    </div>
+    <aside class="notes">
+    <p>DOS MINUTOS. Es el mapa de la clase.</p>
+    <p>"Las cuatro son la misma idea: DECIR LA VERDAD EN EL TIPO."</p>
+    <p>"Las tres primeras las vamos a escribir juntos ahora. La cuarta la vamos a leer, y la practican en el ejercicio y en la tarea."</p>
+    <p>SI VAS TARDE: esta diapositiva es lo único recortable del bloque. El diagrama y "los tipos se borran", no.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>0:20</h1>
+    <h2>Live coding</h2>
+    <h2>Ustedes miran</h2>
+    </div>
+    <aside class="notes">
+    <p>DECILO TEXTUAL: "Cierren el editor. Los próximos quince minutos yo escribo y ustedes miran. No copien: van a hacer esto mismo después, y con las manos libres se entiende mejor. Si me equivoco, avisen."</p>
+    <p>Proyecto: lab/demo, archivo src/app/sessions/s00/menu.ts. Preparado antes de entrar con <code>node scripts/prep-demo.mjs</code>.</p>
+    <p>La secuencia de tecleo minuto a minuto, con las TRES roturas deliberadas y el orden de sacrificio, está en mision-profe.md. Segundo monitor.</p>
+    <p>Y dejá la terminal del npm start A LA VISTA: hoy los errores salen ahí.</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>Inferencia · 0:20</h2>
+    <pre><code class="language-ts">let price = 42;
+price = 'cuarenta y dos';
+</code></pre>
+    <h2><code>TS2322: Type 'string' is not assignable to type 'number'.</code></h2>
+    </div>
+    <aside class="notes">
+    <p>ROTURA DELIBERADA 1.</p>
+    <p>Primero el hover sobre MENU, sin escribir nada: "ya sabe que esto es una lista de cafés. NADIE SE LO DIJO. Lo dedujo del valor."</p>
+    <p>Después estas dos líneas. Leé el error completo en voz alta.</p>
+    <p>"Yo nunca escribí number en ningún lado: lo dedujo de que puse 42. Y ahora me lo sostiene."</p>
+    <p>Regla práctica al cerrar: "cuando el valor está ahí, no se anota. Se anota cuando todavía no está: los parámetros, lo que devuelve, lo que viene de afuera."</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>La unión de literales · 0:22</h2>
+    <pre><code class="language-ts">export type CoffeeSize = string;
+</code></pre>
+    <pre><code class="language-ts">export type CoffeeSize = 'chico' | 'mediano' | 'grande';
+</code></pre>
+    <h2><code>TS2345: Argument of type '"mediana"' is not assignable…</code></h2>
+    </div>
+    <aside class="notes">
+    <p>Primero mostrá que sizeFactor('mediana') COMPILA. Es el bug de las 0:05, ahora con TypeScript prendido.</p>
+    <p>"¿Por qué pasa? Porque el parámetro es CoffeeSize, y CoffeeSize hoy es string. Y 'mediana' es un string perfectamente válido."</p>
+    <p>Cambiás UNA línea y el error aparece cincuenta líneas más abajo: "Eso es lo que compra apretar un tipo."</p>
+    <p>Definí acá UNIÓN (la barra: esto o esto) y LITERAL (un tipo con un solo valor adentro).</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>El <code>switch</code> que se queja solo · 0:25</h2>
+    <pre><code class="language-ts">switch (size) {
+  case 'chico':   return 0.8;
+  case 'mediano': return 1;
+  case 'grande':  return 1.3;
+}
+</code></pre>
+    <h2>Sin <code>default</code>, y compila.</h2>
+    </div>
+    <aside class="notes">
+    <p>"TypeScript sabe que CoffeeSize tiene tres valores, ve que los cubrí a los tres, y por eso sabe que esta función siempre devuelve algo."</p>
+    <p>ROTURA DELIBERADA 2 — agregale | 'jumbo' al tipo: TS2366: Function lacks ending return statement and return type does not include 'undefined'.</p>
+    <p>"Agregué un tamaño ARRIBA y el compilador me llevó al único lugar del programa donde falta decidir qué hacer con él. ESO es lo que un comentario nunca va a hacer por ustedes."</p>
+    <p>Sacá el 'jumbo'.</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>Opcional y narrowing · 0:28</h2>
+    <pre><code class="language-ts">notes?: string;   // el tipo pasa a ser string | undefined
+</code></pre>
+    <pre><code class="language-ts">if (coffee.notes === undefined) {
+  return base;
+}
+return `${base} — ${coffee.notes}`;
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>Primero señalá los dos notes: '' del MENU. "Es una mentira chiquita, y las mentiras chiquitas se propagan: en todo el programa, no tiene nota y tiene una nota vacía son lo mismo."</p>
+    <p>ROTURA DELIBERADA 3 — borrá los dos notes: '' y andá al navegador: "Huila · Colombia — undefined". DEJALO DOS SEGUNDOS SIN ARREGLAR.</p>
+    <p>Y el momento del bloque: HOVER sobre coffee.notes arriba del if y abajo. Arriba dice string | undefined. Abajo dice string.</p>
+    <p>"A eso se le dice NARROWING: adentro del if el tipo se achica, porque ahí ya sabe más que afuera."</p>
+    </aside>
+    </section>
+
+    <section class="ojo" data-background-color="oklch(0.56 0.22 27)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1><code>!</code> es una promesa</h1>
+    <p><code>menu[0]!</code> quiere decir <em>confiá en mí, siempre hay uno</em>.</p>
+    <p><strong>¿Podés cumplirla?</strong></p>
+    </div>
+    <aside class="notes">
+    <p>0:31. Ejecutá cheapest([]): TypeError: Cannot read properties of undefined (reading 'price')</p>
+    <p>"Ese signo de exclamación le está diciendo al compilador que se calle. Y no puedo cumplir lo que le prometí."</p>
+    <p>LA REGLA, en una línea: "si te tienta poner un !, casi siempre lo que falta es decir la verdad en el tipo."</p>
+    <p>Cambiá la firma a Coffee | undefined, sacá el !, y volvé al navegador: el pizarrón SIGUE FUNCIONANDO, porque el template ya tenía el @else.</p>
+    <p>"El tipo no agregó trabajo. HIZO VISIBLE EL TRABAJO QUE YA HABÍA QUE HACER."</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2><code>readonly</code> · 0:33</h2>
+    <pre><code class="language-ts">MENU.push({ id: 'c9', name: 'Trucho', origin: 'Ninguno', price: 1 });
+</code></pre>
+    <h2><code>TS2339: Property 'push' does not exist on type 'readonly Coffee[]'.</code></h2>
+    </div>
+    <aside class="notes">
+    <p>Primero mostrá que el push COMPILA: "estoy modificando el menú del negocio desde cualquier parte del programa, y nadie me dice nada."</p>
+    <p>Después poné readonly en los campos y en el array.</p>
+    <p>"readonly no congela nada en tiempo de ejecución: es una marca para el compilador. Y alcanza, porque el que se equivoca es el que escribe."</p>
+    <p>"Esto va a estar en TODO el curso, y en la clase 3 va a ser la diferencia entre que la pantalla se actualice y que no."</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>0:35</h1>
+    <h2>Misión 1</h2>
+    <h2>Ahora ustedes</h2>
+    </div>
+    <aside class="notes">
+    <p>15 minutos, individual, lab/starter, archivo sessions/s00/menu.ts. Cinco TODO(S0). Enunciado completo en mision-estudiante-1.md.</p>
+    <p>DECÍ ESTAS DOS COSAS ANTES DE LARGAR:</p>
+    <ol>
+    <li>"El archivo del componente NO SE TOCA. Los componentes son la clase que viene. Si algo se rompe ahí, el arreglo está en menu.ts."</li>
+    <li>"La terminal donde corre npm start es su segundo par de ojos. Tenganla a la vista."</li>
+    </ol>
+    <p>ESTÁS EN SILENCIO. Reloj de pistas en el guión: 0:43 y 0:47.</p>
+    </aside>
+    </section>
+
+    <section>
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>Misión 1 — los cinco</h2>
+    <ol>
+    <li>Los tamaños son <strong>tres</strong>, y el tipo lo dice</li>
+    <li>Las notas de cata son <strong>opcionales</strong></li>
+    <li>El menú <strong>no se edita</strong></li>
+    <li>El <code>switch</code> <strong>sin <code>default</code></strong></li>
+    <li>Puede <strong>no haber</strong> café más barato</li>
+    </ol>
+    <p><strong>Prohibido:</strong> <code>any</code>, <code>!</code>, <code>as</code></p>
+    </div>
+    <aside class="notes">
+    <p>Dejala en pantalla los quince minutos.</p>
+    <p>Cada requisito del enunciado trae su verificación: una línea que hay que escribir, ver fallar, y borrar. Eso es lo que hace que el ejercicio se autocorrija.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>0:50</h1>
+    <h2>Comparten pantalla</h2>
+    </div>
+    <aside class="notes">
+    <p>Dos personas. Una que le funciona y una que no — a la segunda pedile permiso ANTES.</p>
+    <p>PREGUNTÁS, NO CORREGÍS. Las cuatro preguntas están en el guión.</p>
+    <p>Lo más probable: alguien puso notes: string | undefined en vez de notes?: string. NO LO MARQUES COMO ERROR: es una diferencia real de significado y el que la encontró solo, entendió el tema. La explicación está en el guión.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>1:00</h1>
+    <h2>Descanso</h2>
+    <h2>10 minutos</h2>
+    </div>
+    <aside class="notes">
+    <p>"Vuelvan puntuales, que lo que viene es lo mejor de la clase."</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>1:10</h1>
+    <h2>Predice y ejecuta</h2>
+    </div>
+    <aside class="notes">
+    <p>15 minutos. Los tres snippets están en predice-y-ejecuta/ y las respuestas —VERIFICADAS con tsc, no de memoria— en respuestas.md.</p>
+    <p>EL ORDEN NO SE SALTEA:</p>
+    <ol>
+    <li>Mostrás el código. NO LO EJECUTÁS.</li>
+    <li>"¿Qué va a pasar? Escribilo en el chat." 60 SEGUNDOS DE RELOJ.</li>
+    <li>Recién ahí, ejecutás.</li>
+    <li>Explicás la diferencia.</li>
+    </ol>
+    <p>El paso 2 es todo el ejercicio.</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>1 · ¿Cuál de las dos compila?</h2>
+    <pre><code class="language-ts">const size = 'grande';
+sizeFactor(size);            // A
+
+const config = { size: 'grande' };
+sizeFactor(config.size);     // B
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>Casi todos predicen que las dos.</p>
+    <p>COMPILA A. NO COMPILA B: TS2345: Argument of type 'string' is not assignable to parameter of type 'CoffeeSize'.</p>
+    <p>Un const con un primitivo adentro nunca va a cambiar → tipo literal 'grande'. Una propiedad de objeto SÍ puede cambiar → tipo ancho string. Eso es widening.</p>
+    <p>Hacé el hover sobre las dos ANTES de mostrar el error.</p>
+    <p>La frase: "el tipo no lo decide la letra que escribiste: lo decide QUIÉN PUEDE CAMBIARLA MÁS ADELANTE."</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>2 · Las tres son <code>readonly</code>. ¿Cuáles compilan?</h2>
+    <pre><code class="language-ts">interface Order {
+  readonly customer: string;
+  readonly lines: OrderLine[];
+}
+
+order.customer = 'Beto';        // A
+order.lines = [];               // B
+order.lines.push({ … });        // C
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>Casi todos predicen que ninguna.</p>
+    <p>A y B fallan con TS2540. C COMPILA SIN UNA QUEJA.</p>
+    <p>"readonly en el campo protege LA CAJA, no lo que hay adentro. Nadie puede reemplazar la lista por otra… y cualquiera puede vaciarla."</p>
+    <p>El arreglo, en el momento: readonly lines: readonly OrderLine[];</p>
+    <p>"Los dos readonly no son un error de tipeo. Cada uno cierra una puerta distinta, y la que casi todos dejan abierta es la segunda."</p>
+    <p>Y por qué importa: en S3, un push sobre estado hace que la pantalla NO SE ACTUALICE, sin ningún error.</p>
+    </aside>
+    </section>
+
+    <section class="codigo">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>3 · ¿Compila? ¿Y qué imprime?</h2>
+    <pre><code class="language-ts">const text = '{"name":"Clásico Apertura"}';
+const race = JSON.parse(text) as Race;
+
+console.log(race.name);
+console.log(race.horses.length);
+</code></pre>
+    </div>
+    <aside class="notes">
+    <p>COMPILA PERFECTO. Ni un subrayado rojo.</p>
+    <p>Y al ejecutar: Clásico Apertura Uncaught TypeError: Cannot read properties of undefined (reading 'length')</p>
+    <p>"JSON.parse devuelve any. El as no verifica NADA: le dice al compilador 'tratá esto como una carrera' y el compilador obedece."</p>
+    <p>AS NO ES UNA CONVERSIÓN. ES UNA PROMESA. Y esta no se podía cumplir.</p>
+    <p>Cierre del bloque: "¿cuál les parece más peligroso en un proyecto de verdad?" Eligen el tercero, y tienen razón: los dos primeros los descubrís escribiendo, el tercero compila, pasa el build, se despliega y rompe con un usuario adelante.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>1:25</h1>
+    <h2>Misión 2</h2>
+    <h2>En parejas</h2>
+    </div>
+    <aside class="notes">
+    <p>20 minutos. project/frontend/starter, archivo core/models/race.model.ts. Diez minutos cada uno al teclado. El que dicta no toca el teclado; el que escribe no decide.</p>
+    <p>TRES COSAS ANTES DE LARGAR:</p>
+    <ol>
+    <li>"Los nombres de los campos YA ESTÁN BIEN. No se cambia ni uno: son el contrato con el backend, y hay código Go del otro lado."</li>
+    <li>"Lo que hay que apretar sale de docs/contract/openapi.yaml. No se adivina, se abre."</li>
+    <li>"El ejercicio NO ES QUE COMPILE. Es que cinco líneas que hoy compilan dejen de compilar. Están al final del enunciado."</li>
+    </ol>
+    </aside>
+    </section>
+
+    <section>
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>Misión 2 — lo que tiene que dejar de compilar</h2>
+    <table>
+    <thead><tr><th></th><th>La línea</th><th>El error</th></tr></thead>
+    <tbody>
+    <tr><td>a</td><td><code>race.status === 'galopando'</code></td><td><code>TS2367</code></td></tr>
+    <tr><td>b</td><td><code>horse.odds = 1.01</code></td><td><code>TS2540</code></td></tr>
+    <tr><td>c</td><td><code>race.horses.push(horse)</code></td><td><code>TS2339</code></td></tr>
+    <tr><td>d</td><td><code>{ place: 0, … }</code></td><td><code>TS2322</code></td></tr>
+    <tr><td>e</td><td><code>favourite(race).name</code></td><td><code>TS2532</code></td></tr>
+    </tbody>
+    </table>
+    </div>
+    <aside class="notes">
+    <p>Dejala en pantalla los veinte minutos. Los mensajes completos están en el enunciado y en correccion.md.</p>
+    <p>Circulás entre las parejas. ESCUCHÁS MÁS DE LO QUE HABLÁS.</p>
+    <p>La pareja que termina recibe la extensión: leer api.model.ts y contestar por qué Page&lt;T&gt; es genérico y qué pasa cuando el backend agrega un código de error.</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>1:45</h1>
+    <h2>Code review</h2>
+    </div>
+    <aside class="notes">
+    <p>10 minutos. Una solución de la Misión 2, con permiso. correccion.md en pantalla al lado.</p>
+    <p>DECÍ ESTO PRIMERO, TEXTUAL: "La rúbrica que vamos a usar todo el módulo arranca con '¿es standalone?' y '¿es OnPush?'. Hoy esas dos preguntas no aplican: no hay un solo componente en juego. Desde la clase que viene sí. Hoy revisamos otras cinco."</p>
+    </aside>
+    </section>
+
+    <section>
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h2>La rúbrica de hoy</h2>
+    <ol>
+    <li>¿El tipo dice <strong>exactamente</strong> lo que el contrato garantiza?</li>
+    <li>¿Quedó algún <code>!</code> o <code>as</code> que sea una promesa incumplible?</li>
+    <li>¿Lo que no se edita está <code>readonly</code>?</li>
+    <li>¿Los nombres están en inglés y dicen lo que la cosa es?</li>
+    <li>¿Se abrió el contrato, o se adivinó?</li>
+    </ol>
+    </div>
+    <aside class="notes">
+    <p>EMPEZÁ POR ALGO QUE ESTÁ BIEN HECHO. Siempre hay algo.</p>
+    <p>Los cinco errores que aparecen todos los años, con qué decirles, están en correccion.md.</p>
+    <p>CERRÁ CON ESTO: "Ninguno de estos cambios se ve en la pantalla. La app hace exactamente lo mismo que hace veinte minutos. Lo que cambió es que ahora hay una clase entera de errores que ya no se puede escribir — y eso lo van a agradecer en la clase 7, cuando estos mismos tipos vengan de un servidor de verdad."</p>
+    </aside>
+    </section>
+
+    <section class="bloque" data-background-color="oklch(0.64 0.15 55)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1>1:55</h1>
+    <h2>Exit ticket</h2>
+    <h2>y tarea</h2>
+    </div>
+    <aside class="notes">
+    <p>Exit ticket: tres preguntas, tres minutos. La tercera —qué quedó confuso— es la que arranca S1.</p>
+    <p>Tarea: LEELA EN VOZ ALTA antes de cortar.</p>
+    </aside>
+    </section>
+
+    <section class="ojo" data-background-color="oklch(0.56 0.22 27)">
+    <div class="deck-header">S0 · TypeScript</div>
+    <div class="slide-body">
+    <h1><code>conceptos.md</code></h1>
+    <p>Todo lo de hoy, con <strong>los ejemplos exactos</strong> que corrimos acá.</p>
+    <p>La clase no queda grabada. Esto sí.</p>
+    </div>
+    <aside class="notes">
+    <p>NO LO SALTEES POR FALTA DE TIEMPO. Es lo que más se olvida y lo único que tienen entre esta clase y la que viene.</p>
+    <p>"Cada concepto con su definición, y los errores con su mensaje literal. Ténganlo abierto al lado del editor cuando hagan la tarea."</p>
+    <p>Y el aviso de la próxima: "La clase que viene arrancamos con Angular de verdad: el primer componente. Vengan con el proyecto levantado, que los quince minutos de instalar cosas se los quiero ahorrar."</p>
+    </aside>
+    </section>
+
+    <section class="portada" data-background-color="oklch(0.17 0.02 155)">
+    <div class="slide-body">
+    <h1>Hasta la próxima</h1>
+    <h2>S1 · Primer componente</h2>
+    </div>
+    <aside class="notes">
+    <p>Y anotá, todavía con la clase fresca, las cuatro preguntas del final del guión: qué bloque se pasó, qué no supiste contestar, qué error apareció que no estaba previsto, cuántos llegaron con el entorno instalado.</p>
+    <p>Eso es lo que hace que S1 salga mejor.</p>
+    </aside>
+    </section>
+  </div>
+</div>
+
+<script src="../../theme/reveal/reveal.js"></script>
+<script src="../../theme/reveal/plugin/highlight/highlight.js"></script>
+<script src="../../theme/reveal/plugin/notes/notes.js"></script>
+<script src="../../theme/reveal/plugin/zoom/zoom.js"></script>
+<script>
+  Reveal.initialize({
+    width: 1280,
+    height: 720,
+    margin: 0,
+    // El contenido arranca arriba: las diapositivas a sangre se centran solas
+    // con flex en el tema, y el resto quiere columna de lectura.
+    center: false,
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'none',
+    // Sin ondas ni desvanecidos: el movimiento comunica estado o no está.
+    backgroundTransition: 'none',
+    plugins: [RevealHighlight, RevealNotes, RevealZoom],
+  });
+</script>
+
+</body>
+</html>

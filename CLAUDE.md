@@ -177,6 +177,7 @@ Saltea con gracia lo que todavía no existe. Si falla, **arreglá antes de segui
 | `public/contract/`, `internal/seed/data/` | `sync-contract.mjs` |
 | `public/fonts/` y `src/fonts.css` | `fetch-fonts.mjs` |
 | `sesiones/**/diagramas/*.svg` | `gen-diagram-svg.mjs` — la fuente es el `.excalidraw` |
+| `sesiones/**/slides.reveal.html` | `gen-reveal.mjs` — la fuente es el `slides.md` de Marp |
 
 `verify.mjs` los corre en modo `--check` y falla si algo quedó desfasado.
 

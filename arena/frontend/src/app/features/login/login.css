@@ -1,3 +1,14 @@
+/* Un formulario de seis campos no se apoya arriba de una pantalla vacía. El
+   `main` es columna flex, así que la pantalla de entrada toma el alto que sobra
+   y centra su hoja. `safe` es lo que evita el clásico: en un viewport bajo, un
+   centrado normal empuja el borde de arriba fuera de la pantalla y deja el
+   primer campo inalcanzable. */
+:host {
+  flex: 1;
+  display: grid;
+  align-content: safe center;
+}
+
 .sheet {
   max-inline-size: 28rem;
   margin-inline: auto;
@@ -13,7 +24,10 @@
   flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-6) var(--space-4);
-  background: var(--surface);
+  /* Elevada, no `--surface`: una tarjeta del mismo color que la página depende
+     enteramente del borde para existir, y el borde en oscuro está apagado a
+     propósito. */
+  background: var(--surface-raised);
   border: var(--border-width) solid var(--border);
   box-shadow: var(--shadow-hard);
 }
